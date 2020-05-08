@@ -11,7 +11,7 @@ $_gb_->addColumn(
     ],
     [
         'name'      => 'dateFormat',
-        'arguments' => [inject('format', 'LLL dd, yyyy hh:mm')]
+        'arguments' => [inject('format', 'LLL dd, yyyy HH:mm')]
     ],
     inject('class', 'text-nowrap')
 );

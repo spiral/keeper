@@ -33,6 +33,5 @@ final class UIBootloader extends Bootloader
 
         $stempler->addDirective(ActionDirective::class);
         $stempler->addDirective(AuthDirective::class);
-
     }
 }

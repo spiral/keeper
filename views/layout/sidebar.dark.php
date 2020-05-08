@@ -1,9 +1,11 @@
 <aside class="sf-sidebar active" data-sf="sidebar" id="sidebar">
   <div class="sf-sidebar__container">
-    <div class="sf-sidebar__logo">
-      <span class="dummy"></span>
-      <span>Spiral Framework</span>
-    </div>
+    <block:header>
+      <div class="sf-sidebar__logo">
+        <span class="dummy"></span>
+        <span>Spiral Framework</span>
+      </div>
+    </block:header>
       <?php
       /**
        * Defined in keeper:layout/sitemap

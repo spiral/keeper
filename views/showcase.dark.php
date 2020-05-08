@@ -50,7 +50,7 @@
   </ui:row>
 </ui:tab>
 
-<ui:tab id="qr" title="Forms">
+<ui:tab id="forms" title="Forms">
   <ui:row>
     <ui:col.6>
       <ui:panel header="Sample Form">

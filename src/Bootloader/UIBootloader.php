@@ -29,7 +29,7 @@ final class UIBootloader extends Bootloader
     {
         // overwrite
         $views->addDirectory('keeper', directory('views') . '/keeper');
-        $views->addDirectory('keeper', dirname(__DIR__) . '/../keeper-views');
+        $views->addDirectory('keeper', dirname(__DIR__) . '/../views');
 
         $stempler->addDirective(ActionDirective::class);
         $stempler->addDirective(AuthDirective::class);

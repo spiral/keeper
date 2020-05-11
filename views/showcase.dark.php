@@ -154,20 +154,20 @@
 
         <hr/>
         <p>
-          <action:button src="https://google.com" label="Google"/>
+          <action:button url="https://google.com" label="Google"/>
         </p>
-        <pre>&lt;action:button src="https://google.com" label="Google"/&gt;</pre>
+        <pre>&lt;action:button url="https://google.com" label="Google"/&gt;</pre>
         <hr/>
         <p>
-          <action:button src="https://google.com" icon="users" label="Google"/>
+          <action:button url="https://google.com" icon="users" label="Google"/>
         </p>
-        <pre>&lt;action:button src="https://google.com" icon="users" label="Google"/&gt;</pre>
+        <pre>&lt;action:button url="https://google.com" icon="users" label="Google"/&gt;</pre>
         <hr/>
         <p>
-          <action:button src="https://google.com" icon="search" label="Google" kind="secondary" target="_blank"/>
+          <action:button url="https://google.com" icon="search" label="Google" kind="secondary" target="_blank"/>
         </p>
         <pre>&lt;action:button
-  src="https://google.com"
+  url="https://google.com"
   icon="search"
   label="Google"
   kind="secondary"

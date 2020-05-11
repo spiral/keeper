@@ -29,7 +29,7 @@ final class Controller
      * @Attribute(name="prefix", type="string")
      * @type string
      */
-    public $path;
+    public $prefix;
 
     /**
      * @Attribute(name="name", type="string")

@@ -94,8 +94,8 @@ final class AnnotatedBootloader extends Bootloader
                 }
 
                 $path = $match->getAnnotation()->name . '/';
-                if ($match->getAnnotation()->path !== null) {
-                    $path = $match->getAnnotation()->path;
+                if ($match->getAnnotation()->prefix !== null) {
+                    $path = $match->getAnnotation()->prefix;
                 }
 
                 $route = str_replace('//', '/', $path . $action->route);

@@ -27,9 +27,9 @@ use Spiral\Keeper\Module\Sitemap;
 final class AnnotatedBootloader extends Bootloader
 {
     /**
-     * @param KeeperBootloader $keeper
+     * @param KeeperBootloader  $keeper
      * @param AnnotationLocator $locator
-     * @param Sitemap $sitemap
+     * @param Sitemap           $sitemap
      * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public function boot(KeeperBootloader $keeper, AnnotationLocator $locator, Sitemap $sitemap): void
@@ -52,7 +52,7 @@ final class AnnotatedBootloader extends Bootloader
 
     /**
      * @param Sitemap $sitemap
-     * @param array $item
+     * @param array   $item
      */
     private function setSitemap(Sitemap $sitemap, array $item): void
     {
@@ -64,7 +64,7 @@ final class AnnotatedBootloader extends Bootloader
     }
 
     /**
-     * @param string $namespace
+     * @param string            $namespace
      * @param AnnotationLocator $locator
      * @return array
      *
@@ -109,6 +109,7 @@ final class AnnotatedBootloader extends Bootloader
             $controller['sitemap'] = $this->buildSitemap(
                 $match->getClass(),
                 $reader,
+                $namespace,
                 $controller['name'],
                 array_keys($controller['routes'])
             );
@@ -121,13 +122,15 @@ final class AnnotatedBootloader extends Bootloader
     /**
      * @param \ReflectionClass $class
      * @param AnnotationReader $reader
-     * @param string $controller
-     * @param array $methods
+     * @param string           $namespace
+     * @param string           $controller
+     * @param array            $methods
      * @return array
      */
     private function buildSitemap(
         \ReflectionClass $class,
         AnnotationReader $reader,
+        string $namespace,
         string $controller,
         array $methods
     ): array {
@@ -181,7 +184,7 @@ final class AnnotatedBootloader extends Bootloader
                                 'name'    => $name,
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
-                                'options' => $ann->options,
+                                'options' => $ann->options + ['permission' => sprintf('%s.%s', $namespace, $name)],
                                 'child'   => []
                             ],
                             $dependencies

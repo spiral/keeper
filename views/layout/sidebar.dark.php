@@ -69,34 +69,36 @@
           </div>
           @break
           @default
-          <div class="sf-navgroup">
-            <ul class="sf-nav__list">
-              <li class="sf-nav__item">
-                <div class="sf-nav__item-heading {!! $_s_->getOption('active') ? 'active' : '' !!}"
-                     data-sf="nav-item-toggle"
-                     aria-expanded="{!! $_s_->getOption('active') ? 'true' : 'false' !!}"
-                     aria-controls="nav-item-{!! $_n_ !!}">
-                  @if($_s_->getOption('icon') !==null )
-                    <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
-                  @endif
-                  <span>{{ $_s_->getOption('title') }}</span>
-                </div>
-                <div class="sf-nav__item-content" data-sf-nav="item-content" id="nav-item-{!! $_n_ !!}">
-                  <div class="sf-subnav">
-                    @foreach($_s_ as $_i_)
-                      <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
-                         href="{!! $_router_->uri($_i_->getName()) !!}">
-                        @if($_i_->getOption('icon') !==null )
-                          <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
-                        @endif
-                        <span>{{ $_i_->getOption('title') }}</span>
-                      </a>
-                    @endforeach
+          @if($_s_->hasOption('type'))
+            <div class="sf-navgroup">
+              <ul class="sf-nav__list">
+                <li class="sf-nav__item">
+                  <div class="sf-nav__item-heading {!! $_s_->getOption('active') ? 'active' : '' !!}"
+                       data-sf="nav-item-toggle"
+                       aria-expanded="{!! $_s_->getOption('active') ? 'true' : 'false' !!}"
+                       aria-controls="nav-item-{!! $_n_ !!}">
+                    @if($_s_->getOption('icon') !==null )
+                      <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
+                    @endif
+                    <span>{{ $_s_->getOption('title') }}</span>
                   </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+                  <div class="sf-nav__item-content" data-sf-nav="item-content" id="nav-item-{!! $_n_ !!}">
+                    <div class="sf-subnav">
+                      @foreach($_s_ as $_i_)
+                        <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
+                           href="{!! $_router_->uri($_i_->getName()) !!}">
+                          @if($_i_->getOption('icon') !==null )
+                            <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
+                          @endif
+                          <span>{{ $_i_->getOption('title') }}</span>
+                        </a>
+                      @endforeach
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          @endisset
           @break
         @endswitch
       @endforeach

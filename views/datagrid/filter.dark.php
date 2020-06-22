@@ -27,7 +27,7 @@
               <div class="border position-absolute shadow-sm p-3 bg-white w-100 mt-2" style="z-index: 1">
                   <?php $_gb_->captureForm('#' . $_gb_->getID() . '-filter'); ?>
                 <form:wrapper action="#{!! $_gb_->getID().'-filter' !!}" id="#{!! $_gb_->getID() . '-filter' !!}"
-                              lock-type="none">
+                              lock-type="none" submit-on-reset="true">
                   {!! $_filters_ !!}
                   @if(injected('buttons'))
                     <div class="col-12 text-right">

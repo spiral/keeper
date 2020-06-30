@@ -23,6 +23,7 @@ $_action_['confirm'] = [];
 ob_start(); ?>${confirm|Are you sure to delete this entry?}<?php $_action_['confirm']['body'] = $_gb_->toHandlebars(ob_get_clean());
 ob_start(); ?>${confirm-title|Confirmation Required}<?php $_action_['confirm']['title'] = $_gb_->toHandlebars(ob_get_clean());
 ob_start(); ?>${confirm-ok|Delete}<?php $_action_['confirm']['confirm'] = $_gb_->toHandlebars(ob_get_clean());
+ob_start(); ?>${confirm-ok-kind|danger}<?php $_action_['confirm']['confirmKind'] = $_gb_->toHandlebars(ob_get_clean());
 ob_start(); ?>${confirm-cancel|Cancel}<?php $_action_['confirm']['cancel'] = $_gb_->toHandlebars(ob_get_clean());
 
 ob_start(); ?>

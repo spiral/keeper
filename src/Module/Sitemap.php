@@ -152,7 +152,7 @@ final class Sitemap implements \IteratorAggregate
     private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
     {
         if ($node->hasOption('permission')) {
-            if (!$guard->allows($this->namespace . '.' . $node->getOption('permission'))) {
+            if (!$guard->allows($node->getOption('permission'))) {
                 return new Node('empty');
             }
         }

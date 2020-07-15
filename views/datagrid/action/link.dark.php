@@ -11,6 +11,7 @@ $_gb_->addAction([
     'type'     => 'href',
     'url'      => $_gb_->toHandlebars($_href_),
     'label'    => inject('label'),
+    'target'   => inject('target'),
     'icon'     => inject('icon'),
     'template' => $_gb_->toHandlebars($_template_)
 ]);

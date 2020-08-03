@@ -46,23 +46,28 @@
     @elseif(injected('search'))
       <div class="col col-12 col-lg-7 col-md-6 col-sm-12 mb-2"></div>
     @endif
-    @if(injected('search'))
+      @if(injected('search'))
       <div class="col col-12 col-lg-5 col-md-6 col-sm-12">
-          <?php $_gb_->captureForm('#' . $_gb_->getID() . '-search'); ?>
-        <form:wrapper action="#{!! $_gb_->getID() . '-search' !!}" id="{!! $_gb_->getID() . '-search' !!}"
-                      lock-type="none" immediate="${immediate}">
-          @if(!injected('immediate'))
-            <form:input add-icon="search" size="9" name="${search-name|search}" type="search" placeholder="Search"/>
-            <div class="col-md-3 col-sm-12">
-              <div class="btn-group w-100">
-                <ui:button label="Search" type="submit"/>
-              </div>
-            </div>
+          <?php
+          $_gb_->captureForm('#' . $_gb_->getID() . '-search'); ?>
+          @if(inject('immediate', false))
+          <form:wrapper action="#{!! $_gb_->getID() . '-search' !!}" id="{!! $_gb_->getID() . '-search' !!}"
+                        lock-type="none" immediate="300">
+              <form:input add-icon="search" name="${search-name|search}" type="search" placeholder="Search"/>
+          </form:wrapper>
           @else
-            <form:input add-icon="search" name="${search-name|search}" type="search" placeholder="Search"/>
+          <form:wrapper action="#{!! $_gb_->getID() . '-search' !!}" id="{!! $_gb_->getID() . '-search' !!}"
+                        lock-type="none" immediate="${immediate}">
+
+              <form:input add-icon="search" size="9" name="${search-name|search}" type="search" placeholder="Search"/>
+              <div class="col-md-3 col-sm-12">
+                  <div class="btn-group w-100">
+                      <ui:button label="Search" type="submit"/>
+                  </div>
+              </div>
+          </form:wrapper>
           @endif
-        </form:wrapper>
       </div>
-    @endif
+      @endif
   </div>
 </div>

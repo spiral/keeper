@@ -18,7 +18,7 @@
               data-class-emptyfilter="btn-light"
               data-class-hasfilter="btn-primary"
               data-template="<i class='fas fa-filter'></i> {{#if isEmpty}}Filter{{else}}Filter<span class='ml-2 badge badge-light'>{{changes}}</span>{{/if}}"
-            ><i class="fas fa-filter"></i> Filter
+            ><i class="fas fa-filter"></i> [[Filter]]
             </button>
             @declare(syntax=on)
           </div>
@@ -42,9 +42,16 @@
             </div>
           </div>
         </div>
+          @if(inject('refresh', false))
+            <a class="btn btn-light js-sf-grid-refresh" data-grid-id="{!! $_gb_->getID() !!}"><i class="fas fa-sync"></i> [[Refresh]]</a>
+          @endif
       </div>
     @elseif(injected('search'))
-      <div class="col col-12 col-lg-7 col-md-6 col-sm-12 mb-2"></div>
+      <div class="col col-12 col-lg-7 col-md-6 col-sm-12 mb-2">
+          @if(inject('refresh', false))
+            <a class="btn btn-light js-sf-grid-refresh" data-grid-id="{!! $_gb_->getID() !!}"><i class="fas fa-sync"></i> [[Refresh]]</a>
+          @endif
+      </div>
     @endif
       @if(injected('search'))
       <div class="col col-12 col-lg-5 col-md-6 col-sm-12">

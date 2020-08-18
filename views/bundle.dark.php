@@ -44,6 +44,8 @@
 {{--data grids--}}
 <use:element path="keeper:datagrid/wrapper" as="ui:grid"/>
 <use:element path="keeper:datagrid/filter" as="grid:filter"/>
+<use:element path="keeper:datagrid/refresh" as="grid:refresh"/>
+<use:element path="keeper:datagrid/refresh" as="grid:refreshbutton"/>
 
 {{--grid cells--}}
 <use:element path="keeper:datagrid/cell/text" as="grid:cell"/>

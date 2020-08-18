@@ -64,3 +64,6 @@
 <use:element path="keeper:action/button" as="action:button"/>
 <use:element path="keeper:action/invoke" as="action:invoke"/>
 <use:element path="keeper:action/delete" as="action:delete"/>
+
+{{--notifications--}}
+<use:element path="keeper:notifications/drawer" as="notifications:drawer"/>

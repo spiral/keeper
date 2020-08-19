@@ -1,5 +1,5 @@
 <div class="sf-drawer js-sf-notifications" aria-label="Notification Drawer">
-    <div class="sf-drawer-mask"></div>
+    <div class="sf-drawer-mask js-sf-notifications-mask"></div>
     <div class="sf-drawer-content-wrapper">
         <div class="sf-drawer-content">
             <div class="sf-drawer-body-wrapper">

@@ -67,3 +67,4 @@
 
 {{--notifications--}}
 <use:element path="keeper:notifications/drawer" as="notifications:drawer"/>
+<use:element path="keeper:notifications/toggle" as="notifications:toggle"/>

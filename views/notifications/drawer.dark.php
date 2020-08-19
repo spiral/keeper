@@ -3,7 +3,10 @@
     <div class="sf-drawer-content-wrapper">
         <div class="sf-drawer-content">
             <div class="sf-drawer-body-wrapper">
-                <div class="sf-drawer-header">Notifications <span class="badge badge-primary js-sf-notifications-count">12</span></div>
+                <div class="sf-drawer-header d-flex align-items-center justify-content-between p-3">
+                    <div>Unread Count <strong class="js-sf-notifications-count">12</strong></div>
+                    <a class="btn btn-primary btn-sm text-white js-sf-notifications-button">Mark All As Read</a>
+                </div>
                 <div class="sf-drawer-body js-sf-notifications-body">
                     <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                         <div class="toast-header">

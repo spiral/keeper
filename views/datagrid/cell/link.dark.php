@@ -10,7 +10,7 @@ $_gb_->addColumn(
     $_name_,
     [
         'title'   => inject('label'),
-        'sortDir' => injected('sort') ? inject('sortDir', 'asc') : null
+        'sortDir' => injected('sort') ? inject('sort-dir', 'asc') : null
     ],
     [
         'name'      => 'link',

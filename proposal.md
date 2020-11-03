@@ -18,9 +18,12 @@ So the proposal is:
 - no slashes are auto added or trimmed (except of `/\/+/` to remove `abc///de/`).
 This will mean a keeper controller action may look like this: `keeper_users-edit` (this is fully up to a developer)
 - no defaults will be automatically suggested by having `prefix=''`
-  - a default controller MUST be assigned to a namespace explicitly
+  - a default controller CAN be assigned to a namespace explicitly
   - a default method CAN be declared in the `@Controller` annotation explicitly (by default `index`) 
-  - Otherwise, no defaults 
+  - Otherwise, no defaults
+- any other standard `@Route` params are applicable. Even using a `group` param will act fully the same,
+but on the action level - if a group also has a prefix it will be added right between `@Controller` prefix and `@Action` route
+  
   
 According to that, the usage will look like the next:
 ```php

@@ -60,7 +60,7 @@ class Users
 }
 ```
 
-````html
+```html
 Each namespace can have the same route names - they will be isolated
 <a href="@action('keeper', 'users:index', [])">Refer to a keeper namespace.</a>
 ```

@@ -46,7 +46,7 @@ class KeeperBootloader//...
 
 ```php
 /**
-@\Spiral\Keeper\Annotation\Controller(namespace="keeper", prefix="people/")
+@\Spiral\Keeper\Annotation\Controller(namespace="keeper", prefix="people/", defaultAction="stats")
  */
 class Users
 {

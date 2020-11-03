@@ -64,3 +64,10 @@ class Users
 Each namespace can have the same route names - they will be isolated
 <a href="@action('keeper', 'users:index', [])">Refer to a keeper namespace.</a>
 ```
+
+## Sitemap and breadcrumbs generator
+Annotations should be synced with a custom sitemap generation (for example - via bootloader).
+If an action is already registered in the bootloader, there should be no need of adding an empty annotation to the method.
+Currently, if a developer wants to use a breadcrumb using annotations, they have to use empty (duplicating) annotations.
+
+Also, breadcrumbs can't refer to an external controller. It might be helpful for child controllers.

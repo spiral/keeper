@@ -36,4 +36,10 @@ final class Controller
      * @type string|null
      */
     public $namespace = 'keeper';
+
+    /**
+     * @Attribute(name="name", type="string")
+     * @type string|null
+     */
+    public $defaultAction;
 }

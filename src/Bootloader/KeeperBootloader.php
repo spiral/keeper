@@ -116,6 +116,8 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 (clone $bootloadManager)->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($config);
 
+                //todo add a separate route for default controller (only base prefix)
+                //todo for each controller with a default action add a separate route
                 $routes->hydrate(static::NAMESPACE);
             }
         );

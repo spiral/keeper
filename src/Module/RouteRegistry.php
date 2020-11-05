@@ -33,11 +33,15 @@ final class RouteRegistry
     /** @var MiddlewareInterface[]|string[] */
     private $middleware;
 
+    /** @var RouterInterface */
+    private $appRouter;
+
     /**
      * @param ContainerInterface $container
      * @param KeeperConfig       $config
+     * @param RouterInterface    $appRouter
      */
-    public function __construct(ContainerInterface $container, KeeperConfig $config)
+    public function __construct(ContainerInterface $container, KeeperConfig $config, RouterInterface $appRouter)
     {
         $this->config = $config;
         $this->middleware = $this->config->getMiddleware();
@@ -47,6 +51,7 @@ final class RouteRegistry
             $container->get(UriHandler::class),
             $container
         );
+        $this->appRouter = $appRouter;
     }
 
     /**
@@ -67,26 +72,19 @@ final class RouteRegistry
     }
 
     /**
-     * @return RouteInterface
-     */
-    public function initEndpoint(): RouteInterface
-    {
-        return $this->configureRoute(new Route($this->config->getRoutePattern(), $this->router));
-    }
-
-    /**
      * Provides the ability to inject templated args in a form or {id} or {{id}}.
      *
+     * @param string $namespace
      * @param string $route
      * @param array  $parameters
      * @return string
      */
-    public function uri(string $route, array $parameters = []): string
+    public function uri(string $namespace, string $route, array $parameters = []): string
     {
         $vars = [];
         $restore = [];
         foreach ($parameters as $key => $value) {
-            if (is_string($value) && preg_match('/\{.*\}/', $value)) {
+            if (is_string($value) && preg_match('/{.*}/', $value)) {
                 $restore[sprintf('__%s__', $key)] = $value;
                 $value = sprintf('__%s__', $key);
             }
@@ -95,10 +93,29 @@ final class RouteRegistry
         }
 
         try {
-            return strtr($this->router->uri($route, $vars)->__toString(), $restore);
+            return strtr(
+                $this->appRouter->uri($this->wrapRouterName($namespace, $route), $vars)->__toString(),
+                $restore
+            );
         } catch (UndefinedRouteException $e) {
             throw new RouterException("No such route {$route}", $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param string $namespace
+     * @return void
+     */
+    public function hydrate(string $namespace): void
+    {
+        foreach ($this->router->getRoutes() as $name => $route) {
+            $this->appRouter->setRoute($this->wrapRouterName($namespace, $name), $route);
+        }
+    }
+
+    private function wrapRouterName(string $namespace, string $name): string
+    {
+        return "$namespace\[$name\]";
     }
 
     /**

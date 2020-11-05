@@ -6,9 +6,7 @@
   "require": {
     "php": "^7.2",
     "ext-json": "*",
-    "spiral/framework": "^2.0",
-    "spiral/router": "^1.1",
-    "spiral/security": "^2.1"
+    "spiral/framework": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~8.0",

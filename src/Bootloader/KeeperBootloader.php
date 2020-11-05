@@ -100,7 +100,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         $config = $this->initConfig(static::NAMESPACE);
 
         // keeper relies on it's own routing mechanism
-        $routes = new RouteRegistry($this->container, $config);
+        $routes = new RouteRegistry($this->container, $config, $appRouter);
 
         $this->addModule($routes, ['routes']);
 
@@ -112,11 +112,11 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 KeeperCore::class    => $this->core,
                 KeeperConfig::class  => $config
             ],
-            function () use ($config, $bootloadManager, $appRouter, $routes): void {
+            function () use ($config, $bootloadManager, $routes): void {
                 (clone $bootloadManager)->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($config);
 
-                $appRouter->setRoute(static::NAMESPACE, $routes->initEndpoint());
+                $routes->hydrate(static::NAMESPACE);
             }
         );
     }

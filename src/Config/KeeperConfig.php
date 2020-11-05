@@ -27,6 +27,11 @@ final class KeeperConfig
         $this->config = $config;
     }
 
+    public function getDefaults(): array
+    {
+        return $this->config['routeDefaults'] ?? [];
+    }
+
     /**
      * @return string
      */

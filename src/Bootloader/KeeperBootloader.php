@@ -31,7 +31,9 @@ use Spiral\Security\GuardInterface;
 
 abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 {
-    protected const NAMESPACE = 'keeper';
+    protected const NAMESPACE          = 'keeper';
+    protected const PREFIX             = 'keeper/';
+    protected const DEFAULT_CONTROLLER = 'dashboard';
 
     protected const DEPENDENCIES = [
         GuardBootloader::class,
@@ -195,22 +197,25 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             $namespace,
             [
                 // keeper isolation prefix (only for non-host routing)
-                'routePrefix'  => $namespace . '/',
+                'routePrefix'   => static::PREFIX,
+
+                // default controller
+                'routeDefaults' => ['controller' => static::DEFAULT_CONTROLLER],
 
                 // page to render when login is required
-                'loginView'    => 'keeper:login',
+                'loginView'     => 'keeper:login',
 
                 // keeper route must react to all the path variations
-                'routePattern' => sprintf('%s[/<path:.*>]', $namespace),
+                'routePattern'  => sprintf('%s[/<path:.*>]', $namespace),
 
                 // global keeper middleware
-                'middleware'   => static::MIDDLEWARE,
+                'middleware'    => static::MIDDLEWARE,
 
                 // connected modules and extensions
-                'modules'      => static::LOAD,
+                'modules'       => static::LOAD,
 
                 // domain Core interceptors
-                'interceptors' => static::INTERCEPTORS,
+                'interceptors'  => static::INTERCEPTORS,
             ]
         );
 

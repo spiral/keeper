@@ -18,7 +18,7 @@ final class GridBuilder
     private static $uniqueID = 0;
 
     /** @var string */
-    private $gridID = '';
+    private $gridID;
 
     /**
      * Other grid options.

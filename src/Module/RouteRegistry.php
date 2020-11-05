@@ -30,8 +30,8 @@ final class RouteRegistry
     /** @var RouterInterface */
     private $router;
 
-    /** @var MiddlewareInterface[]|string */
-    private $middleware = [];
+    /** @var MiddlewareInterface[]|string[] */
+    private $middleware;
 
     /**
      * @param ContainerInterface $container
@@ -63,11 +63,7 @@ final class RouteRegistry
      */
     public function setRoute(string $name, RouteInterface $route): void
     {
-        if ($route instanceof Route) {
-            $route = $route->withMiddleware(...$this->middleware);
-        }
-
-        $this->router->setRoute($name, $route);
+        $this->router->setRoute($name, $route instanceof Route ? $this->configureRoute($route) : $route);
     }
 
     /**
@@ -75,10 +71,7 @@ final class RouteRegistry
      */
     public function initEndpoint(): RouteInterface
     {
-        $route = new Route($this->config->getRoutePattern(), $this->router);
-        $route = $route->withMiddleware(...$this->middleware);
-
-        return $route;
+        return $this->configureRoute(new Route($this->config->getRoutePattern(), $this->router));
     }
 
     /**
@@ -106,5 +99,17 @@ final class RouteRegistry
         } catch (UndefinedRouteException $e) {
             throw new RouterException("No such route {$route}", $e->getCode(), $e);
         }
+    }
+
+    /**
+     * Assign middlewares to a given route.
+     *
+     * @param Route $route
+     * @return RouteInterface
+     */
+    private function configureRoute(Route $route): RouteInterface
+    {
+        $defaults = array_merge($this->config->getDefaults(), $route->getDefaults());
+        return $route->withMiddleware(...$this->middleware)->withDefaults($defaults);
     }
 }

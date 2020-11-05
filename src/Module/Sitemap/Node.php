@@ -17,10 +17,10 @@ class Node implements \IteratorAggregate
     private $name;
 
     /** @var array */
-    private $options = [];
+    private $options;
 
     /** @var Node[] */
-    private $nodes = [];
+    private $nodes;
 
     /**
      * Node constructor.
@@ -97,9 +97,9 @@ class Node implements \IteratorAggregate
     }
 
     /**
-     * @return \Generator
+     * @return iterable
      */
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         yield from $this->nodes;
     }

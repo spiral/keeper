@@ -26,22 +26,41 @@ use Spiral\Keeper\Module\Sitemap;
 
 final class AnnotatedBootloader extends Bootloader
 {
+    /** @var AnnotationReader */
+    private $reader;
+
+    /** @var AnnotationLocator */
+    private $locator;
+
+    public function __construct(AnnotationReader $reader, AnnotationLocator $locator)
+    {
+        $this->reader = $reader;
+        $this->locator = $locator;
+    }
+
     /**
-     * @param KeeperBootloader  $keeper
-     * @param AnnotationLocator $locator
-     * @param Sitemap           $sitemap
-     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @param KeeperBootloader $keeper
+     * @param Sitemap          $sitemap
      */
-    public function boot(KeeperBootloader $keeper, AnnotationLocator $locator, Sitemap $sitemap): void
+    public function boot(KeeperBootloader $keeper, Sitemap $sitemap): void
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $annotations = $this->parseAnnotations($keeper->getNamespace(), $locator);
+        $annotations = $this->parseAnnotations($keeper->getNamespace());
         foreach ($annotations as $controller) {
             $keeper->addController($controller['name'], $controller['class']);
 
             foreach ($controller['routes'] as $method => $route) {
-                $keeper->addRoute($route['route'], $controller['name'], $method, $route['verbs']);
+                $keeper->addRoute(
+                    $route['route'],
+                    $controller['name'],
+                    $method,
+                    $route['verbs'],
+                    $route['name'],
+                    $route['defaults'],
+                    $route['group'],
+                    $route['middleware']
+                );
             }
 
             foreach ($controller['sitemap'] as $item) {
@@ -64,56 +83,46 @@ final class AnnotatedBootloader extends Bootloader
     }
 
     /**
-     * @param string            $namespace
-     * @param AnnotationLocator $locator
+     * @param string $namespace
      * @return array
-     *
-     * @throws \Doctrine\Common\Annotations\AnnotationException
      */
-    private function parseAnnotations(string $namespace, AnnotationLocator $locator): array
+    private function parseAnnotations(string $namespace): array
     {
-        $reader = new AnnotationReader();
-
         $annotations = [];
-        foreach ($locator->findClasses(Controller::class) as $match) {
-            if ($match->getAnnotation()->namespace !== $namespace) {
+        foreach ($this->locator->findClasses(Controller::class) as $match) {
+            /** @var Controller $controller */
+            $controller = $match->getAnnotation();
+            if ($controller->namespace !== $namespace) {
                 continue;
             }
 
-            $controller = [
-                'name'    => $match->getAnnotation()->name,
+            $annotation = [
+                'name'    => $controller->name,
+                'prefix'  => $controller->prefix,
                 'class'   => $match->getClass()->getName(),
                 'routes'  => [],
                 'sitemap' => []
             ];
 
             foreach ($match->getClass()->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                $action = $reader->getMethodAnnotation($method, Action::class);
-                if ($action === null) {
+                $action = $this->reader->getMethodAnnotation($method, Action::class);
+                if (!$action instanceof Action) {
                     continue;
                 }
 
-                $path = $match->getAnnotation()->name . '/';
-                if ($match->getAnnotation()->prefix !== null) {
-                    $path = $match->getAnnotation()->prefix;
-                }
-
-                $route = str_replace('//', '/', $path . $action->route);
-
-                $controller['routes'][$method->getName()] = [
-                    'route' => $route,
-                    'verbs' => (array) $action->methods,
-                ];
+                $annotation['routes'][$method->getName()] = $action->toArray(
+                    (string)$controller->prefix,
+                    (string)$controller->defaultAction
+                );
             }
 
-            $controller['sitemap'] = $this->buildSitemap(
+            $annotation['sitemap'] = $this->buildSitemap(
                 $match->getClass(),
-                $reader,
                 $namespace,
-                $controller['name'],
-                array_keys($controller['routes'])
+                $controller->name,
+                array_keys($annotation['routes'])
             );
-            $annotations[] = $controller;
+            $annotations[] = $annotation;
         }
 
         return $annotations;
@@ -121,7 +130,6 @@ final class AnnotatedBootloader extends Bootloader
 
     /**
      * @param \ReflectionClass $class
-     * @param AnnotationReader $reader
      * @param string           $namespace
      * @param string           $controller
      * @param array            $methods
@@ -129,7 +137,6 @@ final class AnnotatedBootloader extends Bootloader
      */
     private function buildSitemap(
         \ReflectionClass $class,
-        AnnotationReader $reader,
         string $namespace,
         string $controller,
         array $methods
@@ -138,7 +145,7 @@ final class AnnotatedBootloader extends Bootloader
         $gs->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
 
         $lastSegment = 'root';
-        foreach ($reader->getClassAnnotations($class) as $ann) {
+        foreach ($this->reader->getClassAnnotations($class) as $ann) {
             switch (true) {
                 case $ann instanceof Segment:
                 case $ann instanceof Group:
@@ -163,7 +170,7 @@ final class AnnotatedBootloader extends Bootloader
                 continue;
             }
 
-            foreach ($reader->getMethodAnnotations($method) as $ann) {
+            foreach ($this->reader->getMethodAnnotations($method) as $ann) {
                 // name and route is the same thing
                 $name = sprintf('%s.%s', $controller, $method->getName());
 

@@ -147,18 +147,32 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     }
 
     /**
-     * @param string $pattern
-     * @param string $controller
-     * @param string $action
-     * @param array  $verbs
+     * @param string      $pattern
+     * @param string      $controller
+     * @param string      $action
+     * @param array       $verbs
+     * @param string|null $name
+     * @param array       $defaults
+     * @param string|null $group
+     * @param array       $middlewares
      */
-    public function addRoute(string $pattern, string $controller, string $action, array $verbs = Route::VERBS): void
-    {
+    public function addRoute(
+        string $pattern,
+        string $controller,
+        string $action,
+        array $verbs = Route::VERBS,
+        string $name = null,
+        array $defaults = [],
+        string $group = null,
+        array $middlewares = []
+    ): void {
         $target = new Action($controller, $action);
-
+        $route = new Route(
+            $pattern, $target->withCore($this->core), $defaults
+        );
         $this->getRouteRegistry()->setRoute(
-            sprintf('%s.%s', $controller, $action),
-            (new Route($pattern, $target->withCore($this->core)))->withVerbs(...$verbs)
+            $name ?? sprintf('%s.%s', $controller, $action),
+            $route->withMiddleware(...$middlewares)->withVerbs(...$verbs)
         );
     }
 

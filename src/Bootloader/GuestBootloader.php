@@ -28,8 +28,12 @@ final class GuestBootloader extends Bootloader
      */
     public function boot(KeeperCore $core, PermissionsInterface $permissions): void
     {
-        $permissions->addRole(Guest::ROLE);
-        $permissions->addRole('admin');
+        if (!$permissions->hasRole(Guest::ROLE)) {
+            $permissions->addRole(Guest::ROLE);
+        }
+        if (!$permissions->hasRole('admin')) {
+            $permissions->addRole('admin');
+        }
 
         $ns = $core->getNamespace();
         $permissions->associate(Guest::ROLE, "{$ns}.*", AllowRule::class);

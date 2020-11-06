@@ -22,6 +22,7 @@ use Spiral\Keeper\Annotation\Sitemap\Group;
 use Spiral\Keeper\Annotation\Sitemap\Link;
 use Spiral\Keeper\Annotation\Sitemap\Segment;
 use Spiral\Keeper\Annotation\Sitemap\View;
+use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Module\Sitemap;
 
 final class AnnotatedBootloader extends Bootloader
@@ -41,14 +42,29 @@ final class AnnotatedBootloader extends Bootloader
     /**
      * @param KeeperBootloader $keeper
      * @param Sitemap          $sitemap
+     * @param KeeperConfig     $config
      */
-    public function boot(KeeperBootloader $keeper, Sitemap $sitemap): void
+    public function boot(KeeperBootloader $keeper, Sitemap $sitemap, KeeperConfig $config): void
     {
         AnnotationRegistry::registerLoader('class_exists');
 
         $annotations = $this->parseAnnotations($keeper->getNamespace());
         foreach ($annotations as $controller) {
             $keeper->addController($controller['name'], $controller['class']);
+
+            if ($controller['defaultAction'] && isset($controller['routes'][$controller['defaultAction']])) {
+                $route = $controller['routes'][$controller['defaultAction']];
+                $keeper->addRoute(
+                    (string)$controller['prefix'],
+                    $controller['name'],
+                    $controller['defaultAction'],
+                    $route['verbs'],
+                    "{$controller['name']}[default:{$controller['defaultAction']}]",
+                    $route['defaults'],
+                    $route['group'],
+                    $route['middleware']
+                );
+            }
 
             foreach ($controller['routes'] as $method => $route) {
                 $keeper->addRoute(
@@ -66,6 +82,64 @@ final class AnnotatedBootloader extends Bootloader
             foreach ($controller['sitemap'] as $item) {
                 $this->setSitemap($sitemap, $item);
             }
+        }
+
+        if (!isset($config->getDefaults()['controller'], $annotations[$config->getDefaults()['controller']])) {
+            return;
+        }
+
+        $controller = $annotations[$config->getDefaults()['controller']];
+        $action = null;
+        if (isset($config->getDefaults()['action'], $controller['routes'][$config->getDefaults()['action']])) {
+            $action = $config->getDefaults()['action'];
+        } elseif (isset($controller['routes'][$controller['defaultAction'] ?: 'index'])) {
+            $action = $controller['defaultAction'] ?: 'index';
+        }
+
+        if ($action !== null) {
+            $route = $controller['routes'][$action];
+            $keeper->addRoute(
+                '',
+                $controller['name'],
+                $action,
+                $route['verbs'],
+                "[default:{$controller['name']}[default:$action]]",
+                $route['defaults'],
+                $route['group'],
+                $route['middleware']
+            );
+        }
+
+        if (isset($config->getDefaults()['action'], $controller['routes'][$config->getDefaults()['action']])) {
+            $action = $config->getDefaults()['action'];
+            $route = $controller['routes'][$action];
+            $keeper->addRoute(
+                '',
+                $controller['name'],
+                $action,
+                $route['verbs'],
+                "[default:{$controller['name']}[default:$action]]",
+                $route['defaults'],
+                $route['group'],
+                $route['middleware']
+            );
+        } else {
+            $action = $controller['defaultAction'] ?: 'index';
+            if (!isset($controller['routes'][$action])) {
+                return;
+            }
+
+            $route = $controller['routes'][$action];
+            $keeper->addRoute(
+                '',
+                $controller['name'],
+                $action,
+                $route['verbs'],
+                "[default:{$controller['name']}[default:$action]]",
+                $route['defaults'],
+                $route['group'],
+                $route['middleware']
+            );
         }
     }
 
@@ -97,11 +171,12 @@ final class AnnotatedBootloader extends Bootloader
             }
 
             $annotation = [
-                'name'    => $controller->name,
-                'prefix'  => $controller->prefix,
-                'class'   => $match->getClass()->getName(),
-                'routes'  => [],
-                'sitemap' => []
+                'name'          => $controller->name,
+                'prefix'        => $controller->prefix ?: null,
+                'defaultAction' => $controller->defaultAction ?: null,
+                'class'         => $match->getClass()->getName(),
+                'routes'        => [],
+                'sitemap'       => []
             ];
 
             foreach ($match->getClass()->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
@@ -110,10 +185,7 @@ final class AnnotatedBootloader extends Bootloader
                     continue;
                 }
 
-                $annotation['routes'][$method->getName()] = $action->toArray(
-                    (string)$controller->prefix,
-                    (string)$controller->defaultAction
-                );
+                $annotation['routes'][$method->getName()] = $action->toArray((string)$controller->prefix);
             }
 
             $annotation['sitemap'] = $this->buildSitemap(
@@ -122,7 +194,7 @@ final class AnnotatedBootloader extends Bootloader
                 $controller->name,
                 array_keys($annotation['routes'])
             );
-            $annotations[] = $annotation;
+            $annotations[$match->getClass()->getName()] = $annotation;
         }
 
         return $annotations;

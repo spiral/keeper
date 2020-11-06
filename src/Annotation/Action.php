@@ -64,14 +64,14 @@ final class Action
      */
     public $middleware = [];
 
-    public function toArray(string $prefix, string $defaultAction): array
+    public function toArray(string $prefix): array
     {
         return [
             'route'      => $this->route($prefix),
-            'name'       => $this->name,
+            'name'       => $this->name ?: null,
             'verbs'      => (array)$this->methods,
-            'defaults'   => $this->defaults($defaultAction),
-            'group'      => $this->group,
+            'defaults'   => $this->defaults,
+            'group'      => $this->group ?: null,
             'middleware' => (array)$this->middleware,
         ];
     }
@@ -79,14 +79,5 @@ final class Action
     public function route(string $prefix): string
     {
         return preg_replace('/\\+/', '/', $prefix . $this->route);
-    }
-
-    public function defaults(string $defaultAction): array
-    {
-        if (!$defaultAction) {
-            return $this->defaults;
-        }
-
-        return array_merge($this->defaults, ['action' => $defaultAction]);
     }
 }

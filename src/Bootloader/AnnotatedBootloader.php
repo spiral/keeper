@@ -33,10 +33,19 @@ final class AnnotatedBootloader extends Bootloader
     /** @var AnnotationLocator */
     private $locator;
 
-    public function __construct(AnnotationReader $reader, AnnotationLocator $locator)
+    /** @var KeeperConfig */
+    private $config;
+
+    /**
+     * @param AnnotationReader  $reader
+     * @param AnnotationLocator $locator
+     * @param KeeperConfig      $config
+     */
+    public function __construct(AnnotationReader $reader, AnnotationLocator $locator, KeeperConfig $config)
     {
         $this->reader = $reader;
         $this->locator = $locator;
+        $this->config = $config;
     }
 
     /**
@@ -59,7 +68,7 @@ final class AnnotatedBootloader extends Bootloader
                     $controller['name'],
                     $controller['defaultAction'],
                     $route['verbs'],
-                    "{$controller['name']}[default:{$controller['defaultAction']}]",
+                    $controller['name'],
                     $route['defaults'],
                     $route['group'],
                     $route['middleware']
@@ -103,39 +112,7 @@ final class AnnotatedBootloader extends Bootloader
                 $controller['name'],
                 $action,
                 $route['verbs'],
-                "[default:{$controller['name']}[default:$action]]",
-                $route['defaults'],
-                $route['group'],
-                $route['middleware']
-            );
-        }
-
-        if (isset($config->getDefaults()['action'], $controller['routes'][$config->getDefaults()['action']])) {
-            $action = $config->getDefaults()['action'];
-            $route = $controller['routes'][$action];
-            $keeper->addRoute(
                 '',
-                $controller['name'],
-                $action,
-                $route['verbs'],
-                "[default:{$controller['name']}[default:$action]]",
-                $route['defaults'],
-                $route['group'],
-                $route['middleware']
-            );
-        } else {
-            $action = $controller['defaultAction'] ?: 'index';
-            if (!isset($controller['routes'][$action])) {
-                return;
-            }
-
-            $route = $controller['routes'][$action];
-            $keeper->addRoute(
-                '',
-                $controller['name'],
-                $action,
-                $route['verbs'],
-                "[default:{$controller['name']}[default:$action]]",
                 $route['defaults'],
                 $route['group'],
                 $route['middleware']
@@ -170,9 +147,10 @@ final class AnnotatedBootloader extends Bootloader
                 continue;
             }
 
+            $prefix = $this->config->getRoutePrefix() . $controller->prefix;
             $annotation = [
                 'name'          => $controller->name,
-                'prefix'        => $controller->prefix ?: null,
+                'prefix'        => $prefix,
                 'defaultAction' => $controller->defaultAction ?: null,
                 'class'         => $match->getClass()->getName(),
                 'routes'        => [],
@@ -185,7 +163,7 @@ final class AnnotatedBootloader extends Bootloader
                     continue;
                 }
 
-                $annotation['routes'][$method->getName()] = $action->toArray((string)$controller->prefix);
+                $annotation['routes'][$method->getName()] = $action->toArray($prefix);
             }
 
             $annotation['sitemap'] = $this->buildSitemap(

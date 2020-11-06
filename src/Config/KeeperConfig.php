@@ -50,14 +50,6 @@ final class KeeperConfig
     }
 
     /**
-     * @return string
-     */
-    public function getRoutePattern(): string
-    {
-        return $this->config['routePattern'];
-    }
-
-    /**
      * @return array
      */
     public function getMiddleware(): array

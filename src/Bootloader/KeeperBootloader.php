@@ -221,9 +221,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 // page to render when login is required
                 'loginView'     => 'keeper:login',
 
-                // keeper route must react to all the path variations
-                'routePattern'  => sprintf('%s[/<path:.*>]', $namespace),
-
                 // global keeper middleware
                 'middleware'    => static::MIDDLEWARE,
 

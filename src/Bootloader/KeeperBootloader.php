@@ -235,7 +235,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             ]
         );
 
-        return new KeeperConfig($this->config->getConfig($namespace));
+        return new KeeperConfig($namespace, $this->config->getConfig($namespace));
     }
 
     /**

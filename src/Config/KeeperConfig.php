@@ -18,13 +18,22 @@ final class KeeperConfig
 {
     /** @var array */
     private $config;
+    /** @var string */
+    private $namespace;
 
     /**
-     * @param array $config
+     * @param string $namespace
+     * @param array  $config
      */
-    public function __construct(array $config)
+    public function __construct(string $namespace, array $config)
     {
         $this->config = $config;
+        $this->namespace = $namespace;
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->namespace;
     }
 
     public function getDefaults(): array

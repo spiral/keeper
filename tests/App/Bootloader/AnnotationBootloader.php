@@ -7,10 +7,10 @@ namespace Spiral\Tests\Keeper\App\Bootloader;
 use Spiral\Keeper\Bootloader;
 use Spiral\Keeper\Bootloader\GuestBootloader;
 
-class DashBootloader extends Bootloader\KeeperBootloader
+class AnnotationBootloader extends Bootloader\KeeperBootloader
 {
-    protected const NAMESPACE = 'dash';
-    protected const PREFIX    = 'dash-';
+    protected const NAMESPACE = 'annotation';
+    protected const PREFIX    = '/annotation_';
 
     protected const LOAD = [
         Bootloader\SitemapBootloader::class,

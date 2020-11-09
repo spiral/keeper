@@ -27,6 +27,7 @@ class App extends Kernel
         CommandBootloader::class,
         Bootloader\KeeperBootloader::class,
         Bootloader\DashBootloader::class,
+        Bootloader\AnnotationBootloader::class,
     ];
 
     public function getHttp(): Http

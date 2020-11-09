@@ -19,4 +19,12 @@ class UserController
     {
         return 'listed';
     }
+
+    /**
+     * @Action(route="/dotted")
+     */
+    public function dot(): string
+    {
+        return 'dotted';
+    }
 }

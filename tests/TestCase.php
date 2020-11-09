@@ -20,6 +20,18 @@ use Spiral\Tests\Keeper\App\App;
  */
 abstract class TestCase extends BaseTestCase
 {
+    /** @var App */
+    protected $app;
+
+    /**
+     * @throws \Throwable
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->app = $this->makeApp(['DEBUG' => true]);
+    }
+
     /**
      * @param array $env
      * @return App

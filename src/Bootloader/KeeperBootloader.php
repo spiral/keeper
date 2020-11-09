@@ -174,11 +174,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         );
     }
 
-    public function getRoutes(): RouteRegistry
-    {
-        return clone $this->getRouteRegistry();
-    }
-
     /**
      * @return RouteRegistry
      */

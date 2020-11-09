@@ -13,6 +13,7 @@ namespace Spiral\Keeper\Module;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Keeper\Config\KeeperConfig;
+use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\Exception\RouterException;
 use Spiral\Router\Exception\UndefinedRouteException;
 use Spiral\Router\Route;
@@ -56,7 +57,7 @@ final class RouteRegistry
     public function setRoute(string $name, RouteInterface $route): void
     {
         $this->appRouter->setRoute(
-            $this->wrapWithNamespace($name),
+            RouteBuilder::routeName($this->config->getNamespace(), $name),
             $route instanceof Route ? $this->configureRoute($route) : $route
         );
     }
@@ -64,12 +65,29 @@ final class RouteRegistry
     /**
      * Provides the ability to inject templated args in a form or {id} or {{id}}.
      *
-     * @param string $route
-     * @param array  $parameters
+     * @param string            $namespace
+     * @param string|array|null $route
+     * @param array             $parameters
      * @return string
      */
-    public function uri(string $namespace, string $route, array $parameters = []): string
+    public function uri(string $namespace, $route = null, array $parameters = []): string
     {
+        if (!empty($parameters) && !is_string($route)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Route name should be a string in case of parameters are provided, %s given',
+                    gettype($route)
+                )
+            );
+        }
+
+        $route = $route ?: null;
+        if (empty($route) && empty($parameters)) {
+            [$namespace, $route] = ['keeper', $namespace];
+        } elseif (is_array($route) && !empty($route)) {
+            [$namespace, $route, $parameters] = ['keeper', $namespace, $route];
+        }
+
         $vars = [];
         $restore = [];
         foreach ($parameters as $key => $value) {
@@ -83,17 +101,12 @@ final class RouteRegistry
 
         try {
             return strtr(
-                $this->appRouter->uri($this->wrapWithNamespace($route), $vars)->__toString(),
+                $this->appRouter->uri(RouteBuilder::routeName($namespace, $route), $vars)->__toString(),
                 $restore
             );
         } catch (UndefinedRouteException $e) {
             throw new RouterException("No such route {$route}", $e->getCode(), $e);
         }
-    }
-
-    private function wrapWithNamespace(string $name): string
-    {
-        return $name ? "{$this->config->getNamespace()}[$name]" : $this->config->getNamespace();
     }
 
     /**

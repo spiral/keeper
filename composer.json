@@ -15,7 +15,8 @@
     "spiral/annotations": "^2.0",
     "spiral/toolkit": "^v1.1",
     "spiral/helpers": "^1.0",
-    "spiral/code-style": "^1.0"
+    "spiral/code-style": "^1.0",
+    "laminas/laminas-diactoros": "^2.4"
   },
   "autoload": {
     "psr-4": {
@@ -24,7 +25,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Spiral\\Keeper\\Tests\\": "tests/Keeper/"
+      "Spiral\\Tests\\Keeper\\": "tests/"
     }
   }
 }

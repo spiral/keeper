@@ -7,8 +7,11 @@ namespace Spiral\Tests\Keeper\App\Bootloader;
 use Spiral\Keeper\Bootloader;
 use Spiral\Keeper\Bootloader\GuestBootloader;
 
-class KeeperBootloader extends Bootloader\KeeperBootloader
+class BlankBootloader extends Bootloader\KeeperBootloader
 {
+    protected const NAMESPACE = 'blank';
+    protected const PREFIX    = '';
+
     protected const LOAD = [
         Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,

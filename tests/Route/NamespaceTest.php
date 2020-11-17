@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper;
+namespace Spiral\Tests\Keeper\Route;
 
 use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\RouterInterface;
+use Spiral\Tests\Keeper\HttpTrait;
+use Spiral\Tests\Keeper\TestCase;
 
-class RouterTest extends TestCase
+abstract class NamespaceTest extends TestCase
 {
     use HttpTrait;
 
-    protected const NAMESPACE = 'annotation';
+    protected const NAMESPACE = '';
+    protected const PREFIX    = '';
 
     /**
      * @dataProvider routeUris
@@ -20,14 +23,16 @@ class RouterTest extends TestCase
      */
     public function testRouteUris(string $uri, string $expected): void
     {
-        $this->assertSame($expected, $this->get($uri)->getBody()->__toString());
+        $this->assertSame($expected, $this->get(static::PREFIX . $uri)->getBody()->__toString());
     }
 
     public function routeUris(): iterable
     {
         return [
-            ['/annotation_/without', 'without name'],
-            ['/annotation_with', 'with name'],
+            ['/without', 'name: without name'],
+            ['with', 'name: with name'],
+            ['/pref/ix_/without', 'prefix: without name'],
+            ['/pref/ix_with', 'prefix: with name'],
         ];
     }
 
@@ -48,8 +53,10 @@ class RouterTest extends TestCase
     public function routeNames(): iterable
     {
         return [
-            ['names.withoutName', 'without name'],
-            ['with:name', 'with name'],
+            ['names.withoutName', 'name: without name'],
+            ['with:name', 'name: with name'],
+            ['prefix.withoutName', 'prefix: without name'],
+            ['with:prefix:name', 'prefix: with name'],
         ];
     }
 }

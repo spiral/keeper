@@ -25,9 +25,8 @@ class App extends Kernel
 
     protected const APP = [
         CommandBootloader::class,
-        Bootloader\KeeperBootloader::class,
-        Bootloader\DashBootloader::class,
         Bootloader\AnnotationBootloader::class,
+        Bootloader\BlankBootloader::class,
     ];
 
     public function getHttp(): Http

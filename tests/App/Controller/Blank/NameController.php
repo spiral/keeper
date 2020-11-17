@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper\App\Controller\Annotation;
+namespace Spiral\Tests\Keeper\App\Controller\Blank;
 
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 
 /**
- * @Controller(namespace="annotation", name="names")
+ * @Controller(namespace="blank", name="names")
  */
 class NameController
 {

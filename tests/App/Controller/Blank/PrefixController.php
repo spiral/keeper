@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper\App\Controller\Annotation;
+namespace Spiral\Tests\Keeper\App\Controller\Blank;
 
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 
 /**
- * @Controller(namespace="annotation", name="names")
+ * @Controller(namespace="blank", name="prefix", prefix="/pref/ix_")
  */
-class NameController
+class PrefixController
 {
     /**
      * @Action(route="/without")
@@ -18,15 +18,15 @@ class NameController
      */
     public function withoutName(): string
     {
-        return 'name: without name';
+        return 'prefix: without name';
     }
 
     /**
-     * @Action(route="with", name="with:name")
+     * @Action(route="with", name="with:prefix:name")
      * @return string
      */
     public function withName(): string
     {
-        return 'name: with name';
+        return 'prefix: with name';
     }
 }

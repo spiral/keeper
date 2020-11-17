@@ -41,7 +41,7 @@ abstract class NamespaceTest extends TestCase
      * @param string $route
      * @param string $expected
      */
-    public function testRouteName(string $route, string $expected): void
+    public function testRouteNames(string $route, string $expected): void
     {
         /** @var RouterInterface $router */
         $router = $this->app->get(RouterInterface::class);

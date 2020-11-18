@@ -34,6 +34,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     protected const NAMESPACE          = 'keeper';
     protected const PREFIX             = 'keeper/';
     protected const DEFAULT_CONTROLLER = 'dashboard';
+    protected const CONFIG_NAME        = '';
 
     protected const DEPENDENCIES = [
         GuardBootloader::class,
@@ -97,7 +98,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     public function boot(BootloadManager $bootloadManager, RouterInterface $appRouter): void
     {
-        $config = $this->initConfig(static::NAMESPACE);
+        $config = $this->initConfig();
 
         // keeper relies on it's own routing mechanism
         $routes = new RouteRegistry($config, $appRouter);
@@ -202,13 +203,12 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     /**
      * Init configuration from default and user-defined value.
      *
-     * @param string $namespace
      * @return KeeperConfig
      */
-    private function initConfig(string $namespace): KeeperConfig
+    private function initConfig(): KeeperConfig
     {
         $this->config->setDefaults(
-            $namespace,
+            static::CONFIG_NAME ?: static::NAMESPACE,
             [
                 // keeper isolation prefix (only for non-host routing)
                 'routePrefix'   => static::PREFIX,
@@ -230,7 +230,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             ]
         );
 
-        return new KeeperConfig($namespace, $this->config->getConfig($namespace));
+        return new KeeperConfig(static::NAMESPACE, $this->config->getConfig(static::NAMESPACE));
     }
 
     /**

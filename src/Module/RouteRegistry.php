@@ -69,6 +69,7 @@ final class RouteRegistry
      * @param string|array|null $route
      * @param array             $parameters
      * @return string
+     * @deprecated use RouteBuilder::uri()
      */
     public function uri(string $namespace, $route = null, array $parameters = []): string
     {

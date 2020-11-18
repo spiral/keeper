@@ -19,17 +19,7 @@ class ActionDirective extends AbstractDirective
 {
     public function renderKeeper(Directive $directive): string
     {
-        if (count($directive->values) < 2) {
-            throw new DirectiveException(
-                'Unable to call @keeper directive, at least 2 values is required',
-                $directive->getContext()
-            );
-        }
-
-        return sprintf(
-            '<?php echo $this->container->get(\Spiral\Keeper\Module\RouteRegistry::class)->uri(%s); ?>',
-            $directive->body
-        );
+        return $this->doRender($directive, 'keeper');
     }
 
     /**
@@ -40,9 +30,14 @@ class ActionDirective extends AbstractDirective
     public function renderAction(Directive $directive): string
     {
         $directive = $this->supportLegacy($directive);
+        return $this->doRender($directive, 'action');
+    }
+
+    private function doRender(Directive $directive, string $name): string
+    {
         if (count($directive->values) < 2) {
             throw new DirectiveException(
-                'Unable to call @route directive, at least 2 values is required',
+                "Unable to call @$name directive, at least 2 values is required",
                 $directive->getContext()
             );
         }
@@ -52,6 +47,7 @@ class ActionDirective extends AbstractDirective
             $directive->body
         );
     }
+
 
     private function supportLegacy(Directive $directive): Directive
     {

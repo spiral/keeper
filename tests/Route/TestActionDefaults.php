@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Spiral\Tests\Keeper\Route;
 
 use Spiral\Keeper\Helper\RouteBuilder;
+use Spiral\Router\Exception\UndefinedRouteException;
 use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
-class TestDefaults extends TestCase
+class TestActionDefaults extends TestCase
 {
     use HttpTrait;
 
@@ -38,10 +39,10 @@ class TestDefaults extends TestCase
         $this->assertSame(200, $this->get(self::PREFIX . '/notSetWithIndex/index')->getStatusCode());
     }
 
-    public function testNoDefaultController(): void
+    public function testNoConfigDefaultController(): void
     {
+        $this->expectException(UndefinedRouteException::class);
         $uri = (string)$this->router()->uri(RouteBuilder::routeName(static::NAMESPACE));
-        $this->assertSame(404, $this->get($uri)->getStatusCode());
     }
 
     private function router(): RouterInterface

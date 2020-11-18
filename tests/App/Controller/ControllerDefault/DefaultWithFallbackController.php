@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper\App\Controller\ControllerDefaultWithFallback;
+namespace Spiral\Tests\Keeper\App\Controller\ControllerDefault;
 
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
@@ -10,7 +10,7 @@ use Spiral\Keeper\Annotation\Controller;
 /**
  * @Controller(namespace="controllerDefault3", name="cDefault3", prefix="/cdPrefix3")
  */
-class DefaultController
+class DefaultWithFallbackController
 {
     /**
      * @Action(route="/index", name="controllerDefault3:default:index")

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Spiral\Tests\Keeper\App\Controller\ControllerDefaultWithFallback\DefaultController;
+use Spiral\Tests\Keeper\App\Controller\ControllerDefault\DefaultWithFallbackController;
 
 return [
     'routeDefaults' => [
-        'controller' => DefaultController::class
+        'controller' => DefaultWithFallbackController::class
     ]
 ];

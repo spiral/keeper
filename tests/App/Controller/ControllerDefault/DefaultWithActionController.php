@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper\App\Controller\ControllerDefaultWithAction;
+namespace Spiral\Tests\Keeper\App\Controller\ControllerDefault;
 
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
@@ -10,7 +10,7 @@ use Spiral\Keeper\Annotation\Controller;
 /**
  * @Controller(namespace="controllerDefault2", name="cDefault2", prefix="/cdPrefix2", defaultAction="defaults")
  */
-class DefaultController
+class DefaultWithActionController
 {
     /**
      * @Action(route="/index", name="controllerDefault2:default:index")

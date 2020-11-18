@@ -108,7 +108,7 @@ final class AnnotatedBootloader extends Bootloader
         if ($action !== null) {
             $route = $controller['routes'][$action];
             $keeper->addRoute(
-                '',
+                $this->config->getRoutePrefix(),
                 $controller['name'],
                 $action,
                 $route['verbs'],

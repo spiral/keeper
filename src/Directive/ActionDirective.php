@@ -43,7 +43,7 @@ class ActionDirective extends AbstractDirective
         }
 
         return sprintf(
-            '<?php echo $this->container->get(\Spiral\Keeper\Module\RouteRegistry::class)->uri(%s); ?>',
+            '<?php echo $this->container->get(\Spiral\Keeper\Helper\RouteBuilder::class)->uri(%s); ?>',
             $directive->body
         );
     }

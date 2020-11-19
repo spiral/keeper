@@ -29,7 +29,7 @@ class ActionDirective extends AbstractDirective
      */
     public function renderAction(Directive $directive): string
     {
-        $directive = $this->supportLegacy($directive);
+        $directive = $this->handleLegacyDirective($directive);
         return $this->doRender($directive, 'action');
     }
 
@@ -49,7 +49,7 @@ class ActionDirective extends AbstractDirective
     }
 
 
-    private function supportLegacy(Directive $directive): Directive
+    private function handleLegacyDirective(Directive $directive): Directive
     {
         if (count($directive->values) < 1) {
             throw new DirectiveException(

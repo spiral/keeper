@@ -2,6 +2,7 @@
 
 ### Annotations
 - `@Action` annotation now is fully compatible with a global `@Route` annotation.
+`name` property is optional, by default `controller.action` name will be assigned.
 > For now router ignores provided group.
 - `@Controller` annotation now can have a `defaultAction` property, see below for more details.
 

@@ -167,7 +167,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     ): void {
         $target = new Action($controller, $action);
         $route = new Route(
-            $pattern, $target->withCore($this->core), $defaults
+            $pattern,
+            $target->withCore($this->core),
+            $defaults
         );
         $this->getRouteRegistry()->setRoute(
             $name ?? "$controller.$action",

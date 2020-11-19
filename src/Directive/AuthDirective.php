@@ -17,7 +17,7 @@ use Spiral\Stempler\Node\Dynamic\Directive;
 
 class AuthDirective extends AbstractDirective
 {
-     /** @var RouteDirective */
+    /** @var RouteDirective */
     private $route;
 
     public function __construct(RouteDirective $route)

@@ -22,7 +22,8 @@ return [
 ];
 ```
 
-or via `defaultAction` property in `@Controller` annotation. `index` method name will be used as a fallback.
+or via `defaultAction` property in `@Controller` annotation
+>`index` method will be used as a fallback.
 
 ### URI
 `RouteRegistry::uri()` is deprecated, `@action` directive as well. Use `RouteBuilder::uri()` and `@keeper` instead.

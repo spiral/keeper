@@ -14,8 +14,6 @@ namespace Spiral\Keeper\Module;
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Helper\RouteBuilder;
-use Spiral\Router\Exception\RouterException;
-use Spiral\Router\Exception\UndefinedRouteException;
 use Spiral\Router\Route;
 use Spiral\Router\RouteInterface;
 use Spiral\Router\RouterInterface;
@@ -89,25 +87,8 @@ final class RouteRegistry
             [$namespace, $route, $parameters] = ['keeper', $namespace, $route];
         }
 
-        $vars = [];
-        $restore = [];
-        foreach ($parameters as $key => $value) {
-            if (is_string($value) && preg_match('/{.*}/', $value)) {
-                $restore[sprintf('__%s__', $key)] = $value;
-                $value = sprintf('__%s__', $key);
-            }
-
-            $vars[$key] = $value;
-        }
-
-        try {
-            return strtr(
-                $this->appRouter->uri(RouteBuilder::routeName($namespace, $route), $vars)->__toString(),
-                $restore
-            );
-        } catch (UndefinedRouteException $e) {
-            throw new RouterException("No such route {$route}", $e->getCode(), $e);
-        }
+        $builder = new RouteBuilder($this->appRouter);
+        return $builder->uri($namespace, $route, $parameters);
     }
 
     /**

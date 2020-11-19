@@ -26,6 +26,7 @@ class App extends Kernel
     protected const APP = [
         CommandBootloader::class,
         Bootloader\AnnotationBootloader::class,
+        Bootloader\AppBootloader::class,
         Bootloader\BlankBootloader::class,
         Bootloader\DefaultBootloader::class,
         Bootloader\ControllerDefaultBootloader::class,

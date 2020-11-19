@@ -42,6 +42,7 @@ abstract class TestCase extends BaseTestCase
         $config = [
             'config' => __DIR__ . '/config/',
             'root'   => __DIR__ . '/App/',
+            'views'  => __DIR__ . '/views/',
             'app'    => __DIR__ . '/App/',
         ];
 

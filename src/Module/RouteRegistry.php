@@ -71,6 +71,18 @@ final class RouteRegistry
      */
     public function uri(string $namespace, $route = null, array $parameters = []): string
     {
+        [
+            'namespace'  => $namespace,
+            'route'      => $route,
+            'parameters' => $parameters
+        ] = $this->handleLegacyUriParams($namespace, $route, $parameters);
+
+        $builder = new RouteBuilder($this->appRouter);
+        return $builder->uri($namespace, $route, $parameters);
+    }
+
+    private function handleLegacyUriParams(string $namespace, $route = null, array $parameters = []): array
+    {
         if (!empty($parameters) && !is_string($route)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -83,12 +95,11 @@ final class RouteRegistry
         $route = $route ?: null;
         if (empty($route) && empty($parameters)) {
             [$namespace, $route] = ['keeper', $namespace];
-        } elseif (is_array($route) && !empty($route)) {
+        } elseif (is_array($route)) {
             [$namespace, $route, $parameters] = ['keeper', $namespace, $route];
         }
 
-        $builder = new RouteBuilder($this->appRouter);
-        return $builder->uri($namespace, $route, $parameters);
+        return compact('namespace', 'route', 'parameters');
     }
 
     /**

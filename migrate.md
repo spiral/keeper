@@ -22,7 +22,7 @@ return [
 ];
 ```
 
-or via `defaultAction` property in `@Controller` annotation
+or via `defaultAction` property in `@Controller` annotation.
 >`index` method will be used as a fallback.
 
 ### URI

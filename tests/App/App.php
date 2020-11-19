@@ -32,6 +32,8 @@ class App extends Kernel
         Bootloader\ControllerDefaultBootloader::class,
         Bootloader\ControllerDefaultWithActionBootloader::class,
         Bootloader\ControllerDefaultWithFallbackBootloader::class,
+        Bootloader\OldBootloader::class,
+        Bootloader\NewBootloader::class,
     ];
 
     public function getHttp(): Http

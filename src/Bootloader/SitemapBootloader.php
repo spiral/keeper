@@ -29,14 +29,16 @@ final class SitemapBootloader extends Bootloader
 {
     /** @var AnnotationReader */
     private $reader;
-
     /** @var Locator */
     private $locator;
+    /** @var GraphSorter */
+    private $sorter;
 
-    public function __construct(AnnotationReader $reader, Locator $locator)
+    public function __construct(AnnotationReader $reader, Locator $locator, GraphSorter $sorter)
     {
         $this->reader = $reader;
         $this->locator = $locator;
+        $this->sorter = $sorter;
     }
 
     public function boot(KeeperBootloader $keeper): void
@@ -53,20 +55,23 @@ final class SitemapBootloader extends Bootloader
 
     private function parseAnnotations(string $namespace): iterable
     {
+        $lastSegments = [];
+        $methods = [];
         /**
          * @var \ReflectionClass $class
          * @var Controller       $controller
          */
         foreach ($this->locator->locateNamespaceControllers($namespace) as $class => $controller) {
-            yield from $this->buildSitemap(
-                $class,
-                $controller->name,
-                iterator_to_array($this->packMethods($class, $namespace))
-            );
+            $lastSegments[$controller->name] = $this->buildClassSitemap($class);
+            foreach ($this->packMethods($class, $namespace, $controller->name) as $name => $method) {
+                $methods[$name] = $method;
+            }
         }
+
+        yield from $this->buildSitemap($lastSegments, $methods);
     }
 
-    private function packMethods(\ReflectionClass $class, string $namespace): \Generator
+    private function packMethods(\ReflectionClass $class, string $namespace, string $controller): \Generator
     {
         /**
          * @var \ReflectionMethod $method
@@ -76,32 +81,20 @@ final class SitemapBootloader extends Bootloader
             /** @var Guarded|null $permission */
             $permission = $this->reader->getMethodAnnotation($method, Guarded::class);
 
-            $method = Sitemap\Method::create($namespace, $class->getName(), $method, $action, $permission);
-            yield $method->name => $method;
+            $method = Sitemap\Method::create($namespace, $class->getName(), $controller, $method, $action, $permission);
+            yield "$controller.{$method->name}" => $method;
         }
     }
 
-    /**
-     * @param \ReflectionClass $class
-     * @param string           $controller
-     * @param Sitemap\Method[] $methods
-     * @return array
-     */
-    private function buildSitemap(
-        \ReflectionClass $class,
-        string $controller,
-        array $methods
-    ): array {
-        $gs = new GraphSorter();
-        $gs->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
-
+    private function buildClassSitemap(\ReflectionClass $class): string
+    {
         $lastSegment = 'root';
         foreach ($this->reader->getClassAnnotations($class) as $ann) {
             switch (true) {
                 case $ann instanceof Segment:
                 case $ann instanceof Group:
                     $lastSegment = $ann->name;
-                    $gs->addItem(
+                    $this->sorter->addItem(
                         $ann->name,
                         [
                             'type'    => $ann instanceof Segment ? Sitemap::TYPE_SEGMENT : Sitemap::TYPE_GROUP,
@@ -115,20 +108,33 @@ final class SitemapBootloader extends Bootloader
                     );
             }
         }
+        return $lastSegment;
+    }
+
+    /**
+     * @param array            $lastSegments
+     * @param Sitemap\Method[] $methods
+     * @return array
+     */
+    private function buildSitemap(array $lastSegments, array $methods): array
+    {
+        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
 
         foreach ($methods as $method) {
+            $lastSegment = $lastSegments[$method->controller] ?? 'root';
             foreach ($this->reader->getMethodAnnotations($method->reflection) as $ann) {
                 switch (true) {
                     case $ann instanceof Link:
                     case $ann instanceof View:
                         $parent = $ann->parent ?? $lastSegment;
                         if ($parent !== null && isset($methods[$parent])) {
-                            $parent = "$controller.$parent";
+                            $parent = "{$method->controller}.$parent";
                         }
+                        //todo here need to check the parent via all methods!
 
                         $dependencies = ($parent === null) ? [] : [$parent];
 
-                        $gs->addItem(
+                        $this->sorter->addItem(
                             $method->route,
                             [
                                 'type'    => $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
@@ -149,7 +155,7 @@ final class SitemapBootloader extends Bootloader
         // wood working
         $root = null;
         $points = [];
-        foreach ($gs->sort() as $item) {
+        foreach ($this->sorter->sort() as $item) {
             $points[$item['name']] = &$item;
             if ($root === null) {
                 $root = &$item;

@@ -14,14 +14,21 @@ class Method
     /** @var string */
     public $name;
     /** @var string */
+    public $controller;
+    /** @var string */
     public $route;
     /** @var string|null */
     public $permission;
 
-    public function __construct(\ReflectionMethod $reflection, string $route, ?string $permission = null)
-    {
+    public function __construct(
+        \ReflectionMethod $reflection,
+        string $route,
+        string $controller,
+        ?string $permission = null
+    ) {
         $this->reflection = $reflection;
         $this->name = $reflection->getName();
+        $this->controller = $controller;
         $this->route = $route;
         $this->permission = $permission;
     }
@@ -29,15 +36,17 @@ class Method
     public static function create(
         string $namespace,
         string $class,
+        string $controller,
         \ReflectionMethod $reflection,
         Action $action,
         ?Guarded $permission = null
     ): self {
-        $name = $reflection->getName();
+        $method = $reflection->getName();
         return new self(
             $reflection,
-            $namespace . ($permission instanceof Guarded ? $permission->permission : "$class.$name"),
-            $action->name ?: "$class.$name"
+            $namespace . ($permission instanceof Guarded ? $permission->permission : "$class.$method"),
+            $controller,
+            $action->name ?: "$class.$method"
         );
     }
 }

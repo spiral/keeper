@@ -11,55 +11,37 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
-use Spiral\Keeper\Helper\RouteBuilder;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Spiral\Annotations\AnnotationLocator;
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Helpers\GraphSorter;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
-use Spiral\Keeper\Annotation\Sitemap\Group;
-use Spiral\Keeper\Annotation\Sitemap\Link;
-use Spiral\Keeper\Annotation\Sitemap\Segment;
-use Spiral\Keeper\Annotation\Sitemap\View;
 use Spiral\Keeper\Config\KeeperConfig;
-use Spiral\Keeper\Module\Sitemap;
+use Spiral\Keeper\Helper\Locator;
+use Spiral\Keeper\Helper\RouteBuilder;
 
 final class AnnotatedBootloader extends Bootloader
 {
-    /** @var AnnotationReader */
-    private $reader;
-
-    /** @var AnnotationLocator */
-    private $locator;
-
     /** @var KeeperConfig */
     private $config;
+    /** @var Locator */
+    private $locator;
 
-    /**
-     * @param AnnotationReader  $reader
-     * @param AnnotationLocator $locator
-     * @param KeeperConfig      $config
-     */
-    public function __construct(AnnotationReader $reader, AnnotationLocator $locator, KeeperConfig $config)
+    public function __construct(KeeperConfig $config, Locator $locator)
     {
-        $this->reader = $reader;
-        $this->locator = $locator;
         $this->config = $config;
+        $this->locator = $locator;
     }
 
     /**
      * @param KeeperBootloader $keeper
-     * @param Sitemap          $sitemap
      * @param KeeperConfig     $config
      */
-    public function boot(KeeperBootloader $keeper, Sitemap $sitemap, KeeperConfig $config): void
+    public function boot(KeeperBootloader $keeper, KeeperConfig $config): void
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $annotations = $this->parseAnnotations($keeper->getNamespace());
-        foreach ($annotations as $controller) {
+        $annotations = iterator_to_array($this->parseAnnotations($keeper->getNamespace()));
+        foreach ($annotations as $name => $controller) {
             $keeper->addController($controller['name'], $controller['class']);
 
             if ($controller['defaultAction'] && isset($controller['routes'][$controller['defaultAction']])) {
@@ -87,10 +69,6 @@ final class AnnotatedBootloader extends Bootloader
                     $route['group'],
                     $route['middleware']
                 );
-            }
-
-            foreach ($controller['sitemap'] as $item) {
-                $this->setSitemap($sitemap, $item);
             }
         }
 
@@ -121,153 +99,33 @@ final class AnnotatedBootloader extends Bootloader
         }
     }
 
-    /**
-     * @param Sitemap $sitemap
-     * @param array   $item
-     */
-    private function setSitemap(Sitemap $sitemap, array $item): void
+    private function parseAnnotations(string $namespace): \Generator
     {
-        $node = $sitemap->{$item['type']}($item['name'], $item['title'], $item['options']);
-
-        foreach ($item['child'] as $child) {
-            $this->setSitemap($node, $child);
-        }
-    }
-
-    /**
-     * @param string $namespace
-     * @return array
-     */
-    private function parseAnnotations(string $namespace): array
-    {
-        $annotations = [];
-        foreach ($this->locator->findClasses(Controller::class) as $match) {
-            /** @var Controller $controller */
-            $controller = $match->getAnnotation();
-            if ($controller->namespace !== $namespace) {
-                continue;
-            }
-
+        /**
+         * @var \ReflectionClass $class
+         * @var Controller       $controller
+         */
+        foreach ($this->locator->locateNamespaceControllers($namespace) as $class => $controller) {
+            $className = $class->getName();
             $prefix = RouteBuilder::concat($this->config->getRoutePrefix(), (string)$controller->prefix);
-            $annotation = [
+            yield $className => [
                 'name'          => $controller->name,
                 'prefix'        => $prefix,
                 'defaultAction' => $controller->defaultAction ?: null,
-                'class'         => $match->getClass()->getName(),
-                'routes'        => [],
-                'sitemap'       => []
+                'class'         => $className,
+                'routes'        => iterator_to_array($this->packRoutes($class, $prefix)),
             ];
-
-            foreach ($match->getClass()->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                $action = $this->reader->getMethodAnnotation($method, Action::class);
-                if (!$action instanceof Action) {
-                    continue;
-                }
-
-                $annotation['routes'][$method->getName()] = $action->toArray($prefix);
-            }
-
-            $annotation['sitemap'] = $this->buildSitemap(
-                $match->getClass(),
-                $namespace,
-                $controller->name,
-                array_keys($annotation['routes'])
-            );
-            $annotations[$match->getClass()->getName()] = $annotation;
         }
-
-        return $annotations;
     }
 
-    /**
-     * @param \ReflectionClass $class
-     * @param string           $namespace
-     * @param string           $controller
-     * @param array            $methods
-     * @return array
-     */
-    private function buildSitemap(
-        \ReflectionClass $class,
-        string $namespace,
-        string $controller,
-        array $methods
-    ): array {
-        $gs = new GraphSorter();
-        $gs->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
-
-        $lastSegment = 'root';
-        foreach ($this->reader->getClassAnnotations($class) as $ann) {
-            switch (true) {
-                case $ann instanceof Segment:
-                case $ann instanceof Group:
-                    $lastSegment = $ann->name;
-                    $gs->addItem(
-                        $ann->name,
-                        [
-                            'type'    => $ann instanceof Segment ? Sitemap::TYPE_SEGMENT : Sitemap::TYPE_GROUP,
-                            'name'    => $ann->name,
-                            'parent'  => $ann->parent,
-                            'title'   => $ann->title,
-                            'options' => $ann->options,
-                            'child'   => []
-                        ],
-                        [$ann->parent]
-                    );
-            }
+    private function packRoutes(\ReflectionClass $class, string $prefix): \Generator
+    {
+        /**
+         * @var \ReflectionMethod $method
+         * @var Action            $action
+         */
+        foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
+            yield $method->getName() => $action->toArray($prefix);
         }
-
-        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            if (!in_array($method->getName(), $methods, true)) {
-                continue;
-            }
-
-            foreach ($this->reader->getMethodAnnotations($method) as $ann) {
-                // name and route is the same thing
-                $name = sprintf('%s.%s', $controller, $method->getName());
-
-                switch (true) {
-                    case $ann instanceof Link:
-                    case $ann instanceof View:
-                        $parent = $ann->parent ?? $lastSegment;
-                        if ($parent !== null && in_array($parent, $methods, true)) {
-                            $parent = sprintf('%s.%s', $controller, $parent);
-                        }
-
-                        $dependencies = ($parent === null) ? [] : [$parent];
-
-                        $gs->addItem(
-                            $name,
-                            [
-                                'type'    => $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
-                                'name'    => $name,
-                                'parent'  => $parent,
-                                'title'   => $ann->title,
-                                'options' => $ann->options + ['permission' => sprintf('%s.%s', $namespace, $name)],
-                                'child'   => []
-                            ],
-                            $dependencies
-                        );
-
-                        break;
-                }
-            }
-        }
-
-        // wood working
-        $root = null;
-        $points = [];
-        foreach ($gs->sort() as $item) {
-            $points[$item['name']] = &$item;
-            if ($root === null) {
-                $root = &$item;
-                unset($item);
-                continue;
-            }
-
-            $points[$item['parent']]['child'][] = &$item;
-            unset($item);
-        }
-
-        return $root['child'];
     }
 }

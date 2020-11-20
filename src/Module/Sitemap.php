@@ -151,16 +151,14 @@ final class Sitemap implements \IteratorAggregate
      */
     private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
     {
-        if ($node->hasOption('permission')) {
-            if (!$guard->allows($node->getOption('permission'))) {
-                return new Node('empty');
-            }
+        if ($node->hasOption('permission') && !$guard->allows($node->getOption('permission'))) {
+            return new Node('empty');
         }
 
         $activePath = false;
         $nodes = [];
-        foreach ($node as $name => $child) {
-            $child = $this->filterVisible($child, $guard, $targetNode);
+        foreach ($node as $name => $subNode) {
+            $child = $this->filterVisible($subNode, $guard, $targetNode);
             if ($child !== null) {
                 $nodes[$child->getName()] = $child;
 
@@ -175,7 +173,7 @@ final class Sitemap implements \IteratorAggregate
         }
 
         $opts = $node->getOptions();
-        if ($node->getName() === $targetNode || $activePath) {
+        if ($activePath || $node->getName() === $targetNode) {
             $opts['active'] = true;
         }
 

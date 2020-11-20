@@ -30,7 +30,7 @@ class MigrateTest extends TestCase
     public function testNewDirective(): void
     {
         $this->assertSame(
-            '<a href="/new/new/new">new.new</a>',
+            '<a href="/new/new/new">new.new</a><a href="/new/new/new">new.new</a>',
             $this->getContent('/new/new/new')
         );
     }

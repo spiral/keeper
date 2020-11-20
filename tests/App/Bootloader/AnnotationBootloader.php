@@ -13,7 +13,6 @@ class AnnotationBootloader extends Bootloader\KeeperBootloader
     protected const PREFIX    = '/annotation_';
 
     protected const LOAD = [
-        Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

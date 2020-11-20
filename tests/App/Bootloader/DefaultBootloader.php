@@ -13,7 +13,6 @@ class DefaultBootloader extends Bootloader\KeeperBootloader
     protected const PREFIX    = '/default';
 
     protected const LOAD = [
-        Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

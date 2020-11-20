@@ -11,8 +11,8 @@ class NewBootloader extends Bootloader\KeeperBootloader
 {
     protected const NAMESPACE = 'new';
     protected const PREFIX    = '/new';
-    protected const LOAD      = [
-        Bootloader\SitemapBootloader::class,
+
+    protected const LOAD = [
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

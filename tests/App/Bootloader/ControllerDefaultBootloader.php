@@ -13,7 +13,6 @@ class ControllerDefaultBootloader extends Bootloader\KeeperBootloader
     protected const PREFIX    = '/controllerDefault';
 
     protected const LOAD = [
-        Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

@@ -13,7 +13,6 @@ class BlankBootloader extends Bootloader\KeeperBootloader
     protected const PREFIX    = '';
 
     protected const LOAD = [
-        Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

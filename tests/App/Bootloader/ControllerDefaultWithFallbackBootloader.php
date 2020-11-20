@@ -13,7 +13,6 @@ class ControllerDefaultWithFallbackBootloader extends Bootloader\KeeperBootloade
     protected const PREFIX    = '/controllerDefault3';
 
     protected const LOAD = [
-        Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
     ];

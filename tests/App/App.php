@@ -11,6 +11,7 @@ use Spiral\Bootloader\Security\GuardBootloader;
 use Spiral\Console\Console;
 use Spiral\Framework\Kernel;
 use Spiral\Http\Http;
+use Spiral\Keeper\Bootloader\UIBootloader;
 use Spiral\Stempler\Bootloader\StemplerBootloader;
 use Spiral\Tests\Keeper\App\Bootloader;
 
@@ -34,6 +35,7 @@ class App extends Kernel
         Bootloader\ControllerDefaultWithFallbackBootloader::class,
         Bootloader\OldBootloader::class,
         Bootloader\NewBootloader::class,
+        UIBootloader::class
     ];
 
     public function getHttp(): Http

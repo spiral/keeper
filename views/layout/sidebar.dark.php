@@ -14,6 +14,8 @@
        * @var \Spiral\Keeper\Module\RouteRegistry      $_router_
        * @var \Spiral\Security\GuardInterface          $_guard_
        * @var \Spiral\Keeper\Module\Sitemap            $_sitemap_
+       * @var \Spiral\Keeper\Module\Sitemap\Node       $_s_
+       * @var \Spiral\Keeper\Module\Sitemap\Node       $_i_
        */
       ?>
     <nav class="sf-nav" data-sf="nav">

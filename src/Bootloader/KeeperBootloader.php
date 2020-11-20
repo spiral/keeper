@@ -209,8 +209,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     private function initConfig(): KeeperConfig
     {
+        $config = static::CONFIG_NAME ?: static::NAMESPACE;
         $this->config->setDefaults(
-            static::CONFIG_NAME ?: static::NAMESPACE,
+            $config,
             [
                 // keeper isolation prefix (only for non-host routing)
                 'routePrefix'   => static::PREFIX,
@@ -232,7 +233,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             ]
         );
 
-        return new KeeperConfig(static::NAMESPACE, $this->config->getConfig(static::NAMESPACE));
+        return new KeeperConfig(static::NAMESPACE, $this->config->getConfig($config));
     }
 
     /**

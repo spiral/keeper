@@ -29,6 +29,8 @@ final class RouteRegistry
     /** @var RouterInterface */
     private $appRouter;
 
+    private $names = [];
+
     /**
      * @param KeeperConfig    $config
      * @param RouterInterface $appRouter
@@ -45,7 +47,17 @@ final class RouteRegistry
      */
     public function addMiddleware($middleware): void
     {
-        $this->middleware[] = $middleware;
+        if (!in_array($middleware, $this->middleware, true)) {
+            $this->middleware[] = $middleware;
+
+            foreach ($this->appRouter->getRoutes() as $name => $route) {
+                if (!isset($this->names[$name]) || !$route instanceof Route) {
+                    continue;
+                }
+
+                $this->appRouter->setRoute($name, $route->withMiddleware($middleware));
+            }
+        }
     }
 
     /**
@@ -54,6 +66,7 @@ final class RouteRegistry
      */
     public function setRoute(string $name, RouteInterface $route): void
     {
+        $this->names[RouteBuilder::routeName($this->config->getNamespace(), $name)] = true;
         $this->appRouter->setRoute(
             RouteBuilder::routeName($this->config->getNamespace(), $name),
             $route instanceof Route ? $this->configureRoute($route) : $route

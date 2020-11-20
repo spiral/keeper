@@ -10,7 +10,8 @@ use Spiral\Keeper\Bootloader\GuestBootloader;
 class OldBootloader extends Bootloader\KeeperBootloader
 {
     protected const NAMESPACE = 'keeper';
-    protected const PREFIX    = '/old';
+    protected const PREFIX    = '/old/';
+
     protected const LOAD      = [
         Bootloader\SitemapBootloader::class,
         Bootloader\AnnotatedBootloader::class,

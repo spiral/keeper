@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation;
 
+use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\Route;
 
 /**
@@ -67,17 +68,12 @@ final class Action
     public function toArray(string $prefix): array
     {
         return [
-            'route'      => $this->route($prefix),
+            'route'      => RouteBuilder::concat($prefix, $this->route),
             'name'       => $this->name ?: null,
             'verbs'      => (array)$this->methods,
             'defaults'   => $this->defaults,
             'group'      => $this->group ?: null,
             'middleware' => (array)$this->middleware,
         ];
-    }
-
-    public function route(string $prefix): string
-    {
-        return preg_replace('/\\+/', '/', $prefix . $this->route);
     }
 }

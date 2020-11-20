@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
+use Spiral\Keeper\Helper\RouteBuilder;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Spiral\Annotations\AnnotationLocator;
@@ -147,7 +148,7 @@ final class AnnotatedBootloader extends Bootloader
                 continue;
             }
 
-            $prefix = $this->config->getRoutePrefix() . $controller->prefix;
+            $prefix = RouteBuilder::concat($this->config->getRoutePrefix(), (string)$controller->prefix);
             $annotation = [
                 'name'          => $controller->name,
                 'prefix'        => $prefix,

@@ -45,4 +45,9 @@ class RouteBuilder
     {
         return $name ? "{$namespace}[$name]" : $namespace;
     }
+
+    public static function concat(string ...$chunks): string
+    {
+        return preg_replace('/\/+/', '/', implode('', $chunks));
+    }
 }

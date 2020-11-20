@@ -15,13 +15,21 @@ class KeeperBootloaderTest extends TestCase
 
     public function testInterceptors(): void
     {
-        $response = $this->get((string)$this->router()->uri(RouteBuilder::routeName('i[i:check]')));
+        $response = $this->get((string)$this->router()->uri(RouteBuilder::routeName('i', 'i:check')));
         $output = json_decode((string)$response->getBody(), true);
         $this->assertIsArray($output);
         $this->assertCount(3, $output);
         $this->assertContains('one', $output);
         $this->assertContains('two', $output);
         $this->assertContains('three', $output);
+    }
+
+    public function testMiddlewares(): void
+    {
+        $response = $this->get('/m/m/check');
+        $this->assertSame('one', $response->getHeaderLine('one'));
+        $this->assertSame('two', $response->getHeaderLine('two'));
+        $this->assertSame('three', $response->getHeaderLine('three'));
     }
 
     private function router(): RouterInterface

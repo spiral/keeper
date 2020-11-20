@@ -32,11 +32,7 @@ final class AnnotatedBootloader extends Bootloader
         $this->locator = $locator;
     }
 
-    /**
-     * @param KeeperBootloader $keeper
-     * @param KeeperConfig     $config
-     */
-    public function boot(KeeperBootloader $keeper, KeeperConfig $config): void
+    public function boot(KeeperBootloader $keeper): void
     {
         AnnotationRegistry::registerLoader('class_exists');
 
@@ -72,17 +68,13 @@ final class AnnotatedBootloader extends Bootloader
             }
         }
 
-        if (!isset($config->getDefaults()['controller'], $annotations[$config->getDefaults()['controller']])) {
+        $defaults = $this->config->getDefaults();
+        if (!isset($defaults['controller'], $annotations[$defaults['controller']])) {
             return;
         }
 
-        $controller = $annotations[$config->getDefaults()['controller']];
-        $action = null;
-        if (isset($config->getDefaults()['action'], $controller['routes'][$config->getDefaults()['action']])) {
-            $action = $config->getDefaults()['action'];
-        } elseif (isset($controller['routes'][$controller['defaultAction'] ?: 'index'])) {
-            $action = $controller['defaultAction'] ?: 'index';
-        }
+        $controller = $annotations[$defaults['controller']];
+        $action = $this->getDefaultControllerAction($controller);
 
         if ($action !== null) {
             $route = $controller['routes'][$action];
@@ -127,5 +119,19 @@ final class AnnotatedBootloader extends Bootloader
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
             yield $method->getName() => $action->toArray($prefix);
         }
+    }
+
+    private function getDefaultControllerAction(array $controller): ?string
+    {
+        $defaults = $this->config->getDefaults();
+        if (isset($defaults['action'], $controller['routes'][$defaults['action']])) {
+            return $defaults['action'];
+        }
+
+        if (isset($controller['routes'][$controller['defaultAction'] ?: 'index'])) {
+            return $controller['defaultAction'] ?: 'index';
+        }
+
+        return null;
     }
 }

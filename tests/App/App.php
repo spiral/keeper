@@ -35,6 +35,7 @@ class App extends Kernel
         Bootloader\ControllerDefaultWithFallbackBootloader::class,
         Bootloader\OldBootloader::class,
         Bootloader\NewBootloader::class,
+        Bootloader\InterceptedBootloader::class,
         UIBootloader::class
     ];
 

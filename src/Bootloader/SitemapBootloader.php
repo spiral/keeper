@@ -84,12 +84,11 @@ final class SitemapBootloader extends Bootloader
         /**
          * @var \ReflectionMethod $method
          * @var Action            $action
+         * @var Guarded|null      $permission
          */
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
-            /** @var Guarded|null $permission */
             $permission = $this->reader->getMethodAnnotation($method, Guarded::class);
-
-            $method = Sitemap\Method::create($namespace, $class->getName(), $controller, $method, $action, $permission);
+            $method = Sitemap\Method::create($namespace, $controller, $method, $action, $permission);
             yield "$controller.{$method->name}" => $method;
         }
     }

@@ -45,15 +45,23 @@ final class SitemapBootloader extends Bootloader
     {
         $sitemap = new Sitemap($keeper->getNamespace());
         $keeper->addModule($sitemap, ['sitemap']);
-        AnnotationRegistry::registerLoader('class_exists');
 
-        $annotations = $this->parseAnnotations($keeper->getNamespace());
+        $this->declareCustomSitemap($sitemap);
+
+        AnnotationRegistry::registerLoader('class_exists');
+        $annotations = $this->parseAnnotations($keeper->getNamespace(), $sitemap);
+
         foreach ($annotations as $annotation) {
             $this->setSitemap($sitemap, $annotation);
         }
     }
 
-    private function parseAnnotations(string $namespace): iterable
+    protected function declareCustomSitemap(Sitemap $sitemap): void
+    {
+        // Your code goes here
+    }
+
+    private function parseAnnotations(string $namespace, Sitemap $sitemap): iterable
     {
         $lastSegments = [];
         $methods = [];
@@ -68,10 +76,10 @@ final class SitemapBootloader extends Bootloader
             }
         }
 
-        yield from $this->buildSitemap($lastSegments, $methods);
+        yield from $this->buildSitemap($lastSegments, $methods, $sitemap);
     }
 
-    private function packMethods(\ReflectionClass $class, string $namespace, string $controller): \Generator
+    private function packMethods(\ReflectionClass $class, string $namespace, string $controller): iterable
     {
         /**
          * @var \ReflectionMethod $method
@@ -88,6 +96,7 @@ final class SitemapBootloader extends Bootloader
 
     private function buildClassSitemap(\ReflectionClass $class): string
     {
+        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
         $lastSegment = 'root';
         foreach ($this->reader->getClassAnnotations($class) as $ann) {
             switch (true) {
@@ -114,25 +123,29 @@ final class SitemapBootloader extends Bootloader
     /**
      * @param array            $lastSegments
      * @param Sitemap\Method[] $methods
+     * @param Sitemap          $sitemap
      * @return array
      */
-    private function buildSitemap(array $lastSegments, array $methods): array
+    private function buildSitemap(array $lastSegments, array $methods, Sitemap $sitemap): array
     {
-        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
-
+        $sitemapElements = $sitemap->getElements();
         foreach ($methods as $method) {
             $lastSegment = $lastSegments[$method->controller] ?? 'root';
             foreach ($this->reader->getMethodAnnotations($method->reflection) as $ann) {
                 switch (true) {
                     case $ann instanceof Link:
                     case $ann instanceof View:
-                        $parent = $ann->parent ?? $lastSegment;
-                        if ($parent !== null && isset($methods[$parent])) {
-                            $parent = "{$method->controller}.$parent";
+                        $parent = null;
+                        if ($ann->hasAbsoluteParent()) {
+                            $parent = $ann->parent;
+                        } elseif ($ann->hasRelativeParent()) {
+                            $parent = "{$method->controller}.{$ann->parent}";
                         }
-                        //todo here need to check the parent via all methods!
 
-                        $dependencies = ($parent === null) ? [] : [$parent];
+                        $knownParent = $parent && (isset($methods[$parent]) || isset($sitemapElements[$parent]));
+                        if (!$knownParent) {
+                            $parent = $lastSegment;
+                        }
 
                         $this->sorter->addItem(
                             $method->route,
@@ -144,7 +157,7 @@ final class SitemapBootloader extends Bootloader
                                 'options' => $ann->options + ['permission' => $method->permission],
                                 'child'   => []
                             ],
-                            $dependencies
+                            $parent ? [] : [$parent]
                         );
 
                         break;

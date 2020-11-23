@@ -103,4 +103,19 @@ class Node implements \IteratorAggregate
     {
         yield from $this->nodes;
     }
+
+    public function getElements(): array
+    {
+        $elements = [];
+        $nested = [];
+        foreach ($this->nodes as $element => $child) {
+            $elements[] = $element;
+            $nestedElements = $child->getElements();
+            if ($nestedElements) {
+                $nested[] = $child->getElements();
+            }
+        }
+
+        return $nested ? array_merge($elements, ...$nested) : $elements;
+    }
 }

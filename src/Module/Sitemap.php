@@ -82,6 +82,11 @@ final class Sitemap implements \IteratorAggregate
         return $this->withRoot($node);
     }
 
+    public function getElements(): array
+    {
+        return $this->root->getElements();
+    }
+
     /**
      * Find all visible nodes and highlight current path.
      *

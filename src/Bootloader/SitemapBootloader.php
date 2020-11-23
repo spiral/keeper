@@ -88,7 +88,7 @@ final class SitemapBootloader extends Bootloader
          */
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
             $permission = $this->reader->getMethodAnnotation($method, Guarded::class);
-            $method = Sitemap\Method::create($namespace, $controller, $method, $action, $permission);
+            $method = Sitemap\Method::create($controller, $method, $action, $permission);
             yield "$controller.{$method->name}" => $method;
         }
     }
@@ -147,10 +147,10 @@ final class SitemapBootloader extends Bootloader
                         }
 
                         $this->sorter->addItem(
-                            $method->route,
+                            $method->name(),
                             [
                                 'type'    => $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
-                                'name'    => $method->route,
+                                'name'    => $method->name(),
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
                                 'options' => $ann->options + ['permission' => $method->permission],

@@ -6,7 +6,6 @@ namespace Spiral\Keeper\Module\Sitemap;
 
 use Spiral\Domain\Annotation\Guarded;
 use Spiral\Keeper\Annotation\Action;
-use Spiral\Keeper\Helper\RouteBuilder;
 
 class Method
 {
@@ -35,7 +34,6 @@ class Method
     }
 
     public static function create(
-        string $namespace,
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
@@ -44,11 +42,16 @@ class Method
         $method = $reflection->getName();
         return new self(
             $reflection,
-            RouteBuilder::routeName($namespace, $action->name ?: "$controller.$method"),
+            $action->name ?: "$controller.$method",
             $controller,
             $permission instanceof Guarded && $permission->permission
                 ? $permission->permission
                 : "$controller.$method"
         );
+    }
+
+    public function name(): string
+    {
+        return "{$this->controller}.{$this->name}";
     }
 }

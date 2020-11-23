@@ -46,7 +46,7 @@
                        data-sf="nav-item-toggle"
                        aria-expanded="{!! $_is_->getOption('active') ? 'true' : 'false' !!}"
                        aria-controls="nav-item-{!! $_in_ !!}">
-                    @if($_is_->getOption('icon') !==null )
+                    @if($_is_->getOption('icon') !== null )
                       <i class="fa fa-{!! $_is_->getOption('icon') !!}"></i>
                     @endif
                     <span>{{ $_is_->getOption('title') }}</span>
@@ -57,7 +57,7 @@
                       @foreach($_is_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
                            href="{!! $_router_->uri($_i_->getName()) !!}">
-                          @if($_i_->getOption('icon') !==null )
+                          @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif
                           <span>{{ $_i_->getOption('title') }}</span>
@@ -79,7 +79,7 @@
                        data-sf="nav-item-toggle"
                        aria-expanded="{!! $_s_->getOption('active') ? 'true' : 'false' !!}"
                        aria-controls="nav-item-{!! $_n_ !!}">
-                    @if($_s_->getOption('icon') !==null )
+                    @if($_s_->getOption('icon') !== null )
                       <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
                     @endif
                     <span>{{ $_s_->getOption('title') }}</span>
@@ -89,7 +89,7 @@
                       @foreach($_s_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
                            href="{!! $_router_->uri($_i_->getName()) !!}">
-                          @if($_i_->getOption('icon') !==null )
+                          @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif
                           <span>{{ $_i_->getOption('title') }}</span>

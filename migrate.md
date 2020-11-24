@@ -18,6 +18,7 @@ is equivalent to a new one:
 /** @var \Spiral\Keeper\Module\RouteRegistry $_router_ */
 $_router_->uri('edit:user:route');
 ```
+
 ### Route defaults
 To enable default controller routing it should be added explicitly to the config.
 Either via `KeeperBootloader::DEFAULT_CONTROLLER` value or via config file:
@@ -53,6 +54,35 @@ or
 
 ## Sitemaps
 
+### Custom sitemap declaration
+In order to sync sitemap annotations and custom sitemap generation you need to extend
+`\Spiral\Keeper\Bootloader\SitemapBootloader::declareCustomSitemap` and declare required nodes inside:
+```php
+<?php
+
+declare(strict_types=1);
+
+use Spiral\Keeper\Module\Sitemap;
+
+class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
+{
+    protected function declareCustomSitemap(Sitemap $sitemap): void
+    {
+        $group = $sitemap->group('group', 'Group Name');
+        $group->link('group.index', 'Index page');
+    }
+}
+```
+
+This will allow referring to that links from the annotations:
+```php
+/**
+ * @\Spiral\Keeper\Annotation\Sitemap\Link(title="Sub-link", parent="group.index")
+ * @\Spiral\Keeper\Annotation\Action(route="/")
+ */
+```
+
+### View templates
 `sidebar` and `breadcrumbs` view files updated to explicitly use sitemap namespace and node route (using new `\Spiral\Keeper\Helper\RouteBuilder` helper).
 ```php
 /**

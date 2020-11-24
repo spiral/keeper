@@ -74,7 +74,7 @@ class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
 }
 ```
 
-This will allow referring to that links from the annotations:
+This will allow referring to that links via `parent` attribute from the annotations:
 ```php
 /**
  * @\Spiral\Keeper\Annotation\Sitemap\Link(title="Sub-link", parent="group.index")

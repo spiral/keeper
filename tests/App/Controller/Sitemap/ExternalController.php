@@ -31,7 +31,7 @@ class ExternalController
 
     /**
      * @Link(title="external", parent="custom.parent")
-     * @Action(route="", name="external:custom")
+     * @Action(route="/custom", name="external:custom")
      * @return string
      */
     public function custom(): string

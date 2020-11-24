@@ -15,5 +15,6 @@ class DefaultBootloader extends Bootloader\KeeperBootloader
     protected const LOAD = [
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class,
+        SitemapBootloader::class
     ];
 }

@@ -25,7 +25,7 @@ $_ln_ = array_pop($_bc_);
           <li class="sf-breadcrumb__item">{{ $_n_->getOption('title') }}</li>
         @else
           <li class="sf-breadcrumb__item"><a
-              href="{!! $_router_->uri($_n_->getName(), $_args_) !!}">{{ $_n_->getOption('title') }}</a>
+              href="{!! $_router_->uri($_sitemap_->getNamespace(), $_n_->getOption('route') ?? $_n_->getName(), $_args_) !!}">{{ $_n_->getOption('title') }}</a>
           </li>
         @endif
       @endforeach

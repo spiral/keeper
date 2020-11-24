@@ -26,7 +26,7 @@
             <ul class="sf-nav__list">
               <li class="sf-nav__item">
                 <a class="sf-nav__item-heading {!! $_s_->getOption('active') ? 'active' : '' !!}"
-                   href="{!! $_router_->uri($_s_->getName()) !!}">
+                   href="{!! $_router_->uri($_sitemap_->getNamespace(), $_s_->getOption('route') ?? $_s_->getName()) !!}">
                   @if($_s_->getOption('icon') !== null)
                     <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
                   @endif
@@ -56,7 +56,7 @@
                     <div class="sf-subnav">
                       @foreach($_is_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
-                           href="{!! $_router_->uri($_i_->getName()) !!}">
+                           href="{!! $_router_->uri($_sitemap_->getNamespace(), $_i_->getOption('route') ?? $_i_->getName()) !!}">
                           @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif
@@ -88,7 +88,7 @@
                     <div class="sf-subnav">
                       @foreach($_s_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
-                           href="{!! $_router_->uri($_i_->getName()) !!}">
+                           href="{!! $_router_->uri($_sitemap_->getNamespace(), $_i_->getOption('route') ?? $_i_->getName()) !!}">
                           @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif

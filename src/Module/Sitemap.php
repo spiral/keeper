@@ -78,6 +78,11 @@ final class Sitemap implements \IteratorAggregate
         return $this->withRoot($node);
     }
 
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
     public function getElements(): array
     {
         return $this->root->getElements();

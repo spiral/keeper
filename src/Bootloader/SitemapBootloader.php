@@ -25,8 +25,10 @@ use Spiral\Keeper\Annotation\Sitemap\View;
 use Spiral\Keeper\Helper\Locator;
 use Spiral\Keeper\Module\Sitemap;
 
-final class SitemapBootloader extends Bootloader
+class SitemapBootloader extends Bootloader
 {
+    protected const ROOT = 'root';
+
     /** @var AnnotationReader */
     private $reader;
     /** @var Locator */
@@ -34,20 +36,21 @@ final class SitemapBootloader extends Bootloader
     /** @var GraphSorter */
     private $sorter;
 
-    public function __construct(AnnotationReader $reader, Locator $locator, GraphSorter $sorter)
+    public function __construct(AnnotationReader $reader, Locator $locator)
     {
         $this->reader = $reader;
         $this->locator = $locator;
-        $this->sorter = $sorter;
-        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
+
+        $this->initSorter();
     }
 
-    public function boot(KeeperBootloader $keeper): void
+    final public function boot(KeeperBootloader $keeper): void
     {
         $sitemap = new Sitemap($keeper->getNamespace());
         $keeper->addModule($sitemap, ['sitemap']);
 
         $this->declareCustomSitemap($sitemap);
+        $this->fillFromSitemap($sitemap);
 
         AnnotationRegistry::registerLoader('class_exists');
         $annotations = $this->parseAnnotations($keeper->getNamespace(), $sitemap);
@@ -60,6 +63,42 @@ final class SitemapBootloader extends Bootloader
     protected function declareCustomSitemap(Sitemap $sitemap): void
     {
         // Your code goes here
+    }
+
+    private function initSorter(): void
+    {
+        $this->sorter = new GraphSorter();
+        $this->sorter->addItem(static::ROOT, ['type' => Sitemap::TYPE_ROOT, 'name' => static::ROOT, 'child' => []], []);
+    }
+
+    private function fillFromSitemap(Sitemap $sitemap): void
+    {
+        if (empty($sitemap->getElements())) {
+            return;
+        }
+
+        foreach ($sitemap->getIterator() as $node) {
+            $this->fillFromNode($node);
+        }
+    }
+
+    private function fillFromNode(Sitemap\Node $node, Sitemap\Node $parent = null): void
+    {
+        $this->sorter->addItem(
+            $node->getName(),
+            [
+                'type'    => $node->getOption('type'),
+                'name'    => $node->getName(),
+                'parent'  => $parent ? $parent->getName() : static::ROOT,
+                'title'   => $node->getOption('title'),
+                'options' => $node->getOptions(),
+                'child'   => []
+            ],
+            [$parent === null ? static::ROOT : $parent->getName()]
+        );
+        foreach ($node->getIterator() as $child) {
+            $this->fillFromNode($child, $node);
+        }
     }
 
     private function parseAnnotations(string $namespace, Sitemap $sitemap): iterable
@@ -83,7 +122,7 @@ final class SitemapBootloader extends Bootloader
 
     private function buildClassSitemap(\ReflectionClass $class): string
     {
-        $lastSegment = 'root';
+        $lastSegment = static::ROOT;
         foreach ($this->reader->getClassAnnotations($class) as $ann) {
             switch (true) {
                 case $ann instanceof Segment:
@@ -129,7 +168,7 @@ final class SitemapBootloader extends Bootloader
     {
         $sitemapElements = $sitemap->getElements();
         foreach ($methods as $method) {
-            $lastSegment = $lastSegments[$method->controller] ?? 'root';
+            $lastSegment = $lastSegments[$method->controller] ?? static::ROOT;
             foreach ($this->reader->getMethodAnnotations($method->reflection) as $ann) {
                 switch (true) {
                     case $ann instanceof Link:
@@ -141,7 +180,10 @@ final class SitemapBootloader extends Bootloader
                             $parent = "{$method->controller}.{$ann->parent}";
                         }
 
-                        $knownParent = $parent && (isset($methods[$parent]) || isset($sitemapElements[$parent]));
+                        $knownParent = $parent && (
+                            isset($methods[$parent]) ||
+                            in_array($parent, $sitemapElements, true)
+                        );
                         if (!$knownParent) {
                             $parent = $lastSegment;
                         }
@@ -153,7 +195,10 @@ final class SitemapBootloader extends Bootloader
                                 'name'    => $method->name(),
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
-                                'options' => $ann->options + ['permission' => $method->permission, 'route' => $method->route],
+                                'options' => $ann->options + [
+                                        'permission' => $method->permission,
+                                        'route'      => $method->route
+                                    ],
                                 'child'   => []
                             ],
                             $parent ? [$parent] : []

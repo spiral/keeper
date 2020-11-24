@@ -9,11 +9,10 @@ use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 use Spiral\Keeper\Annotation\Sitemap\Group;
 use Spiral\Keeper\Annotation\Sitemap\Link;
-use Spiral\Keeper\Module\Sitemap;
 
 /**
  * @Controller(
- *     name="dashboard",
+ *     name="root",
  *     prefix="/root",
  *     namespace="default"
  * )
@@ -24,52 +23,41 @@ class RootController
     /**
      * @Link(title="root")
      * @Action(route="/self")
-     * @param Sitemap $sitemap
-     * @return array
      */
-    public function index(Sitemap $sitemap): array
+    public function index(): void
     {
-        return iterator_to_array($this->sitemap($sitemap));
     }
 
     /**
      * @Guarded(permission="im-a-child")
      * @Link(title="child", parent="parent")
      * @Action(route="/child", name="root:child")
-     * @return string
      */
-    public function child(): string
+    public function child(): void
     {
-        return 'child';
     }
 
     /**
      * @Link(title="parent", parent="custom.parent")
      * @Action(route="/parent", name="root:parent")
-     * @return string
      */
-    public function parent(): string
+    public function parent(): void
     {
-        return 'parent';
     }
 
-    private function sitemap(Sitemap $sitemap): \Generator
+    /**
+     * @Link(title="parent")
+     * @Action(route="/top", name="top")
+     */
+    public function top(): void
     {
-        foreach ($sitemap->getIterator() as $name => $node) {
-            yield $name => $this->wrap($node);
-        }
     }
 
-    private function wrap(Sitemap\Node $node): array
+    /**
+     * @Link(title="bottom", parent="top")
+     * @Action(route="/bottom", name="bottom")
+     */
+    public function bottom(): void
     {
-        $nodes = [];
-        foreach ($node->getIterator() as $name => $child) {
-            $nodes[$name] = $this->wrap($child);
-        }
-        return [
-            'name'    => $node->getName(),
-            'options' => $node->getOptions(),
-            'nodes'   => $nodes ?: null
-        ];
     }
 }

@@ -20,22 +20,18 @@ use Spiral\Keeper\Annotation\Sitemap\Link;
 class ExternalController
 {
     /**
-     * @Link(title="external", parent="dashboard.child")
+     * @Link(title="external", parent="root.child")
      * @Action(route="", name="external:self")
-     * @return string
      */
-    public function index(): string
+    public function index(): void
     {
-        return 'external';
     }
 
     /**
      * @Link(title="external", parent="custom.parent")
      * @Action(route="/custom", name="external:custom")
-     * @return string
      */
-    public function custom(): string
+    public function custom(): void
     {
-        return 'custom';
     }
 }

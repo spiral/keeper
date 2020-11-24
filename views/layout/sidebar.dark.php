@@ -11,7 +11,7 @@
        * Defined in keeper:layout/sitemap
        *
        * @var \Psr\Http\Message\ServerRequestInterface $_serverRequest_
-       * @var \Spiral\Keeper\Module\RouteRegistry      $_router_
+       * @var \Spiral\Keeper\Helper\RouteBuilder       $_router_
        * @var \Spiral\Security\GuardInterface          $_guard_
        * @var \Spiral\Keeper\Module\Sitemap            $_sitemap_
        * @var \Spiral\Keeper\Module\Sitemap\Node       $_s_

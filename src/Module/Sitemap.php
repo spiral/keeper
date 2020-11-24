@@ -16,10 +16,10 @@ use Spiral\Keeper\Module\Sitemap\Node;
 use Spiral\Security\GuardInterface;
 
 /**
- * @method Sitemap|null group(string $name, string $title = null, array $options = [])
- * @method Sitemap|null segment(string $name, string $title = null, array $options = [])
- * @method Sitemap|null link(string $name, string $title = null, array $options = [])
- * @method Sitemap|null view(string $name, string $title = null, array $options = [])
+ * @method Sitemap group(string $name, string $title = null, array $options = [])
+ * @method Sitemap segment(string $name, string $title = null, array $options = [])
+ * @method Sitemap link(string $name, string $title = null, array $options = [])
+ * @method Sitemap view(string $name, string $title = null, array $options = [])
  */
 final class Sitemap implements \IteratorAggregate
 {
@@ -49,9 +49,9 @@ final class Sitemap implements \IteratorAggregate
      *
      * @param string $name
      * @param array  $param
-     * @return Sitemap|null
+     * @return Sitemap
      */
-    public function __call(string $name, array $param)
+    public function __call(string $name, array $param): Sitemap
     {
         if (!in_array($name, [self::TYPE_GROUP, self::TYPE_SEGMENT, self::TYPE_LINK, self::TYPE_VIEW], true)) {
             throw new SitemapException("Undefined method `{$name}`");
@@ -61,14 +61,10 @@ final class Sitemap implements \IteratorAggregate
             throw new SitemapException('Node name required and must be string');
         }
 
-        if ($this->root->get($param[0]) !== null) {
-            $node = $this->root->get($param[0]);
-            if ($node === null) {
-                return null;
-            }
-
+        $root = $this->root->get($param[0]);
+        if ($root instanceof Node) {
             // found chain
-            return $this->withRoot($node);
+            return $this->withRoot($root);
         }
 
         $args = ['type' => $name, 'title' => $param[1]];

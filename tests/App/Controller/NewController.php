@@ -22,4 +22,14 @@ class NewController
     {
         return $views->render('tests:new/new');
     }
+
+    /**
+     * @Action(route="/mixed", name="new:mixed")
+     * @param ViewsInterface $views
+     * @return string
+     */
+    public function mixed(ViewsInterface $views): string
+    {
+        return $views->render('tests:new/mixed');
+    }
 }

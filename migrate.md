@@ -56,7 +56,7 @@ or
 
 ### Custom sitemap declaration
 In order to sync sitemap annotations and custom sitemap generation you need to extend
-`\Spiral\Keeper\Bootloader\SitemapBootloader::declareCustomSitemap` and declare required nodes inside:
+`\Spiral\Keeper\Bootloader\SitemapBootloader::declareSitemap` and declare required nodes inside:
 ```php
 <?php
 
@@ -66,7 +66,7 @@ use Spiral\Keeper\Module\Sitemap;
 
 class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
 {
-    protected function declareCustomSitemap(Sitemap $sitemap): void
+    protected function declareSitemap(Sitemap $sitemap): void
     {
         $group = $sitemap->group('group', 'Group Name');
         $group->link('group.index', 'Index page');
@@ -74,7 +74,7 @@ class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
 }
 ```
 
-This will allow referring to that links via `parent` attribute from the annotations:
+This will allow referring to that links in the annotations via `parent` attribute:
 ```php
 /**
  * @\Spiral\Keeper\Annotation\Sitemap\Link(title="Sub-link", parent="group.index")

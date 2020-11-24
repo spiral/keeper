@@ -8,7 +8,7 @@ use Spiral\Keeper\Module\Sitemap;
 
 class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
 {
-    protected function declareCustomSitemap(Sitemap $sitemap): void
+    protected function declareSitemap(Sitemap $sitemap): void
     {
         $group = $sitemap->group('custom', 'Custom Group');
         $group->link('custom.parent', 'custom parent');

@@ -49,7 +49,7 @@ class SitemapBootloader extends Bootloader
         $sitemap = new Sitemap($keeper->getNamespace());
         $keeper->addModule($sitemap, ['sitemap']);
 
-        $this->declareCustomSitemap($sitemap);
+        $this->declareSitemap($sitemap);
         $this->fillFromSitemap($sitemap);
 
         AnnotationRegistry::registerLoader('class_exists');
@@ -60,7 +60,7 @@ class SitemapBootloader extends Bootloader
         }
     }
 
-    protected function declareCustomSitemap(Sitemap $sitemap): void
+    protected function declareSitemap(Sitemap $sitemap): void
     {
         // Your code goes here
     }

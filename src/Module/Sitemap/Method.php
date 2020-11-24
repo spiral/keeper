@@ -37,7 +37,7 @@ class Method
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
-        ?string $permission = null
+        ?Guarded $permission = null
     ): self {
         $method = $reflection->getName();
         return new self(

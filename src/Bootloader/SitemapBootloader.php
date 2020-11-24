@@ -39,6 +39,7 @@ final class SitemapBootloader extends Bootloader
         $this->reader = $reader;
         $this->locator = $locator;
         $this->sorter = $sorter;
+        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
     }
 
     public function boot(KeeperBootloader $keeper): void
@@ -76,12 +77,12 @@ final class SitemapBootloader extends Bootloader
             }
         }
 
-        yield from $this->buildSitemap($lastSegments, $methods, $sitemap);
+        $this->buildSitemap($lastSegments, $methods, $sitemap);
+        yield from $this->sort();
     }
 
     private function buildClassSitemap(\ReflectionClass $class): string
     {
-        $this->sorter->addItem('root', ['type' => Sitemap::TYPE_ROOT, 'name' => 'root', 'child' => []], []);
         $lastSegment = 'root';
         foreach ($this->reader->getClassAnnotations($class) as $ann) {
             switch (true) {
@@ -123,9 +124,8 @@ final class SitemapBootloader extends Bootloader
      * @param array            $lastSegments
      * @param Sitemap\Method[] $methods
      * @param Sitemap          $sitemap
-     * @return array
      */
-    private function buildSitemap(array $lastSegments, array $methods, Sitemap $sitemap): array
+    private function buildSitemap(array $lastSegments, array $methods, Sitemap $sitemap): void
     {
         $sitemapElements = $sitemap->getElements();
         foreach ($methods as $method) {
@@ -153,17 +153,20 @@ final class SitemapBootloader extends Bootloader
                                 'name'    => $method->name(),
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
-                                'options' => $ann->options + ['permission' => $method->permission],
+                                'options' => $ann->options + ['permission' => $method->permission, 'route' => $method->route],
                                 'child'   => []
                             ],
-                            $parent ? [] : [$parent]
+                            $parent ? [$parent] : []
                         );
 
                         break;
                 }
             }
         }
+    }
 
+    private function sort()
+    {
         // wood working
         $root = null;
         $points = [];

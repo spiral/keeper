@@ -17,6 +17,8 @@ namespace Spiral\Keeper\Annotation\Sitemap;
  */
 final class Link
 {
+    use ParentTrait;
+
     /**
      * @Attribute(name="name", type="string")
      * @var string
@@ -34,22 +36,4 @@ final class Link
      * @var array
      */
     public $options = [];
-
-    public function hasRelativeParent(): bool
-    {
-        if ($this->parent && is_string($this->parent)) {
-            $parent = trim($this->parent, ' .');
-            return $parent && mb_strpos($parent, '.') === false;
-        }
-        return false;
-    }
-
-    public function hasAbsoluteParent(): bool
-    {
-        if ($this->parent && is_string($this->parent)) {
-            $parent = trim($this->parent, ' .');
-            return $parent && mb_strpos($parent, '.') !== false;
-        }
-        return false;
-    }
 }

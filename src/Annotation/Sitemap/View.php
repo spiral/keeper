@@ -17,6 +17,8 @@ namespace Spiral\Keeper\Annotation\Sitemap;
  */
 final class View
 {
+    use ParentTrait;
+
     /**
      * @Attribute(name="name", type="string", required=true)
      * @var string

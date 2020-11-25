@@ -9,7 +9,7 @@ use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
-class TestControllerDefaults extends TestCase
+class ControllerDefaultsTest extends TestCase
 {
     use HttpTrait;
 

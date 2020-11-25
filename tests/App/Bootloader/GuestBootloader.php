@@ -9,7 +9,7 @@ use Spiral\Keeper\KeeperCore;
 use Spiral\Security\Actor\Guest;
 use Spiral\Security\PermissionsInterface;
 use Spiral\Security\Rule;
-use Spiral\Tests\Keeper\App\Enemy;
+use Spiral\Tests\Keeper\App\Auth\Enemy;
 
 class GuestBootloader extends Bootloader
 {

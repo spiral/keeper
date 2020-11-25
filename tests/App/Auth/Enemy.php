@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper\App;
+namespace Spiral\Tests\Keeper\App\Auth;
 
 use Spiral\Security\ActorInterface;
 

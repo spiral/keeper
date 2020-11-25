@@ -6,7 +6,7 @@ namespace Spiral\Tests\Keeper\Sitemap;
 
 use Spiral\Security\Actor\Guest;
 use Spiral\Security\ActorInterface;
-use Spiral\Tests\Keeper\App\Enemy;
+use Spiral\Tests\Keeper\App\Auth\Enemy;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 

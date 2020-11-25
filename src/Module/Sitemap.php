@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spiral\Keeper\Module;
 
 use Spiral\Keeper\Exception\SitemapException;
+use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Keeper\Module\Sitemap\Node;
 use Spiral\Security\GuardInterface;
 
@@ -175,11 +176,17 @@ final class Sitemap implements \IteratorAggregate
         }
 
         $options = $node->getOptions();
-        if ($activePath || $node->getName() === $targetNode) {
+        if ($activePath || $this->nodeMatches($node, $targetNode)) {
             $options['active'] = true;
         }
 
         return new Node($node->getName(), $options, $nodes);
+    }
+
+    private function nodeMatches(Node $node, string $targetNode): bool
+    {
+        $route = $node->getOption('route') ?? $node->getName();
+        return RouteBuilder::routeName($this->namespace, $route) === $targetNode;
     }
 
     /**

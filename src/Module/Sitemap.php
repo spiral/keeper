@@ -41,7 +41,7 @@ final class Sitemap implements \IteratorAggregate
     public function __construct(string $namespace)
     {
         $this->namespace = $namespace;
-        $this->root = new Node('root', ['type' => self::TYPE_ROOT]);
+        $this->root = $this->createRoot();
     }
 
     /**
@@ -93,16 +93,12 @@ final class Sitemap implements \IteratorAggregate
      *
      * @param GuardInterface $guard
      * @param string|null    $targetNode
-     * @return Sitemap|null
+     * @return Sitemap
      */
-    public function withVisibleNodes(GuardInterface $guard, string $targetNode = null): ?Sitemap
+    public function withVisibleNodes(GuardInterface $guard, string $targetNode = null): Sitemap
     {
         $sitemap = clone $this;
-        $sitemap->root = $this->filterVisible($this->root, $guard, $targetNode);
-
-        if ($sitemap->root === null) {
-            return null;
-        }
+        $sitemap->root = $this->filterVisible($this->root, $guard, $targetNode) ?? $this->createRoot();
 
         return $sitemap;
     }
@@ -158,7 +154,7 @@ final class Sitemap implements \IteratorAggregate
     private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
     {
         if ($node->hasOption('permission') && !$guard->allows($node->getOption('permission'))) {
-            return new Node('empty');
+            return null;
         }
 
         $activePath = false;
@@ -175,15 +171,15 @@ final class Sitemap implements \IteratorAggregate
         }
 
         if ($nodes === [] && !in_array($node->getOption('type'), [self::TYPE_LINK, self::TYPE_VIEW], true)) {
-            return new Node('empty');
+            return null;
         }
 
-        $opts = $node->getOptions();
+        $options = $node->getOptions();
         if ($activePath || $node->getName() === $targetNode) {
-            $opts['active'] = true;
+            $options['active'] = true;
         }
 
-        return new Node($node->getName(), $opts, $nodes);
+        return new Node($node->getName(), $options, $nodes);
     }
 
     /**
@@ -196,5 +192,10 @@ final class Sitemap implements \IteratorAggregate
         $sitemap->root = $root;
 
         return $sitemap;
+    }
+
+    private function createRoot(): Node
+    {
+        return new Node('root', ['type' => self::TYPE_ROOT]);
     }
 }

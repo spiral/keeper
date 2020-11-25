@@ -27,7 +27,7 @@ use Spiral\Keeper\Module\Sitemap;
 
 class SitemapBootloader extends Bootloader
 {
-    protected const ROOT = 'root';
+    protected const ROOT = Sitemap::TYPE_ROOT;
 
     /** @var AnnotationReader */
     private $reader;

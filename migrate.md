@@ -42,6 +42,11 @@ or via `defaultAction` property in `@Controller` annotation.
 `RouteRegistry::uri()` is deprecated, `@action` directive as well. Use `RouteBuilder::uri()` and `@keeper` instead.
 > New uri builders now require the namespace explicitly.
 
+**It is highly recommended avoiding using `@action` directive with functions or expressions as 2nd argument**:
+```html
+<a href="@action('profile', injected('anything') ? inject('something') : [])">[[Profile]]</a>
+```
+
 Example:
 ```php
 $rb = $this->container->get(\Spiral\Keeper\Helper\RouteBuilder::class);

@@ -1,4 +1,4 @@
-<a href="@action('old.old')">old.old</a>
+<a href="@action('old.old', inject('anything', []))">old.old</a>
 <?php
 
 /* some php code*/

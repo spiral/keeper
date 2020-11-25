@@ -17,6 +17,8 @@ use Spiral\Stempler\Node\Dynamic\Directive;
 
 class AuthDirective extends AbstractDirective
 {
+    use ArrayTrait;
+
     /** @var RouteDirective */
     private $route;
 
@@ -63,15 +65,5 @@ class AuthDirective extends AbstractDirective
         }
 
         return $this->route->renderRoute($directive);
-    }
-
-    private function endsWithArray($value): bool
-    {
-        return is_string($value) && mb_substr($value, mb_strlen($value) - 1, 1) === ']';
-    }
-
-    private function appendToArray(string $value, string $postfix): string
-    {
-        return rtrim($value, ']') . ", $postfix]";
     }
 }

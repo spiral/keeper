@@ -17,6 +17,8 @@ use Spiral\Stempler\Node\Dynamic\Directive;
 
 class ActionDirective extends AbstractDirective
 {
+    use ArrayTrait;
+
     public function renderKeeper(Directive $directive): string
     {
         return $this->doRender($directive, 'keeper');
@@ -59,17 +61,12 @@ class ActionDirective extends AbstractDirective
         }
 
         $count = count($directive->values);
-        if ($count === 1 || ($count === 2 && $this->endsWithArray($directive->body))) {
+        if ($count === 1 || ($count === 2 && $this->endsWithArray($directive->values[1]))) {
             array_unshift($directive->values, "'keeper'");
             $directive->body = "'keeper', {$directive->body}";
             return $directive;
         }
 
         return $directive;
-    }
-
-    private function endsWithArray($value): bool
-    {
-        return is_string($value) && mb_substr($value, mb_strlen($value) - 1, 1) === ']';
     }
 }

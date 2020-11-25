@@ -183,7 +183,7 @@ final class Sitemap implements \IteratorAggregate
         return new Node($node->getName(), $options, $nodes);
     }
 
-    private function nodeMatches(Node $node, string $targetNode): bool
+    private function nodeMatches(Node $node, string $targetNode = null): bool
     {
         $route = $node->getOption('route') ?? $node->getName();
         return RouteBuilder::routeName($this->namespace, $route) === $targetNode;

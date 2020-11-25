@@ -15,7 +15,7 @@ class MiddlewaredBootloader extends Bootloader\KeeperBootloader
     protected const LOAD       = [
         Bootloader\AnnotatedBootloader::class,
         MiddlewareBootloader::class,
-        Bootloader\GuestBootloader::class,
+        GuestBootloader::class,
     ];
     protected const MIDDLEWARE = [
         Middleware\One::class,

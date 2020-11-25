@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Keeper\Sitemap;
 
+use Spiral\Security\ActorInterface;
+use Spiral\Tests\Keeper\App\Enemy;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
@@ -62,6 +64,19 @@ class AnnotationTest extends TestCase
         $this->assertArrayHasKey('custom.parent', $this->nodes($output, 'custom'));
         $this->assertArrayHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
+    }
+
+    public function testForbidden(): void
+    {
+        $this->app->runScope(
+            [
+                ActorInterface::class => Enemy::class,
+            ],
+            function () use (&$output) {
+                $output = $this->getSitemap();
+            }
+        );
+        $this->assertArrayHasKey('custom', $output);
     }
 
     private function getSitemap(): array

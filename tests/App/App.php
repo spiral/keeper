@@ -22,10 +22,10 @@ class App extends Kernel
         GuardBootloader::class,
         DiactorosBootloader::class,
         RouterBootloader::class,
+        CommandBootloader::class,
     ];
 
     protected const APP = [
-        CommandBootloader::class,
         Bootloader\AnnotationBootloader::class,
         Bootloader\AppBootloader::class,
         Bootloader\BlankBootloader::class,
@@ -53,5 +53,10 @@ class App extends Kernel
     public function get(string $class)
     {
         return $this->container->get($class);
+    }
+
+    public function runScope(array $bindings, callable $scope)
+    {
+       return $this->container->runScope($bindings, $scope);
     }
 }

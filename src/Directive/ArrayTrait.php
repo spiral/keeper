@@ -14,9 +14,4 @@ trait ArrayTrait
 
         return mb_strpos($value, 'inject') === 0 || mb_substr($value, mb_strlen($value) - 1, 1) === ']';
     }
-
-    private function appendToArray(string $value, string $postfix): string
-    {
-        return rtrim($value, ']') . ", $postfix]";
-    }
 }

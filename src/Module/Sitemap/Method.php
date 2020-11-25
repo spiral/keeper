@@ -38,18 +38,17 @@ class Method
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
-        ?Guarded $permission = null
+        ?Guarded $guarded = null
     ): self {
         $method = $reflection->getName();
+        $permission = $guarded instanceof Guarded && $guarded->permission
+            ? $guarded->permission
+            : "$controller.$method";
         return new self(
             $reflection,
             $action->name ?: "$controller.$method",
             $controller,
-            $namespace . (
-                $permission instanceof Guarded && $permission->permission
-                ? $permission->permission
-                : "$controller.$method"
-            )
+            "$namespace.$permission"
         );
     }
 

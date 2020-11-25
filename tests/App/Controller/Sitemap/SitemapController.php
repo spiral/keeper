@@ -7,6 +7,7 @@ namespace Spiral\Tests\Keeper\App\Controller\Sitemap;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 use Spiral\Keeper\Module\Sitemap;
+use Spiral\Security\GuardInterface;
 
 /**
  * @Controller(
@@ -25,6 +26,17 @@ class SitemapController
     public function index(Sitemap $sitemap): array
     {
         return iterator_to_array($this->sitemap($sitemap));
+    }
+
+    /**
+     * @Action(route="/visible")
+     * @param Sitemap        $sitemap
+     * @param GuardInterface $guard
+     * @return array
+     */
+    public function visible(Sitemap $sitemap, GuardInterface $guard): array
+    {
+        return iterator_to_array($this->sitemap($sitemap->withVisibleNodes($guard)));
     }
 
     private function sitemap(Sitemap $sitemap): \Generator

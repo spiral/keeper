@@ -27,9 +27,10 @@ class GuestBootloader extends Bootloader
         $permissions->associate(Guest::ROLE, "{$ns}.*.*", Rule\AllowRule::class);
         $permissions->associate(Guest::ROLE, "{$ns}.*.*.*", Rule\AllowRule::class);
 
-        $permissions->associate(Enemy::ROLE, "{$ns}.*", Rule\ForbidRule::class);
-        $permissions->associate(Enemy::ROLE, "{$ns}.*.*", Rule\ForbidRule::class);
-        $permissions->associate(Enemy::ROLE, "{$ns}.*.*.*", Rule\ForbidRule::class);
-        $permissions->associate(Enemy::ROLE, "{$ns}.sitemap.index", Rule\AllowRule::class);
+        $permissions->associate(Enemy::ROLE, "{$ns}.*", Rule\AllowRule::class);
+        $permissions->associate(Enemy::ROLE, "{$ns}.*.*", Rule\AllowRule::class);
+        $permissions->associate(Enemy::ROLE, "{$ns}.*.*.*", Rule\AllowRule::class);
+
+        $permissions->associate(Enemy::ROLE, "{$ns}.root.parent", Rule\ForbidRule::class);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Keeper\Sitemap;
 
+use Spiral\Security\Actor\Guest;
 use Spiral\Security\ActorInterface;
 use Spiral\Tests\Keeper\App\Enemy;
 use Spiral\Tests\Keeper\HttpTrait;
@@ -69,19 +70,26 @@ class AnnotationTest extends TestCase
     public function testForbidden(): void
     {
         $this->app->runScope(
-            [
-                ActorInterface::class => Enemy::class,
-            ],
+            [ActorInterface::class => Enemy::class],
             function () use (&$output): void {
-                $output = $this->getSitemap();
+                $output = $this->getSitemap(true);
             }
         );
-        $this->assertArrayHasKey('custom', $output);
+        // This exact action is forbidden tests/App/Bootloader/GuestBootloader.php:34
+        $this->assertArrayNotHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
+
+        $this->app->runScope(
+            [ActorInterface::class => Guest::class],
+            function () use (&$output): void {
+                $output = $this->getSitemap(true);
+            }
+        );
+        $this->assertArrayHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
     }
 
-    private function getSitemap(): array
+    private function getSitemap(bool $onlyVisible = false): array
     {
-        $response = $this->get('/default/sitemap');
+        $response = $this->get($onlyVisible ? '/default/sitemap/visible' : '/default/sitemap');
         return json_decode((string)$response->getBody(), true);
     }
 

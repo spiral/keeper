@@ -104,4 +104,4 @@ $_router_->uri($_s_->getName());
 ```
 
 ## TODO
-- migrate breadcrumbs and sidebar 
+- permission-excluded nodes 

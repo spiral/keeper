@@ -43,6 +43,6 @@ class DirectiveTest extends TestCase
 
     private function getContent(string $url): string
     {
-        return trim($this->get($url)->getBody()->__toString());
+        return trim(preg_replace('/\n/', '', $this->get($url)->getBody()->__toString()));
     }
 }

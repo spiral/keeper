@@ -173,7 +173,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         );
 
         $route = $route->withMiddleware(...$middlewares)->withVerbs(...$verbs);
-        if ($name) {
+        if ($name !== null) {
             $this->getRouteRegistry()->setRoute($name, $route);
         }
 

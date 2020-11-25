@@ -13,7 +13,7 @@ use Spiral\Keeper\Annotation\Controller;
 class DefaultController
 {
     /**
-     * @Action(route="/index", name="controllerDefault:default:index")
+     * @Action(route="/index", name="controllerDefault:default:defaults")
      * @return string
      */
     public function defaults(): string

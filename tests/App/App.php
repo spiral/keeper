@@ -57,6 +57,6 @@ class App extends Kernel
 
     public function runScope(array $bindings, callable $scope)
     {
-       return $this->container->runScope($bindings, $scope);
+        return $this->container->runScope($bindings, $scope);
     }
 }

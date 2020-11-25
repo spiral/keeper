@@ -72,7 +72,7 @@ class AnnotationTest extends TestCase
             [
                 ActorInterface::class => Enemy::class,
             ],
-            function () use (&$output) {
+            function () use (&$output): void {
                 $output = $this->getSitemap();
             }
         );

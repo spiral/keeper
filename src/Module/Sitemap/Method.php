@@ -34,6 +34,7 @@ class Method
     }
 
     public static function create(
+        string $namespace,
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
@@ -44,9 +45,11 @@ class Method
             $reflection,
             $action->name ?: "$controller.$method",
             $controller,
-            $permission instanceof Guarded && $permission->permission
+            $namespace . (
+                $permission instanceof Guarded && $permission->permission
                 ? $permission->permission
                 : "$controller.$method"
+            )
         );
     }
 

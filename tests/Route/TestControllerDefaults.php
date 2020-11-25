@@ -22,8 +22,14 @@ class TestControllerDefaults extends TestCase
         $names = $this->names();
         //has controller+action defaults
         $this->assertContains('controllerDefault', $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault', 'cDefault.defaults'), $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault', 'controllerDefault:default:defaults'), $names);
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault', 'cDefault.defaults'),
+            $names
+        );
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault', 'controllerDefault:default:defaults'),
+            $names
+        );
     }
 
     public function testHasConfigDefaultControllerWithOwnDefaultAction(): void
@@ -35,9 +41,18 @@ class TestControllerDefaults extends TestCase
         $names = $this->names();
         //has controller/controller+action defaults
         $this->assertContains('controllerDefault2', $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault2', 'cDefault2'), $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault2', 'cDefault2.defaults'), $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault2', 'controllerDefault2:default:index'), $names);
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault2', 'cDefault2'),
+            $names
+        );
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault2', 'cDefault2.defaults'),
+            $names
+        );
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault2', 'controllerDefault2:default:index'),
+            $names
+        );
     }
 
     public function testHasConfigDefaultControllerWithFallbackAction(): void
@@ -49,8 +64,14 @@ class TestControllerDefaults extends TestCase
         $names = $this->names();
         //has controller+index(fallback) defaults
         $this->assertContains('controllerDefault3', $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault3', 'cDefault3.index'), $names);
-        $this->assertContains(RouteBuilder::routeName('controllerDefault3', 'controllerDefault3:default:index'), $names);
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault3', 'cDefault3.index'),
+            $names
+        );
+        $this->assertContains(
+            RouteBuilder::routeName('controllerDefault3', 'controllerDefault3:default:index'),
+            $names
+        );
     }
 
     private function names(): array

@@ -22,10 +22,19 @@ trait HttpTrait
         }
     }
 
-    private function get($uri, array $query = [], array $headers = [], array $cookies = []): ResponseInterface
-    {
+    private function get(
+        $uri,
+        array $query = [],
+        array $headers = [],
+        array $cookies = [],
+        array $attributes = []
+    ): ResponseInterface {
         try {
-            return $this->app->getHttp()->handle($this->request($uri, 'GET', $query, $headers, $cookies));
+            $request = $this->request($uri, 'GET', $query, $headers, $cookies);
+            foreach ($attributes as $name => $attribute) {
+                $request = $request->withAttribute($name, $attribute);
+            }
+            return $this->app->getHttp()->handle($request);
         } catch (RouteNotFoundException $e) {
             return new NotFoundResponse();
         }

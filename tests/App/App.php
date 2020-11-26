@@ -38,6 +38,7 @@ class App extends Kernel
         Bootloader\InterceptedBootloader::class,
         Bootloader\MiddlewaredBootloader::class,
         UIBootloader::class,
+        Bootloader\LoginBootloader::class,
     ];
 
     public function getHttp(): Http

@@ -7,6 +7,7 @@ namespace Spiral\Tests\Keeper\App\Auth;
 use Spiral\Auth\AuthContextInterface;
 use Spiral\Auth\Session\Token;
 use Spiral\Auth\TokenInterface;
+use Spiral\Security\Actor\Guest;
 
 class AuthContext implements AuthContextInterface
 {
@@ -29,7 +30,7 @@ class AuthContext implements AuthContextInterface
 
     public function getActor(): ?object
     {
-        // TODO: Implement getActor() method.
+        return new Guest();
     }
 
     public function close(): void

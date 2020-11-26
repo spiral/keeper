@@ -24,6 +24,16 @@ class OldController
     }
 
     /**
+     * @Action(route="/invalid")
+     * @param ViewsInterface $views
+     * @return string
+     */
+    public function invalid(ViewsInterface $views): string
+    {
+        return $views->render('tests:old/invalid');
+    }
+
+    /**
      * @Action(route="/new")
      * @param ViewsInterface $views
      * @return string

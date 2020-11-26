@@ -22,6 +22,15 @@ class NewController
     {
         return $views->render('tests:new/new');
     }
+    /**
+     * @Action(route="/invalid")
+     * @param ViewsInterface $views
+     * @return string
+     */
+    public function invalid(ViewsInterface $views): string
+    {
+        return $views->render('tests:new/invalid');
+    }
 
     /**
      * @Action(route="/mixed", name="new:mixed")

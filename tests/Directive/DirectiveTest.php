@@ -8,6 +8,9 @@ use Spiral\Auth\ActorProviderInterface;
 use Spiral\Auth\AuthContextInterface;
 use Spiral\Tests\Keeper\App\Auth\ActorProvider;
 use Spiral\Tests\Keeper\App\Auth\AuthContext;
+use Spiral\Tests\Keeper\HttpTrait;
+use Spiral\Tests\Keeper\TestCase;
+use Spiral\Views\Exception\RenderException;
 
 class DirectiveTest extends TestCase
 {
@@ -39,6 +42,18 @@ class DirectiveTest extends TestCase
                 );
             }
         );
+    }
+
+    public function testInvalidOld(): void
+    {
+        $this->expectException(RenderException::class);
+        $this->getContent('/old/old/invalid');
+    }
+
+    public function testInvalidNew(): void
+    {
+        $this->expectException(RenderException::class);
+        $this->getContent('/new/new/invalid');
     }
 
     private function getContent(string $url): string

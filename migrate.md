@@ -109,6 +109,4 @@ $_router_->uri($_s_->getName());
 ```
 
 ## TODO
-- permission-excluded nodes 
 - sitemap active path
-- broken directives

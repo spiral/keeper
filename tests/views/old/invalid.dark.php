@@ -1,4 +1,4 @@
-<a href="@action('keeper')">old.new</a>
+<a href="@action()">old.new</a>
 <?php
 
 /* some php code*/

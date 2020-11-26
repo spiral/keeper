@@ -46,12 +46,14 @@ class DirectiveTest extends TestCase
     public function testInvalidOld(): void
     {
         $this->expectException(\Throwable::class);
+        $this->expectExceptionMessageMatches('/^Unable to call .action directive/i');
         $this->getContent('/old/old/invalid');
     }
 
     public function testInvalidNew(): void
     {
         $this->expectException(\Throwable::class);
+        $this->expectExceptionMessageMatches('/^Unable to call .keeper directive/i');
         $this->getContent('/new/new/invalid');
     }
 

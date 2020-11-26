@@ -55,7 +55,7 @@ class ActionDirective extends AbstractDirective
     {
         if (count($directive->values) < 1) {
             throw new DirectiveException(
-                'Unable to call @route directive, at least 1 value is required',
+                'Unable to call @action directive, at least 1 value is required',
                 $directive->getContext()
             );
         }

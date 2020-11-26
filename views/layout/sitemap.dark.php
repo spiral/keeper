@@ -10,7 +10,7 @@ $_router_ = $this->container->get(\Spiral\Keeper\Helper\RouteBuilder::class);
 $_sitemap_ = $this->container->get(\Spiral\Keeper\Module\Sitemap::class);
 
 // allow user re-definition
-$_activeRoute_ = inject('activeRoute', $_serverRequest_->getAttribute('routeName'));
+$_activeRoute_ = inject('activeRoute', $_serverRequest_->getAttribute(\Spiral\Router\Router::ROUTE_NAME));
 
 // all visible nodes and active path highlighted
 $_sitemap_ = $_sitemap_->withVisibleNodes($_guard_, $_activeRoute_);

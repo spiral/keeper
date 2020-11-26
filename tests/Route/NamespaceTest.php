@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Spiral\Tests\Keeper\Route;
 
 use Spiral\Keeper\Helper\RouteBuilder;
-use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
@@ -43,9 +42,7 @@ abstract class NamespaceTest extends TestCase
      */
     public function testRouteNames(string $route, string $expected): void
     {
-        /** @var RouterInterface $router */
-        $router = $this->app->get(RouterInterface::class);
-        $uri = $router->uri(RouteBuilder::routeName(static::NAMESPACE, $route));
+        $uri = $this->router()->uri(RouteBuilder::routeName(static::NAMESPACE, $route));
 
         $this->assertSame($expected, $this->get($uri)->getBody()->__toString());
     }

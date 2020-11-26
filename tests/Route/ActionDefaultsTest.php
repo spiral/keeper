@@ -44,9 +44,4 @@ class ActionDefaultsTest extends TestCase
         $this->expectException(UndefinedRouteException::class);
         $uri = (string)$this->router()->uri(RouteBuilder::routeName(static::NAMESPACE));
     }
-
-    private function router(): RouterInterface
-    {
-        return $this->app->get(RouterInterface::class);
-    }
 }

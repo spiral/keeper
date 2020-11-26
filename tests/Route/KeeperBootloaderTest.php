@@ -31,9 +31,4 @@ class KeeperBootloaderTest extends TestCase
         $this->assertSame('two', $response->getHeaderLine('two'));
         $this->assertSame('three', $response->getHeaderLine('three'));
     }
-
-    private function router(): RouterInterface
-    {
-        return $this->app->get(RouterInterface::class);
-    }
 }

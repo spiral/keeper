@@ -78,9 +78,4 @@ class ControllerDefaultsTest extends TestCase
     {
         return array_unique(array_keys($this->router()->getRoutes()));
     }
-
-    private function router(): RouterInterface
-    {
-        return $this->app->get(RouterInterface::class);
-    }
 }

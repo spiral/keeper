@@ -13,6 +13,7 @@ namespace Spiral\Tests\Keeper;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Spiral\Boot\Environment;
+use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\App\App;
 
 /**
@@ -47,5 +48,10 @@ abstract class TestCase extends BaseTestCase
         ];
 
         return App::init($config, new Environment($env), false);
+    }
+
+    protected function router(): RouterInterface
+    {
+        return $this->app->get(RouterInterface::class);
     }
 }

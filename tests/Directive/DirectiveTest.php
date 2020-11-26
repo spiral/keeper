@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Tests\Keeper;
+namespace Spiral\Tests\Keeper\Directive;
 
 use Spiral\Auth\ActorProviderInterface;
 use Spiral\Auth\AuthContextInterface;

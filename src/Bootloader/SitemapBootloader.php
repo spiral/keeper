@@ -135,7 +135,7 @@ class SitemapBootloader extends Bootloader
                             'name'    => $ann->name,
                             'parent'  => $ann->parent,
                             'title'   => $ann->title,
-                            'options' => $ann->options,
+                            'options' => $ann->options + ['position' => $ann->position],
                             'child'   => []
                         ],
                         [$ann->parent]
@@ -195,6 +195,7 @@ class SitemapBootloader extends Bootloader
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
                                 'options' => $ann->options + [
+                                        'position'   => $ann->position,
                                         'permission' => $method->permission,
                                         'route'      => $method->route
                                     ],

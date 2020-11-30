@@ -42,4 +42,10 @@ final class Group
      * @var array
      */
     public $options = [];
+
+    /**
+     * @Attribute(name="position", type="float")
+     * @var float
+     */
+    public $position;
 }

@@ -14,6 +14,32 @@ class AnnotationTest extends TestCase
 {
     use HttpTrait;
 
+    public function testOrder(): void
+    {
+        $output = $this->getSitemap();
+        $groupPositions = [];
+        foreach ($output as $name => $group) {
+            $groupPositions[$name] = $group['options']['position'] ?? 0;
+        }
+        $rootSame = [
+            'externalgroup' => 0,
+            'rootgroup'     => 1,
+            'custom'        => 1.1,
+            'simple.method' => 2
+        ];
+        $this->assertSame($rootSame, $groupPositions);
+
+        $rootGroupNodes = [];
+        foreach ($output['rootgroup']['nodes'] as $name => $group) {
+            $rootGroupNodes[$name] = $group['options']['position'] ?? 0;
+        }
+        $nestedSame = [
+            'root.top'   => 0.6,
+            'root.index' => 0.7
+        ];
+        $this->assertSame($nestedSame, $rootGroupNodes);
+    }
+
     public function testRoot(): void
     {
         $output = $this->getSitemap();

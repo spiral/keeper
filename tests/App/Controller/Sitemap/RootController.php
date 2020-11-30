@@ -25,7 +25,7 @@ use Spiral\Security\GuardInterface;
 class RootController
 {
     /**
-     * @Link(title="root")
+     * @Link(title="root", position=0.7)
      * @Action(route="/self")
      */
     public function index(): void
@@ -59,7 +59,7 @@ class RootController
     }
 
     /**
-     * @Link(title="parent")
+     * @Link(title="parent", position=0.6)
      * @Action(route="/top", name="top")
      */
     public function top(): void

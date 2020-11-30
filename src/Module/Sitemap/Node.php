@@ -101,7 +101,21 @@ class Node implements \IteratorAggregate
      */
     public function getIterator(): iterable
     {
-        yield from $this->nodes;
+        $positions = [];
+        $position = 0;
+        $nodes = $this->nodes;
+        foreach ($this->nodes as $name => $node) {
+            $currentPosition = $node->getOption('position') ?? $position;
+            if ($node->getOption('position') === null) {
+                $position++;
+            }
+
+            $positions[$name] = $currentPosition;
+            $node->setOption('position', $currentPosition);
+        }
+        array_multisort($positions, SORT_ASC, $nodes);
+
+        yield from $nodes;
     }
 
     public function getElements(): array

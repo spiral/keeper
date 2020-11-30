@@ -1,3 +1,7 @@
+## Files
+View template `views/layout/breadcrumps.dark.php` renamed into `views/layout/breadcrumbs.dark.php` (typo fixed).
+Referenced in `views/layout/common.dark.php` and `views/bundle.dark.php`.
+
 ## Routes
 
 ### Annotations

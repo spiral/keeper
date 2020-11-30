@@ -93,6 +93,8 @@ This will allow referring to that links in the annotations via `parent` attribut
 
 ### Position order
 Introduced `position` annotation property for all kind of sitemap annotations.
+> You can use a `position` option in a direct sitemap declaration syntax.
+
 Sitemap module will now provide a sorted list of nested nodes.
 It uses either defined `position` value, or an auto-incremented default one.
 > Using ascending order.

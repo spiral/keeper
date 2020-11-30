@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation;
 
+use Doctrine\Common\Annotations\Annotation\Attribute;
 use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\Route;
 

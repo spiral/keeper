@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation\Sitemap;
 
+use Doctrine\Common\Annotations\Annotation\Attribute;
+
 /**
  * @Annotation
  * @Target({"CLASS"})

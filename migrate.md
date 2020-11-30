@@ -91,6 +91,34 @@ This will allow referring to that links in the annotations via `parent` attribut
  */
 ```
 
+### Position order
+Introduced `position` annotation property for all kind of sitemap annotations.
+Sitemap module will now provide a sorted list of nested nodes.
+It uses either defined `position` value, or an auto-incremented default one.
+> Using ascending order.
+
+Note that existed position will cause skipping default's auto-increment for that element.
+For example having such 3 items with only one with defined position:
+```php
+use Spiral\Keeper\Module\Sitemap;
+
+class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
+{
+    protected function declareSitemap(Sitemap $sitemap): void
+    {
+        $sitemap->group('positioned', 'Positioned', ['position' => 0.5]);
+        $sitemap->group('first', 'First');
+        $sitemap->group('second', 'Second');
+    }
+}
+```
+will have the next sorting result:
+```
+first: 0,
+positioned: 0.5,
+second: 1
+```
+
 ### View templates
 `sidebar` and `breadcrumbs` view files updated to explicitly use sitemap namespace and node route (using new `\Spiral\Keeper\Helper\RouteBuilder` helper).
 ```php

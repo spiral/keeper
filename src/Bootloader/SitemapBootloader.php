@@ -181,8 +181,7 @@ class SitemapBootloader extends Bootloader
                         }
 
                         $knownParent = $parent && (
-                            isset($methods[$parent]) ||
-                            in_array($parent, $sitemapElements, true)
+                            isset($methods[$parent]) || in_array($parent, $sitemapElements, true)
                         );
                         if (!$knownParent) {
                             $parent = $lastSegment;

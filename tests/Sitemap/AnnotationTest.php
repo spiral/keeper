@@ -23,9 +23,9 @@ class AnnotationTest extends TestCase
         }
         $rootSame = [
             'externalgroup' => 0,
+            'simple.method' => 0.8,
             'rootgroup'     => 1,
-            'custom'        => 1.1,
-            'simple.method' => 2
+            'custom'        => 1.1
         ];
         $this->assertSame($rootSame, $groupPositions);
 

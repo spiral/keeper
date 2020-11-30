@@ -15,7 +15,7 @@ class SimpleController
 {
     /**
      * @Action(name="some:simple:method", route="")
-     * @Link(title="simple")
+     * @Link(title="simple", position=0.8)
      */
     public function method(): void
     {

@@ -11,42 +11,35 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Module;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Keeper\Config\KeeperConfig;
-use Spiral\Router\Exception\RouterException;
-use Spiral\Router\Exception\UndefinedRouteException;
+use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\Route;
 use Spiral\Router\RouteInterface;
-use Spiral\Router\Router;
 use Spiral\Router\RouterInterface;
-use Spiral\Router\UriHandler;
 
 final class RouteRegistry
 {
     /** @var KeeperConfig */
     private $config;
 
-    /** @var RouterInterface */
-    private $router;
+    /** @var MiddlewareInterface[]|string[] */
+    private $middleware;
 
-    /** @var MiddlewareInterface[]|string */
-    private $middleware = [];
+    /** @var RouterInterface */
+    private $appRouter;
+
+    private $names = [];
 
     /**
-     * @param ContainerInterface $container
-     * @param KeeperConfig       $config
+     * @param KeeperConfig    $config
+     * @param RouterInterface $appRouter
      */
-    public function __construct(ContainerInterface $container, KeeperConfig $config)
+    public function __construct(KeeperConfig $config, RouterInterface $appRouter)
     {
         $this->config = $config;
         $this->middleware = $this->config->getMiddleware();
-
-        $this->router = new Router(
-            $config->getRoutePrefix(),
-            $container->get(UriHandler::class),
-            $container
-        );
+        $this->appRouter = $appRouter;
     }
 
     /**
@@ -54,7 +47,17 @@ final class RouteRegistry
      */
     public function addMiddleware($middleware): void
     {
-        $this->middleware[] = $middleware;
+        if (!in_array($middleware, $this->middleware, true)) {
+            $this->middleware[] = $middleware;
+
+            foreach ($this->appRouter->getRoutes() as $name => $route) {
+                if (!isset($this->names[$name]) || !$route instanceof Route) {
+                    continue;
+                }
+
+                $this->appRouter->setRoute($name, $route->withMiddleware($middleware));
+            }
+        }
     }
 
     /**
@@ -63,48 +66,64 @@ final class RouteRegistry
      */
     public function setRoute(string $name, RouteInterface $route): void
     {
-        if ($route instanceof Route) {
-            $route = $route->withMiddleware(...$this->middleware);
-        }
-
-        $this->router->setRoute($name, $route);
-    }
-
-    /**
-     * @return RouteInterface
-     */
-    public function initEndpoint(): RouteInterface
-    {
-        $route = new Route($this->config->getRoutePattern(), $this->router);
-        $route = $route->withMiddleware(...$this->middleware);
-
-        return $route;
+        $this->names[RouteBuilder::routeName($this->config->getNamespace(), $name)] = true;
+        $this->appRouter->setRoute(
+            RouteBuilder::routeName($this->config->getNamespace(), $name),
+            $route instanceof Route ? $this->configureRoute($route) : $route
+        );
     }
 
     /**
      * Provides the ability to inject templated args in a form or {id} or {{id}}.
      *
-     * @param string $route
-     * @param array  $parameters
+     * @param string            $namespace
+     * @param string|array|null $route
+     * @param array             $parameters
      * @return string
+     * @deprecated use RouteBuilder::uri()
      */
-    public function uri(string $route, array $parameters = []): string
+    public function uri(string $namespace, $route = null, array $parameters = []): string
     {
-        $vars = [];
-        $restore = [];
-        foreach ($parameters as $key => $value) {
-            if (is_string($value) && preg_match('/\{.*\}/', $value)) {
-                $restore[sprintf('__%s__', $key)] = $value;
-                $value = sprintf('__%s__', $key);
-            }
+        [
+            'namespace'  => $namespace,
+            'route'      => $route,
+            'parameters' => $parameters
+        ] = $this->handleLegacyUriParams($namespace, $route, $parameters);
 
-            $vars[$key] = $value;
+        $builder = new RouteBuilder($this->appRouter);
+        return $builder->uri($namespace, $route, $parameters);
+    }
+
+    private function handleLegacyUriParams(string $namespace, $route = null, array $parameters = []): array
+    {
+        if (!empty($parameters) && !is_string($route)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Route name should be a string in case of parameters are provided, %s given',
+                    gettype($route)
+                )
+            );
         }
 
-        try {
-            return strtr($this->router->uri($route, $vars)->__toString(), $restore);
-        } catch (UndefinedRouteException $e) {
-            throw new RouterException("No such route {$route}", $e->getCode(), $e);
+        $route = $route ?: null;
+        if (empty($route) && empty($parameters)) {
+            [$namespace, $route] = ['keeper', $namespace];
+        } elseif (is_array($route)) {
+            [$namespace, $route, $parameters] = ['keeper', $namespace, $route];
         }
+
+        return compact('namespace', 'route', 'parameters');
+    }
+
+    /**
+     * Assign middlewares to a given route.
+     *
+     * @param Route $route
+     * @return RouteInterface
+     */
+    private function configureRoute(Route $route): RouteInterface
+    {
+        $defaults = array_merge($this->config->getDefaults(), $route->getDefaults());
+        return $route->withMiddleware(...$this->middleware)->withDefaults($defaults);
     }
 }

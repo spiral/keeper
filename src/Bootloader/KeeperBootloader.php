@@ -31,7 +31,10 @@ use Spiral\Security\GuardInterface;
 
 abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 {
-    protected const NAMESPACE = 'keeper';
+    protected const NAMESPACE          = 'keeper';
+    protected const PREFIX             = 'keeper/';
+    protected const DEFAULT_CONTROLLER = 'dashboard';
+    protected const CONFIG_NAME        = '';
 
     protected const DEPENDENCIES = [
         GuardBootloader::class,
@@ -95,10 +98,10 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     public function boot(BootloadManager $bootloadManager, RouterInterface $appRouter): void
     {
-        $config = $this->initConfig($this->core->getNamespace());
+        $config = $this->initConfig();
 
         // keeper relies on it's own routing mechanism
-        $routes = new RouteRegistry($this->container, $config);
+        $routes = new RouteRegistry($config, $appRouter);
 
         $this->addModule($routes, ['routes']);
 
@@ -110,11 +113,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 KeeperCore::class    => $this->core,
                 KeeperConfig::class  => $config
             ],
-            function () use ($config, $bootloadManager, $appRouter, $routes): void {
+            function () use ($config, $bootloadManager): void {
                 (clone $bootloadManager)->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($config);
-
-                $appRouter->setRoute($this->core->getNamespace(), $routes->initEndpoint());
             }
         );
     }
@@ -124,7 +125,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     public function getNamespace(): string
     {
-        return $this->core->getNamespace();
+        return static::NAMESPACE;
     }
 
     /**
@@ -145,19 +146,38 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     }
 
     /**
-     * @param string $pattern
-     * @param string $controller
-     * @param string $action
-     * @param array  $verbs
+     * @param string      $pattern
+     * @param string      $controller
+     * @param string      $action
+     * @param array       $verbs
+     * @param string|null $name
+     * @param array       $defaults
+     * @param string|null $group
+     * @param array       $middlewares
      */
-    public function addRoute(string $pattern, string $controller, string $action, array $verbs = Route::VERBS): void
-    {
+    public function addRoute(
+        string $pattern,
+        string $controller,
+        string $action,
+        array $verbs = Route::VERBS,
+        string $name = null,
+        array $defaults = [],
+        string $group = null,
+        array $middlewares = []
+    ): void {
         $target = new Action($controller, $action);
-
-        $this->getRouteRegistry()->setRoute(
-            sprintf('%s.%s', $controller, $action),
-            (new Route($pattern, $target->withCore($this->core)))->withVerbs(...$verbs)
+        $route = new Route(
+            $pattern,
+            $target->withCore($this->core),
+            $defaults
         );
+
+        $route = $route->withMiddleware(...$middlewares)->withVerbs(...$verbs);
+        if ($name !== null) {
+            $this->getRouteRegistry()->setRoute($name, $route);
+        }
+
+        $this->getRouteRegistry()->setRoute("$controller.$action", $route);
     }
 
     /**
@@ -165,7 +185,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     protected function getRouteRegistry(): RouteRegistry
     {
-        return $this->core->getModule(RouteRegistry::class);
+        /** @var RouteRegistry $registry */
+        $registry = $this->core->getModule(RouteRegistry::class);
+        return $registry;
     }
 
     /**
@@ -186,35 +208,35 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     /**
      * Init configuration from default and user-defined value.
      *
-     * @param string $namespace
      * @return KeeperConfig
      */
-    private function initConfig(string $namespace): KeeperConfig
+    private function initConfig(): KeeperConfig
     {
+        $config = static::CONFIG_NAME ?: static::NAMESPACE;
         $this->config->setDefaults(
-            $namespace,
+            $config,
             [
                 // keeper isolation prefix (only for non-host routing)
-                'routePrefix'  => $namespace . '/',
+                'routePrefix'   => static::PREFIX,
+
+                // default controller
+                'routeDefaults' => ['controller' => static::DEFAULT_CONTROLLER],
 
                 // page to render when login is required
-                'loginView'    => 'keeper:login',
-
-                // keeper route must react to all the path variations
-                'routePattern' => sprintf('%s[/<path:.*>]', $namespace),
+                'loginView'     => 'keeper:login',
 
                 // global keeper middleware
-                'middleware'   => static::MIDDLEWARE,
+                'middleware'    => static::MIDDLEWARE,
 
                 // connected modules and extensions
-                'modules'      => static::LOAD,
+                'modules'       => static::LOAD,
 
                 // domain Core interceptors
-                'interceptors' => static::INTERCEPTORS,
+                'interceptors'  => static::INTERCEPTORS,
             ]
         );
 
-        return new KeeperConfig($this->config->getConfig($namespace));
+        return new KeeperConfig(static::NAMESPACE, $this->config->getConfig($config));
     }
 
     /**

@@ -12,14 +12,15 @@ declare(strict_types=1);
 namespace Spiral\Keeper\Module;
 
 use Spiral\Keeper\Exception\SitemapException;
+use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Keeper\Module\Sitemap\Node;
 use Spiral\Security\GuardInterface;
 
 /**
- * @method Sitemap|null group(string $name, string $title = null, array $options = [])
- * @method Sitemap|null segment(string $name, string $title = null, array $options = [])
- * @method Sitemap|null link(string $name, string $title = null, array $options = [])
- * @method Sitemap|null view(string $name, string $title = null, array $options = [])
+ * @method Sitemap group(string $name, string $title = null, array $options = [])
+ * @method Sitemap segment(string $name, string $title = null, array $options = [])
+ * @method Sitemap link(string $name, string $title = null, array $options = [])
+ * @method Sitemap view(string $name, string $title = null, array $options = [])
  */
 final class Sitemap implements \IteratorAggregate
 {
@@ -41,7 +42,7 @@ final class Sitemap implements \IteratorAggregate
     public function __construct(string $namespace)
     {
         $this->namespace = $namespace;
-        $this->root = new Node('root', ['type' => self::TYPE_ROOT]);
+        $this->root = $this->createRoot();
     }
 
     /**
@@ -49,9 +50,9 @@ final class Sitemap implements \IteratorAggregate
      *
      * @param string $name
      * @param array  $param
-     * @return Sitemap|null
+     * @return Sitemap
      */
-    public function __call(string $name, array $param)
+    public function __call(string $name, array $param): Sitemap
     {
         if (!in_array($name, [self::TYPE_GROUP, self::TYPE_SEGMENT, self::TYPE_LINK, self::TYPE_VIEW], true)) {
             throw new SitemapException("Undefined method `{$name}`");
@@ -61,14 +62,10 @@ final class Sitemap implements \IteratorAggregate
             throw new SitemapException('Node name required and must be string');
         }
 
-        if ($this->root->get($param[0]) !== null) {
-            $node = $this->root->get($param[0]);
-            if ($node === null) {
-                return null;
-            }
-
+        $root = $this->root->get($param[0]);
+        if ($root instanceof Node) {
             // found chain
-            return $this->withRoot($node);
+            return $this->withRoot($root);
         }
 
         $args = ['type' => $name, 'title' => $param[1]];
@@ -82,21 +79,27 @@ final class Sitemap implements \IteratorAggregate
         return $this->withRoot($node);
     }
 
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    public function getElements(): array
+    {
+        return $this->root->getElements();
+    }
+
     /**
      * Find all visible nodes and highlight current path.
      *
      * @param GuardInterface $guard
      * @param string|null    $targetNode
-     * @return Sitemap|null
+     * @return Sitemap
      */
-    public function withVisibleNodes(GuardInterface $guard, string $targetNode = null): ?Sitemap
+    public function withVisibleNodes(GuardInterface $guard, string $targetNode = null): Sitemap
     {
         $sitemap = clone $this;
-        $sitemap->root = $this->filterVisible($this->root, $guard, $targetNode);
-
-        if ($sitemap->root === null) {
-            return null;
-        }
+        $sitemap->root = $this->filterVisible($this->root, $guard, $targetNode) ?? $this->createRoot();
 
         return $sitemap;
     }
@@ -151,16 +154,14 @@ final class Sitemap implements \IteratorAggregate
      */
     private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
     {
-        if ($node->hasOption('permission')) {
-            if (!$guard->allows($node->getOption('permission'))) {
-                return new Node('empty');
-            }
+        if ($node->hasOption('permission') && !$guard->allows($node->getOption('permission'))) {
+            return null;
         }
 
         $activePath = false;
         $nodes = [];
-        foreach ($node as $name => $child) {
-            $child = $this->filterVisible($child, $guard, $targetNode);
+        foreach ($node as $name => $subNode) {
+            $child = $this->filterVisible($subNode, $guard, $targetNode);
             if ($child !== null) {
                 $nodes[$child->getName()] = $child;
 
@@ -171,15 +172,21 @@ final class Sitemap implements \IteratorAggregate
         }
 
         if ($nodes === [] && !in_array($node->getOption('type'), [self::TYPE_LINK, self::TYPE_VIEW], true)) {
-            return new Node('empty');
+            return null;
         }
 
-        $opts = $node->getOptions();
-        if ($node->getName() === $targetNode || $activePath) {
-            $opts['active'] = true;
+        $options = $node->getOptions();
+        if ($activePath || $this->nodeMatches($node, $targetNode)) {
+            $options['active'] = true;
         }
 
-        return new Node($node->getName(), $opts, $nodes);
+        return new Node($node->getName(), $options, $nodes);
+    }
+
+    private function nodeMatches(Node $node, string $targetNode = null): bool
+    {
+        $route = $node->getOption('route') ?? $node->getName();
+        return RouteBuilder::routeName($this->namespace, $route) === $targetNode;
     }
 
     /**
@@ -192,5 +199,10 @@ final class Sitemap implements \IteratorAggregate
         $sitemap->root = $root;
 
         return $sitemap;
+    }
+
+    private function createRoot(): Node
+    {
+        return new Node('root', ['type' => self::TYPE_ROOT]);
     }
 }

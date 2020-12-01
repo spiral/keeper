@@ -18,13 +18,27 @@ final class KeeperConfig
 {
     /** @var array */
     private $config;
+    /** @var string */
+    private $namespace;
 
     /**
-     * @param array $config
+     * @param string $namespace
+     * @param array  $config
      */
-    public function __construct(array $config)
+    public function __construct(string $namespace, array $config)
     {
         $this->config = $config;
+        $this->namespace = $namespace;
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    public function getDefaults(): array
+    {
+        return $this->config['routeDefaults'] ?? [];
     }
 
     /**
@@ -33,14 +47,6 @@ final class KeeperConfig
     public function getRoutePrefix(): string
     {
         return $this->config['routePrefix'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getRoutePattern(): string
-    {
-        return $this->config['routePattern'];
     }
 
     /**

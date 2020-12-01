@@ -17,10 +17,10 @@ class Node implements \IteratorAggregate
     private $name;
 
     /** @var array */
-    private $options = [];
+    private $options;
 
     /** @var Node[] */
-    private $nodes = [];
+    private $nodes;
 
     /**
      * Node constructor.
@@ -97,10 +97,39 @@ class Node implements \IteratorAggregate
     }
 
     /**
-     * @return \Generator
+     * @return iterable
      */
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
-        yield from $this->nodes;
+        $positions = [];
+        $position = 0;
+        $nodes = $this->nodes;
+        foreach ($this->nodes as $name => $node) {
+            $currentPosition = $node->getOption('position') ?? $position;
+            if ($node->getOption('position') === null) {
+                $position++;
+            }
+
+            $positions[$name] = $currentPosition;
+            $node->setOption('position', $currentPosition);
+        }
+        array_multisort($positions, SORT_ASC, $nodes);
+
+        yield from $nodes;
+    }
+
+    public function getElements(): array
+    {
+        $elements = [];
+        $nested = [];
+        foreach ($this->nodes as $element => $child) {
+            $elements[] = $element;
+            $nestedElements = $child->getElements();
+            if ($nestedElements) {
+                $nested[] = $child->getElements();
+            }
+        }
+
+        return $nested ? array_merge($elements, ...$nested) : $elements;
     }
 }

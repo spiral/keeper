@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit bootstrap="vendor/autoload.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          colors="true"
@@ -8,6 +8,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
+         stderr="true"
          stopOnFailure="false"
          stopOnError="false">
 
@@ -22,4 +23,9 @@
             <directory>src/</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="memory_limit" value="-1"/>
+    </php>
 </phpunit>

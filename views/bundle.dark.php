@@ -3,7 +3,7 @@
 {{--layout elements--}}
 <use:element path="keeper:layout/sidebar" as="keeper:sidebar"/>
 <use:element path="keeper:layout/header" as="keeper:header"/>
-<use:element path="keeper:layout/breadcrumps" as="keeper:breadcrumps"/>
+<use:element path="keeper:layout/breadcrumbs" as="keeper:breadcrumbs"/>
 
 {{--layout partials--}}
 <use:element path="keeper:layout/panel" as="ui:panel"/>

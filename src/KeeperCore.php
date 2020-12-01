@@ -42,9 +42,9 @@ final class KeeperCore implements CoreInterface, InjectorInterface
 
     /**
      * @param ScopeInterface $scope
-     * @param CoreInterface $core
+     * @param CoreInterface  $core
      * @param GuardInterface $guard
-     * @param string $namespace
+     * @param string         $namespace
      */
     public function __construct(
         ScopeInterface $scope,
@@ -103,7 +103,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface
 
     /**
      * @param object $module
-     * @param array $aliases
+     * @param array  $aliases
      */
     public function addModule(object $module, array $aliases): void
     {
@@ -127,7 +127,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface
 
     /**
      * @param \ReflectionClass $class
-     * @param string|null $context
+     * @param string|null      $context
      * @return object|null
      */
     public function createInjection(\ReflectionClass $class, string $context = null)
@@ -138,7 +138,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface
     /**
      * @param string $controller
      * @param string $action
-     * @param array $parameters
+     * @param array  $parameters
      * @return mixed
      * @throws \Throwable
      */

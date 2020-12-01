@@ -11,9 +11,11 @@
        * Defined in keeper:layout/sitemap
        *
        * @var \Psr\Http\Message\ServerRequestInterface $_serverRequest_
-       * @var \Spiral\Keeper\Module\RouteRegistry      $_router_
+       * @var \Spiral\Keeper\Helper\RouteBuilder       $_router_
        * @var \Spiral\Security\GuardInterface          $_guard_
        * @var \Spiral\Keeper\Module\Sitemap            $_sitemap_
+       * @var \Spiral\Keeper\Module\Sitemap\Node       $_s_
+       * @var \Spiral\Keeper\Module\Sitemap\Node       $_i_
        */
       ?>
     <nav class="sf-nav" data-sf="nav">
@@ -24,7 +26,7 @@
             <ul class="sf-nav__list">
               <li class="sf-nav__item">
                 <a class="sf-nav__item-heading {!! $_s_->getOption('active') ? 'active' : '' !!}"
-                   href="{!! $_router_->uri($_s_->getName()) !!}">
+                   href="{!! $_router_->uri($_sitemap_->getNamespace(), $_s_->getOption('route') ?? $_s_->getName()) !!}">
                   @if($_s_->getOption('icon') !== null)
                     <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
                   @endif
@@ -44,7 +46,7 @@
                        data-sf="nav-item-toggle"
                        aria-expanded="{!! $_is_->getOption('active') ? 'true' : 'false' !!}"
                        aria-controls="nav-item-{!! $_in_ !!}">
-                    @if($_is_->getOption('icon') !==null )
+                    @if($_is_->getOption('icon') !== null )
                       <i class="fa fa-{!! $_is_->getOption('icon') !!}"></i>
                     @endif
                     <span>{{ $_is_->getOption('title') }}</span>
@@ -54,8 +56,8 @@
                     <div class="sf-subnav">
                       @foreach($_is_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
-                           href="{!! $_router_->uri($_i_->getName()) !!}">
-                          @if($_i_->getOption('icon') !==null )
+                           href="{!! $_router_->uri($_sitemap_->getNamespace(), $_i_->getOption('route') ?? $_i_->getName()) !!}">
+                          @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif
                           <span>{{ $_i_->getOption('title') }}</span>
@@ -77,7 +79,7 @@
                        data-sf="nav-item-toggle"
                        aria-expanded="{!! $_s_->getOption('active') ? 'true' : 'false' !!}"
                        aria-controls="nav-item-{!! $_n_ !!}">
-                    @if($_s_->getOption('icon') !==null )
+                    @if($_s_->getOption('icon') !== null )
                       <i class="fa fa-{!! $_s_->getOption('icon') !!}"></i>
                     @endif
                     <span>{{ $_s_->getOption('title') }}</span>
@@ -86,8 +88,8 @@
                     <div class="sf-subnav">
                       @foreach($_s_ as $_i_)
                         <a class="sf-subnav__item {!! $_i_->getOption('active') ? 'active' : '' !!}"
-                           href="{!! $_router_->uri($_i_->getName()) !!}">
-                          @if($_i_->getOption('icon') !==null )
+                           href="{!! $_router_->uri($_sitemap_->getNamespace(), $_i_->getOption('route') ?? $_i_->getName()) !!}">
+                          @if($_i_->getOption('icon') !== null )
                             <i class="fa fa-{!! $_i_->getOption('icon') !!}"></i>
                           @endif
                           <span>{{ $_i_->getOption('title') }}</span>

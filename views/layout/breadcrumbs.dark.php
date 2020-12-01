@@ -3,7 +3,7 @@
  * Defined in keeper:layout/sitemap
  *
  * @var \Psr\Http\Message\ServerRequestInterface $_serverRequest_
- * @var \Spiral\Keeper\Module\RouteRegistry      $_router_
+ * @var \Spiral\Keeper\Helper\RouteBuilder       $_router_
  * @var \Spiral\Security\GuardInterface          $_guard_
  * @var \Spiral\Keeper\Module\Sitemap            $_sitemap_
  */
@@ -25,7 +25,9 @@ $_ln_ = array_pop($_bc_);
                     <li class="sf-breadcrumb__item">{{ $_n_->getOption('title') }}</li>
                 @else
                     <li class="sf-breadcrumb__item">
-                        <a href="{!! $_router_->uri($_n_->getName(), $_args_) !!}">{{ $_n_->getOption('title') }}</a>
+                        <a href="{!! $_router_->uri($_sitemap_->getNamespace(), $_n_->getOption('route') ?? $_n_->getName(), $_args_) !!}">
+                            {{ $_n_->getOption('title') }}
+                        </a>
                     </li>
                 @endif
             @endforeach

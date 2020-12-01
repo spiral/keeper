@@ -11,12 +11,16 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation\Sitemap;
 
+use Doctrine\Common\Annotations\Annotation\Attribute;
+
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
 final class View
 {
+    use ParentTrait;
+
     /**
      * @Attribute(name="name", type="string", required=true)
      * @var string
@@ -34,4 +38,10 @@ final class View
      * @var array
      */
     public $options = [];
+
+    /**
+     * @Attribute(name="position", type="float")
+     * @var float
+     */
+    public $position;
 }

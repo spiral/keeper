@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation\Sitemap;
 
+use Doctrine\Common\Annotations\Annotation\Attribute;
+
 /**
  * @Annotation
  * @Target({"CLASS"})
@@ -40,4 +42,10 @@ final class Group
      * @var array
      */
     public $options = [];
+
+    /**
+     * @Attribute(name="position", type="float")
+     * @var float
+     */
+    public $position;
 }

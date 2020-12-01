@@ -91,9 +91,20 @@ This will allow referring to that links in the annotations via `parent` attribut
  */
 ```
 
-### Position order
+### Sorting
 Introduced `position` annotation property for all kind of sitemap annotations.
-> You can use a `position` option in a direct sitemap declaration syntax.
+```php
+/**
+ * @\Spiral\Keeper\Annotation\Sitemap\Link(title="System", position=1.0)
+ */
+```
+> Note that annotations wait for float position values
+
+You can use a `position` option in a direct sitemap declaration syntax:
+```php
+/** @var \Spiral\Keeper\Module\Sitemap $sitemap */
+$sitemap->group('dashboard', 'Dashboard', ['icon' => 'home', 'position' => -1.2]);
+```
 
 Sitemap module will now provide a sorted list of nested nodes.
 It uses either defined `position` value, or an auto-incremented default one.

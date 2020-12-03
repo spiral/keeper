@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Keeper\Module\Sitemap;
 
 use Spiral\Domain\Annotation\Guarded;
+use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Keeper\Annotation\Action;
 
 class Method
@@ -34,21 +35,29 @@ class Method
     }
 
     public static function create(
-        string $namespace,
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
+        ?GuardNamespace $guardNamespace = null,
         ?Guarded $guarded = null
     ): self {
         $method = $reflection->getName();
-        $permission = $guarded instanceof Guarded && $guarded->permission
-            ? $guarded->permission
-            : "$controller.$method";
+
+        $permission = array_filter(
+            [
+                $guardNamespace && $guardNamespace->namespace ? $guardNamespace->namespace : $controller,
+                $guarded && $guarded->permission ? $guarded->permission : $method
+            ],
+            static function ($chunk): bool {
+                return (bool)$chunk;
+            }
+        );
+
         return new self(
             $reflection,
             $action->name ?: "$controller.$method",
             $controller,
-            "$namespace.$permission"
+            implode('.', $permission)
         );
     }
 

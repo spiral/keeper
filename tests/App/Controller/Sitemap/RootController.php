@@ -51,6 +51,7 @@ class RootController
     }
 
     /**
+     * @Guarded(permission="parentRoot")
      * @Link(title="parent", parent="custom.parent")
      * @Action(route="/parent", name="root:parent")
      */

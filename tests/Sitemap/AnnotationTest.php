@@ -93,6 +93,35 @@ class AnnotationTest extends TestCase
         $this->assertArrayHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
     }
 
+    /**
+     * @depends testExternalParent
+     */
+    public function testPermissionsWithoutNamespace(): void
+    {
+        $output = $this->getSitemap();
+
+        $parent = $this->node($output, 'custom', 'custom.parent', 'root.parent');
+        $this->assertSame('root.parentRoot', $parent['options']['permission']);
+
+        $child = $this->node($output, 'custom', 'custom.parent', 'root.parent', 'root.child');
+        $this->assertSame('root.im-a-child', $child['options']['permission']);
+    }
+
+    /**
+     * @depends testExternalParent
+     * @depends testSiblings
+     */
+    public function testPermissionsWithNamespace(): void
+    {
+        $output = $this->getSitemap();
+
+        $node = $this->node($output, 'custom', 'custom.parent', 'root.parent', 'root.child', 'external.index');
+        $this->assertSame('default.external.index', $node['options']['permission']);
+
+        $node = $this->node($output, 'custom', 'custom.parent', 'external.custom');
+        $this->assertSame('default.external.cstm', $node['options']['permission']);
+    }
+
     public function testForbidden(): void
     {
         $this->app->runScope(
@@ -101,8 +130,11 @@ class AnnotationTest extends TestCase
                 $output = $this->getSitemap(true);
             }
         );
+
         // This exact action is forbidden tests/App/Bootloader/GuestBootloader.php:34
         $this->assertArrayNotHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayNotHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
 
         $this->app->runScope(
             [ActorInterface::class => Guest::class],
@@ -110,13 +142,26 @@ class AnnotationTest extends TestCase
                 $output = $this->getSitemap(true);
             }
         );
+
         $this->assertArrayHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
     }
 
     private function getSitemap(bool $onlyVisible = false): array
     {
         $response = $this->get($onlyVisible ? '/default/sitemap/visible' : '/default/sitemap');
         return json_decode((string)$response->getBody(), true);
+    }
+
+    private function node(array $sitemap, string $firstKey, string ...$keys): array
+    {
+        $sitemap = ['nodes' => $sitemap];
+        array_unshift($keys, $firstKey);
+        foreach ($keys as $key) {
+            $sitemap = $sitemap['nodes'][$key];
+        }
+        return $sitemap;
     }
 
     private function nodes(array $sitemap, string $firstKey, string ...$keys): array

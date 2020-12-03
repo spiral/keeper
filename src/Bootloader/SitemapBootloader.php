@@ -15,6 +15,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Domain\Annotation\Guarded;
+use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Helpers\GraphSorter;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
@@ -111,7 +112,7 @@ class SitemapBootloader extends Bootloader
          */
         foreach ($this->locator->locateNamespaceControllers($namespace) as $class => $controller) {
             $lastSegments[$controller->name] = $this->buildClassSitemap($class);
-            foreach ($this->packMethods($namespace, $class, $controller->name) as $name => $method) {
+            foreach ($this->packMethods($class, $controller->name) as $name => $method) {
                 $methods[$name] = $method;
             }
         }
@@ -145,16 +146,18 @@ class SitemapBootloader extends Bootloader
         return $lastSegment;
     }
 
-    private function packMethods(string $namespace, \ReflectionClass $class, string $controller): iterable
+    private function packMethods(\ReflectionClass $class, string $controller): iterable
     {
         /**
-         * @var \ReflectionMethod $method
-         * @var Action            $action
-         * @var Guarded|null      $permission
+         * @var \ReflectionMethod   $method
+         * @var Action              $action
+         * @var Guarded|null        $guarded
+         * @var GuardNamespace|null $guardNamespace
          */
+        $guardNamespace = $this->reader->getClassAnnotation($class, GuardNamespace::class);
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
-            $permission = $this->reader->getMethodAnnotation($method, Guarded::class);
-            $method = Sitemap\Method::create($namespace, $controller, $method, $action, $permission);
+            $guarded = $this->reader->getMethodAnnotation($method, Guarded::class);
+            $method = Sitemap\Method::create($controller, $method, $action, $guardNamespace, $guarded);
             yield "$controller.{$method->name}" => $method;
         }
     }

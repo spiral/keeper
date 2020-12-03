@@ -2,6 +2,10 @@
 
 {{--layout elements--}}
 <use:element path="keeper:layout/sidebar" as="keeper:sidebar"/>
+<use:element path="keeper:layout/sidebar/group" as="keeper:sidebar:group"/>
+<use:element path="keeper:layout/sidebar/link" as="keeper:sidebar:link"/>
+<use:element path="keeper:layout/sidebar/icon" as="keeper:sidebar:icon"/>
+<use:element path="keeper:layout/sidebar/a" as="keeper:sidebar:a"/>
 <use:element path="keeper:layout/header" as="keeper:header"/>
 <use:element path="keeper:layout/breadcrumbs" as="keeper:breadcrumbs"/>
 

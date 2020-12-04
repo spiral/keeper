@@ -22,7 +22,7 @@ $_node_ = inject('node');
         <div class="sf-nav__item-content" data-sf-nav="item-content" id="nav-item-{!! $_name_ !!}">
             <div class="sf-subnav">
                 @foreach($_node_ as $_child_)
-                    <keeper:sidebar:link node="{!! $_child_ !!}"/>
+                    <keeper:sidebar:link node="{{ $_child_ }}"/>
                 @endforeach
             </div>
         </div>

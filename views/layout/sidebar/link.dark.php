@@ -7,7 +7,7 @@
  */
 $_node_ = inject('node');
 ?>
-<keeper:sidebar:a class="sf-subnav__item" node="{!! $_node_ !!}">
-    <keeper:sidebar:link node="{!! $_node_ !!}"/>
+<keeper:sidebar:a class="sf-subnav__item" node="{{ $_node_ }}">
+    <keeper:sidebar:link node="{{ $_node_ }}"/>
     <span>{{ $_node_->getOption('title') }}</span>
 </keeper:sidebar:a>

@@ -22,8 +22,8 @@
                     <div class="sf-navgroup">
                         <ul class="sf-nav__list">
                             <li class="sf-nav__item">
-                                <keeper:sidebar:a class="sf-nav__item-heading" node="{!! $_node_ !!}">
-                                    <keeper:sidebar:link node="{!! $_node_ !!}"/>
+                                <keeper:sidebar:a class="sf-nav__item-heading" node="{{ $_node_ }}">
+                                    <keeper:sidebar:link node="{{ $_node_ }}"/>
                                     <span>{{ $_node_->getOption('title') }}</span>
                                 </keeper:sidebar:a>
                             </li>
@@ -37,11 +37,11 @@
                         @foreach($_node_ as $_childName_ => $_child_)
                             @switch($_child_->getOption('type'))
                                 @case(\Spiral\Keeper\Module\Sitemap::TYPE_GROUP)
-                                <keeper:sidebar:group name="{!! $_childName_ !!}" parent="{!! $_child_ !!}"/>
+                                <keeper:sidebar:group name="{!! $_childName_ !!}" parent="{{ $_child_ }}"/>
                                 @break
 
                                 @case(\Spiral\Keeper\Module\Sitemap::TYPE_LINK)
-                                <keeper:sidebar:link node="{!! $_child_ !!}"/>
+                                <keeper:sidebar:link node="{{ $_child_ }}"/>
                                 @break
                             @endswitch
                         @endforeach
@@ -50,7 +50,7 @@
 
                     @case(\Spiral\Keeper\Module\Sitemap::TYPE_GROUP)
                     <div class="sf-navgroup">
-                        <keeper:sidebar:group name="{!! $_name_ !!}" parent="{!! $_node_ !!}"/>
+                        <keeper:sidebar:group name="{!! $_name_ !!}" parent="{{ $_node_ }}"/>
                     </div>
                     @break
                 @endswitch

@@ -1,3 +1,5 @@
+<use:bundle path="keeper:bundle"/>
+
 <?php
 
 /**

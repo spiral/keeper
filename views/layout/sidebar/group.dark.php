@@ -1,4 +1,5 @@
-<use:element path="keeper:layout/sidebar/link" as="keeper:sidebar:link"/>
+<use:bundle path="keeper:bundle"/>
+
 <?php
 
 /**

@@ -1,3 +1,5 @@
+<use:bundle path="keeper:bundle"/>
+
 <aside class="sf-sidebar active" data-sf="sidebar" id="sidebar">
     <div class="sf-sidebar__container">
         <block:header>

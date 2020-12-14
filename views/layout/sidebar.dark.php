@@ -39,7 +39,7 @@
                         @foreach($_node_ as $_childName_ => $_child_)
                             @switch($_child_->getOption('type'))
                                 @case(\Spiral\Keeper\Module\Sitemap::TYPE_GROUP)
-                                <keeper:sidebar:group name="{!! $_childName_ !!}" parent="{{ $_child_ }}"/>
+                                <keeper:sidebar:group name="{!! $_childName_ !!}" node="{{ $_child_ }}"/>
                                 @break
 
                                 @case(\Spiral\Keeper\Module\Sitemap::TYPE_LINK)
@@ -52,7 +52,7 @@
 
                     @case(\Spiral\Keeper\Module\Sitemap::TYPE_GROUP)
                     <div class="sf-navgroup">
-                        <keeper:sidebar:group name="{!! $_name_ !!}" parent="{{ $_node_ }}"/>
+                        <keeper:sidebar:group name="{!! $_name_ !!}" node="{{ $_node_ }}"/>
                     </div>
                     @break
                 @endswitch

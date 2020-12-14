@@ -8,6 +8,7 @@ Referenced in `views/layout/common.dark.php` and `views/bundle.dark.php`.
 - `@Action` annotation now is fully compatible with a global `@Route` annotation.
 `name` property is optional, by default `controller.action` name will be assigned.
 > For now router ignores provided group.
+- `@Controller` annotation now will not fall back to controller's name if prefix is empty, please define `prefix` attribute explicitly if needed.
 - `@Controller` annotation now can have a `defaultAction` property, see below for more details.
 
 

@@ -148,6 +148,14 @@ class AnnotationTest extends TestCase
         $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
     }
 
+    public function testDuplicatedElements(): void
+    {
+        $output = $this->getSitemap();
+
+        $this->assertArrayHasKey('root.duplicated', $this->nodes($output, 'custom'));
+        $this->assertArrayNotHasKey('root.duplicated', $this->nodes($output, 'rootgroup'));
+    }
+
     private function getSitemap(bool $onlyVisible = false): array
     {
         $response = $this->get($onlyVisible ? '/default/sitemap/visible' : '/default/sitemap');

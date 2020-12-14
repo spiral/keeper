@@ -33,6 +33,14 @@ class RootController
     }
 
     /**
+     * @Link(title="duplicated")
+     * @Action(route="/duplicated")
+     */
+    public function duplicated(): void
+    {
+    }
+
+    /**
      * @Guarded(permission="im-a-child")
      * @Link(title="child", parent="parent")
      * @Action(route="/child", name="root:child")

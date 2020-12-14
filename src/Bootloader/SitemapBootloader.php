@@ -36,6 +36,8 @@ class SitemapBootloader extends Bootloader
     private $locator;
     /** @var GraphSorter */
     private $sorter;
+    /** @var array */
+    private $cache = [];
 
     public function __construct(AnnotationReader $reader, Locator $locator)
     {
@@ -85,7 +87,8 @@ class SitemapBootloader extends Bootloader
 
     private function fillFromNode(Sitemap\Node $node, Sitemap\Node $parent = null): void
     {
-        $this->sorter->addItem(
+        $this->addItem(
+            $node->getOption('type'),
             $node->getName(),
             [
                 'type'    => $node->getOption('type'),
@@ -95,7 +98,7 @@ class SitemapBootloader extends Bootloader
                 'options' => $node->getOptions(),
                 'child'   => []
             ],
-            [$parent === null ? static::ROOT : $parent->getName()]
+            [$parent ? $parent->getName() : static::ROOT]
         );
         foreach ($node->getIterator() as $child) {
             $this->fillFromNode($child, $node);
@@ -129,7 +132,8 @@ class SitemapBootloader extends Bootloader
                 case $ann instanceof Segment:
                 case $ann instanceof Group:
                     $lastSegment = $ann->name;
-                    $this->sorter->addItem(
+                    $this->addItem(
+                        $ann instanceof Segment ? Sitemap::TYPE_SEGMENT : Sitemap::TYPE_GROUP,
                         $ann->name,
                         [
                             'type'    => $ann instanceof Segment ? Sitemap::TYPE_SEGMENT : Sitemap::TYPE_GROUP,
@@ -139,7 +143,7 @@ class SitemapBootloader extends Bootloader
                             'options' => $ann->options + ['position' => $ann->position],
                             'child'   => []
                         ],
-                        [$ann->parent]
+                        $ann->parent ? [$ann->parent] : []
                     );
             }
         }
@@ -190,7 +194,8 @@ class SitemapBootloader extends Bootloader
                             $parent = $lastSegment;
                         }
 
-                        $this->sorter->addItem(
+                        $this->addItem(
+                            $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
                             $method->name(),
                             [
                                 'type'    => $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
@@ -210,6 +215,15 @@ class SitemapBootloader extends Bootloader
                         break;
                 }
             }
+        }
+    }
+
+    private function addItem(string $type, string $name, array $item, array $dependencies): void
+    {
+        $key = "$type:$name";
+        if (!isset($this->cache[$key])) {
+            $this->cache[$key] = true;
+            $this->sorter->addItem($name, $item, $dependencies);
         }
     }
 

@@ -11,6 +11,7 @@ class SitemapBootloader extends \Spiral\Keeper\Bootloader\SitemapBootloader
     protected function declareSitemap(Sitemap $sitemap): void
     {
         $group = $sitemap->group('custom', 'Custom Group', ['position' => 1.1]);
+        $group->link('root.duplicated', 'Duplicated link');
         $group->link('custom.parent', 'custom parent');
     }
 }

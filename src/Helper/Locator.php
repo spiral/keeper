@@ -27,14 +27,19 @@ final class Locator
 
     public function locateNamespaceControllers(string $namespace): iterable
     {
+        $matches = [];
         foreach ($this->locator->findClasses(Controller::class) as $match) {
             /** @var Controller $controller */
             $controller = $match->getAnnotation();
             if ($controller->namespace !== $namespace) {
                 continue;
             }
+            $matches[$match->getClass()->getFileName()] = $match;
+        }
 
-            yield $match->getClass() => $controller;
+        ksort($matches);
+        foreach ($matches as $match) {
+            yield $match->getClass() => $match->getAnnotation();
         }
     }
 

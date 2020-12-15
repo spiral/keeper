@@ -1,3 +1,15 @@
+## Summary
+The whole changelog is described below, here you can see the main steps that could be required for a successful migration.
+- `breadcrumps.dark.php` renamed into `breadcrumbs.dark.php`. So if you extend it or `common.dark.php` please be aware.
+- `@Controller` annotation now don't use `name` attribute for prefixing, use `prefix` attribute explicitly.
+- For sitemaps permissions are taken from `@GuardNamespace` and `@Guarded` annotation.
+  Note that keeper namespace isn't used here automatically because these annotations come from external module,
+  so you need to specify the namespace in the `@GuardNamespace` explicitly. 
+  As a fallback to `@GuardNamespace` controller's `namespace.name` is used, method's `name` is a fallback to a missing `@Guarded` annotation.
+- `@action` directive is deprecated, use `@keeper` one. It has a new 1st parameter - namespace.
+- `RouteRegistry::uri()` helper is deprecated, use `RouteBuilder::uri()` one. It has a new 1st parameter - namespace.
+- For better and understandable sitemap sorting use `position` attribute in annotations or `position` option in `Sitemap` element declaring (via code).
+
 ## Files
 View template `views/layout/breadcrumps.dark.php` renamed into `views/layout/breadcrumbs.dark.php` (typo fixed).
 Referenced in `views/layout/common.dark.php` and `views/bundle.dark.php`.

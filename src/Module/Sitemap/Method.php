@@ -35,6 +35,7 @@ class Method
     }
 
     public static function create(
+        string $namespace,
         string $controller,
         \ReflectionMethod $reflection,
         Action $action,
@@ -45,7 +46,7 @@ class Method
 
         $permission = array_filter(
             [
-                $guardNamespace && $guardNamespace->namespace ? $guardNamespace->namespace : $controller,
+                $guardNamespace && $guardNamespace->namespace ? $guardNamespace->namespace : "$namespace.$controller",
                 $guarded && $guarded->permission ? $guarded->permission : $method
             ],
             static function ($chunk): bool {

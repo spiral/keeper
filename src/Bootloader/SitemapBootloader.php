@@ -115,7 +115,7 @@ class SitemapBootloader extends Bootloader
          */
         foreach ($this->locator->locateNamespaceControllers($namespace) as $class => $controller) {
             $lastSegments[$controller->name] = $this->buildClassSitemap($class);
-            foreach ($this->packMethods($class, $controller->name) as $name => $method) {
+            foreach ($this->packMethods($namespace, $class, $controller->name) as $name => $method) {
                 $methods[$name] = $method;
             }
         }
@@ -150,7 +150,7 @@ class SitemapBootloader extends Bootloader
         return $lastSegment;
     }
 
-    private function packMethods(\ReflectionClass $class, string $controller): iterable
+    private function packMethods(string $namespace, \ReflectionClass $class, string $controller): iterable
     {
         /**
          * @var \ReflectionMethod   $method
@@ -161,7 +161,7 @@ class SitemapBootloader extends Bootloader
         $guardNamespace = $this->reader->getClassAnnotation($class, GuardNamespace::class);
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
             $guarded = $this->reader->getMethodAnnotation($method, Guarded::class);
-            $method = Sitemap\Method::create($controller, $method, $action, $guardNamespace, $guarded);
+            $method = Sitemap\Method::create($namespace, $controller, $method, $action, $guardNamespace, $guarded);
             yield "$controller.{$method->name}" => $method;
         }
     }

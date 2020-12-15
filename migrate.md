@@ -134,10 +134,16 @@ second: 1
 ```
 
 ### Visibility
-Now permissions are taken from `@GuardNamespace` and `@Guarded` annotation: `<guard Namespace (or controller name)>.<guarded permission (or method name)>`.
-Note that keeper namespace isn't used here automatically because these annotations come from external module.
+Now permissions are taken from `@GuardNamespace` and `@Guarded` annotation.
+Note that keeper namespace isn't used here automatically because these annotations come from external module, so you need to specify the namespace in the `@GuardNamespace` explicitly: 
+```php
+/**
+ * @Controller(name="myController", prefix="/prefix", namespace="ns")
+ * @GuardNamespace(namespace="ns.myController")
+ */
 
-**It is recommended to use @GuardNamespace(namespace="keeper.\<controller\>") and @Guarded annotations**
+```
+As a fallback to `@GuardNamespace` controller's `namespace.name` is used, method's `name` is a fallback to a missing `@Guarded` annotation.
 
 Example with `@GuardNamespace` annotation:
 ```php

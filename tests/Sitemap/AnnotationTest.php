@@ -101,10 +101,10 @@ class AnnotationTest extends TestCase
         $output = $this->getSitemap();
 
         $parent = $this->node($output, 'custom', 'custom.parent', 'root.parent');
-        $this->assertSame('root.parentRoot', $parent['options']['permission']);
+        $this->assertSame('default.root.parentRoot', $parent['options']['permission']);
 
         $child = $this->node($output, 'custom', 'custom.parent', 'root.parent', 'root.child');
-        $this->assertSame('root.im-a-child', $child['options']['permission']);
+        $this->assertSame('default.root.im-a-child', $child['options']['permission']);
     }
 
     /**

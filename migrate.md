@@ -133,6 +133,66 @@ positioned: 0.5,
 second: 1
 ```
 
+### Visibility
+Now permissions are taken from `@GuardNamespace` and `@Guarded` annotation: `<guard Namespace (or controller name)>.<guarded permission (or method name)>`.
+Note that keeper namespace isn't used here automatically because these annotations come from external module.
+
+Example with `@GuardNamespace` annotation:
+```php
+/**
+ * @Controller(name="with", prefix="/with", namespace="first")
+ * @GuardNamespace(namespace="withNamespace")
+ */
+class WithNamespaceController
+{
+    /**
+     * @Link(title="A")
+     * ...
+     */
+    public function a(): void
+    {
+        // permission is "withNamespace.a"
+    }
+
+    /**
+     * @Link(title="B")
+     * @Guarded(permission="permission")
+     * ...
+     */
+    public function b(): void
+    {
+        // permission is "withNamespace.permission"
+    }
+}
+```
+Example without `@GuardNamespace` annotation:
+```php
+/**
+ * @Controller(name="without", prefix="/without", namespace="second")
+ */
+class WithoutNamespaceController
+{
+    /**
+     * @Link(title="A")
+     * ...
+     */
+    public function a(): void
+    {
+        // permission is "without.a"
+    }
+
+    /**
+     * @Link(title="B")
+     * @Guarded(permission="permission")
+     * ...
+     */
+    public function b(): void
+    {
+        // permission is "without.permission"
+    }
+}
+```
+
 ### View templates
 `sidebar` and `breadcrumbs` view files updated to explicitly use sitemap namespace and node route (using new `\Spiral\Keeper\Helper\RouteBuilder` helper).
 ```php

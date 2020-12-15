@@ -137,7 +137,7 @@ second: 1
 Now permissions are taken from `@GuardNamespace` and `@Guarded` annotation: `<guard Namespace (or controller name)>.<guarded permission (or method name)>`.
 Note that keeper namespace isn't used here automatically because these annotations come from external module.
 
-**It is recommended to use @GuardNamespace(namespace="keeper.<controller>") and @Guarded annotations**
+**It is recommended to use @GuardNamespace(namespace="keeper.\<controller\>") and @Guarded annotations**
 
 Example with `@GuardNamespace` annotation:
 ```php

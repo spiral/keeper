@@ -201,19 +201,18 @@ class WithoutNamespaceController
 /**
  * @var \Spiral\Keeper\Helper\RouteBuilder $_router_ 
  * @var \Spiral\Keeper\Module\Sitemap      $_sitemap_ 
- * @var \Spiral\Keeper\Module\Sitemap\Node $_s_ 
+ * @var \Spiral\Keeper\Module\Sitemap\Node $_node_ 
  */
-$_router_->uri($_sitemap_->getNamespace(), $_s_->getOption('route') ?? $_s_->getName());
+$_router_->uri($_sitemap_->getNamespace(), $_node_->getOption('route') ?? $_node_->getName());
 ```
 If you have extended the basic view templates please update the code.
 > for the `keeper` namespace old syntax will still be valid:
 ```php
 /**
  * @var \Spiral\Keeper\Module\RouteRegistry $_router_ 
- * @var \Spiral\Keeper\Module\Sitemap       $_sitemap_ 
- * @var \Spiral\Keeper\Module\Sitemap\Node  $_s_ 
+ * @var \Spiral\Keeper\Module\Sitemap\Node  $_node_ 
  */
-$_router_->uri($_s_->getName());
+$_router_->uri($_node_->getName());
 ```
 
 ## TODO

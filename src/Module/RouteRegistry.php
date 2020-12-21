@@ -123,7 +123,6 @@ final class RouteRegistry
      */
     private function configureRoute(Route $route): RouteInterface
     {
-        $defaults = array_merge($this->config->getDefaults(), $route->getDefaults());
-        return $route->withMiddleware(...$this->middleware)->withDefaults($defaults);
+        return $route->withMiddleware(...$this->middleware);
     }
 }

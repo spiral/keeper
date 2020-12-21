@@ -6,7 +6,6 @@ namespace Spiral\Tests\Keeper\Route;
 
 use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Router\Exception\UndefinedRouteException;
-use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
@@ -43,5 +42,16 @@ class ActionDefaultsTest extends TestCase
     {
         $this->expectException(UndefinedRouteException::class);
         $uri = (string)$this->router()->uri(RouteBuilder::routeName(static::NAMESPACE));
+    }
+
+    /**
+     * Tests that no weird defaults are passed to the route (given default is taken from the target).
+     */
+    public function testDefaults(): void
+    {
+        $uri = self::PREFIX . '/known/defaults';
+        $request = $this->get($uri);
+        $this->assertSame(200, $request->getStatusCode());
+        $this->assertSame(['action' => 'defaults'], json_decode((string)$request->getBody(), true));
     }
 }

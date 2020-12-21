@@ -166,11 +166,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         array $middlewares = []
     ): void {
         $target = new Action($controller, $action);
-        $route = new Route(
-            $pattern,
-            $target->withCore($this->core),
-            $defaults
-        );
+        $route = new Route($pattern, $target->withCore($this->core), $defaults);
 
         $route = $route->withMiddleware(...$middlewares)->withVerbs(...$verbs);
         if ($name !== null) {

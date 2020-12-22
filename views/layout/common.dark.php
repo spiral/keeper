@@ -21,9 +21,11 @@
     <define:heading>
       <div class="sf-heading">
         <keeper:breadcrumbs activeRoute="${activeRoute}"/>
-        <h1>
-          <block:title>{{$_ln_->getOption('title')}}</block:title>
-        </h1>
+        @if(!empty($_ln_))
+          <h1>
+            <block:title>{{$_ln_->getOption('title')}}</block:title>
+          </h1>
+        @endif
         <div>
           <block:actions/>
           <stack:collect name="actions" level="20"/>

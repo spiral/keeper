@@ -8,6 +8,7 @@ use Spiral\Bootloader\CommandBootloader;
 use Spiral\Bootloader\Http\DiactorosBootloader;
 use Spiral\Bootloader\Http\RouterBootloader;
 use Spiral\Bootloader\Security\GuardBootloader;
+use Spiral\Bootloader\Views\TranslatedCacheBootloader;
 use Spiral\Console\Console;
 use Spiral\Framework\Kernel;
 use Spiral\Http\Http;
@@ -18,6 +19,7 @@ use Spiral\Tests\Keeper\App\Bootloader;
 class App extends Kernel
 {
     protected const LOAD = [
+        TranslatedCacheBootloader::class,
         StemplerBootloader::class,
         GuardBootloader::class,
         DiactorosBootloader::class,

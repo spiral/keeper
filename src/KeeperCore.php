@@ -28,6 +28,9 @@ final class KeeperCore implements CoreInterface, InjectorInterface
     /** @var array */
     private $controllers = [];
 
+    /** @var array */
+    private $aliases = [];
+
     /** @var ScopeInterface */
     private $scope;
 
@@ -73,6 +76,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface
     public function setController(string $name, string $target): void
     {
         $this->controllers[$name] = $target;
+        $this->aliases[$target] = $name;
     }
 
     /**
@@ -130,7 +134,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface
      * @param string|null      $context
      * @return object|null
      */
-    public function createInjection(\ReflectionClass $class, string $context = null)
+    public function createInjection(\ReflectionClass $class, string $context = null): ?object
     {
         return $this->getModule($class->getName());
     }
@@ -144,17 +148,13 @@ final class KeeperCore implements CoreInterface, InjectorInterface
      */
     public function callAction(string $controller, string $action, array $parameters = [])
     {
-        $permission = sprintf('%s.%s.%s', $this->namespace, $controller, $action);
-
-        if (!$this->guard->allows($permission, $parameters)) {
+        $alias = $this->getControllerAlias($controller);
+        if (!$this->guard->allows("{$this->namespace}.$alias.$action", $parameters)) {
             throw new ControllerException(
-                sprintf('Unable to call `%s`->`%s`, forbidden', $controller, $action),
+                "Unable to call `{$alias}`->`{$action}`, forbidden",
                 ControllerException::FORBIDDEN
             );
         }
-
-        // resolve actual class name
-        $controller = $this->getController($controller);
 
         return $this->scope->runScope(
             [
@@ -165,5 +165,17 @@ final class KeeperCore implements CoreInterface, InjectorInterface
                 return $this->invoker->callAction($controller, $action, $parameters);
             }
         );
+    }
+
+    private function getControllerAlias(string $controller)
+    {
+        if (!isset($this->aliases[$controller])) {
+            throw new ControllerException(
+                sprintf('No such controller `%s`', $controller),
+                ControllerException::NOT_FOUND
+            );
+        }
+
+        return $this->aliases[$controller];
     }
 }

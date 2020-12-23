@@ -21,6 +21,7 @@ use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\Core;
 use Spiral\Core\CoreInterface;
 use Spiral\Domain\GuardInterceptor;
+use Spiral\Domain\PermissionsProviderInterface;
 use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Exception\KeeperException;
 use Spiral\Keeper\KeeperCore;
@@ -28,7 +29,6 @@ use Spiral\Keeper\Module\RouteRegistry;
 use Spiral\Router\Route;
 use Spiral\Router\RouterInterface;
 use Spiral\Router\Target\Action;
-use Spiral\Security\GuardInterface;
 
 abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 {
@@ -58,22 +58,10 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     /** @var KeeperCore */
     protected $core;
 
-    /**
-     * @param ConfiguratorInterface $config
-     * @param GuardInterface        $guard
-     * @param Container             $container
-     */
-    public function __construct(ConfiguratorInterface $config, GuardInterface $guard, Container $container)
+    public function __construct(ConfiguratorInterface $config, Container $container)
     {
         $this->config = $config;
         $this->container = $container;
-        $this->core = new KeeperCore(
-            $container,
-            $container,
-            new Core($container),
-            $guard,
-            static::NAMESPACE
-        );
     }
 
     /**
@@ -94,12 +82,22 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     }
 
     /**
-     * @param BootloadManager $bootloadManager
-     * @param RouterInterface $appRouter
+     * @param BootloadManager              $bootloadManager
+     * @param RouterInterface              $appRouter
+     * @param PermissionsProviderInterface $permissions
      * @throws \Throwable
      */
-    public function boot(BootloadManager $bootloadManager, RouterInterface $appRouter): void
-    {
+    public function boot(
+        BootloadManager $bootloadManager,
+        RouterInterface $appRouter,
+        PermissionsProviderInterface $permissions
+    ): void {
+        $this->core = new KeeperCore(
+            $this->container,
+            new Core($this->container),
+            $permissions,
+            static::NAMESPACE
+        );
         $config = $this->initConfig();
 
         // keeper relies on it's own routing mechanism
@@ -202,7 +200,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             }
         }
 
-        $this->core->addInterceptor($this->container->get(GuardInterceptor::class));
+        $this->core->addInterceptor($this->container->make(GuardInterceptor::class, ['permissions' => $this->core]));
     }
 
     /**

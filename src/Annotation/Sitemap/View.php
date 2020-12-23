@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Spiral\Keeper\Annotation\Sitemap;
 
 use Doctrine\Common\Annotations\Annotation\Attribute;
+use Spiral\Keeper\Module\Sitemap\Method;
 
 /**
  * @Annotation
@@ -44,4 +45,14 @@ final class View
      * @var float
      */
     public $position;
+
+    public function getOptions(Method $method = null): array
+    {
+        $options = $this->options + ['position' => $this->position];
+        if ($method !== null) {
+            $options['route'] = $method->route;
+        }
+
+        return $options;
+    }
 }

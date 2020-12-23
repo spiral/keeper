@@ -190,19 +190,7 @@ class SitemapBootloader extends Bootloader
                 switch (true) {
                     case $ann instanceof Link:
                     case $ann instanceof View:
-                        $parent = null;
-                        if ($ann->hasAbsoluteParent()) {
-                            $parent = $ann->parent;
-                        } elseif ($ann->hasRelativeParent()) {
-                            $parent = "{$method->controller}.{$ann->parent}";
-                        }
-
-                        $knownParent = $parent && (
-                            isset($methods[$parent]) || in_array($parent, $sitemapElements, true)
-                        );
-                        if (!$knownParent) {
-                            $parent = $lastSegment;
-                        }
+                        $parent = $this->getParent($ann, $method, $methods, $sitemapElements, $lastSegment);
 
                         $this->addItem(
                             $ann instanceof Link ? Sitemap::TYPE_LINK : Sitemap::TYPE_VIEW,
@@ -212,11 +200,7 @@ class SitemapBootloader extends Bootloader
                                 'name'    => $method->name(),
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
-                                'options' => $ann->options + [
-                                        'position'   => $ann->position,
-                                        'permission' => $method->permission,
-                                        'route'      => $method->route
-                                    ],
+                                'options' => $ann->getOptions($method),
                                 'child'   => []
                             ],
                             $parent ? [$parent] : []
@@ -226,6 +210,35 @@ class SitemapBootloader extends Bootloader
                 }
             }
         }
+    }
+
+    /**
+     * @param Link|View      $ann
+     * @param Sitemap\Method $method
+     * @param array          $methods
+     * @param array          $sitemapElements
+     * @param string         $lastSegment
+     * @return string
+     */
+    private function getParent(
+        $ann,
+        Sitemap\Method $method,
+        array $methods,
+        array $sitemapElements,
+        string $lastSegment
+    ): string {
+        $parent = null;
+        if ($ann->hasAbsoluteParent()) {
+            $parent = $ann->parent;
+        } elseif ($ann->hasRelativeParent()) {
+            $parent = "{$method->controller}.{$ann->parent}";
+        }
+
+        if ($parent && (isset($methods[$parent]) || in_array($parent, $sitemapElements, true))) {
+            return $parent;
+        }
+
+        return $lastSegment;
     }
 
     private function addItem(string $type, string $name, array $item, array $dependencies): void

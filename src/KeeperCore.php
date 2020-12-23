@@ -17,10 +17,11 @@ use Spiral\Core\CoreInterface;
 use Spiral\Core\Exception\ControllerException;
 use Spiral\Core\InterceptableCore;
 use Spiral\Core\ScopeInterface;
+use Spiral\Domain\Permission;
+use Spiral\Domain\PermissionsProviderInterface;
 use Spiral\Keeper\Exception\KeeperException;
-use Spiral\Security\GuardInterface;
 
-final class KeeperCore implements CoreInterface, InjectorInterface
+final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsProviderInterface
 {
     /** @var string */
     private $namespace;
@@ -37,27 +38,21 @@ final class KeeperCore implements CoreInterface, InjectorInterface
     /** @var array */
     private $modules = [];
 
-    /** @var GuardInterface */
-    private $guard;
-
     /** @var InterceptableCore */
     private $invoker;
 
-    /**
-     * @param ScopeInterface $scope
-     * @param CoreInterface  $core
-     * @param GuardInterface $guard
-     * @param string         $namespace
-     */
+    /** @var PermissionsProviderInterface */
+    private $permissions;
+
     public function __construct(
         ScopeInterface $scope,
         CoreInterface $core,
-        GuardInterface $guard,
+        PermissionsProviderInterface $permissions,
         string $namespace
     ) {
         $this->invoker = new InterceptableCore($core);
         $this->scope = $scope;
-        $this->guard = $guard;
+        $this->permissions = $permissions;
         $this->namespace = $namespace;
     }
 
@@ -148,14 +143,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface
      */
     public function callAction(string $controller, string $action, array $parameters = [])
     {
-        $alias = $this->getControllerAlias($controller);
-        if (!$this->guard->allows("{$this->namespace}.$alias.$action", $parameters)) {
-            throw new ControllerException(
-                "Unable to call `{$alias}`->`{$action}`, forbidden",
-                ControllerException::FORBIDDEN
-            );
-        }
-
         return $this->scope->runScope(
             [
                 self::class          => $this,
@@ -164,6 +151,16 @@ final class KeeperCore implements CoreInterface, InjectorInterface
             function () use ($controller, $action, $parameters) {
                 return $this->invoker->callAction($controller, $action, $parameters);
             }
+        );
+    }
+
+    public function getPermission(string $controller, string $action): Permission
+    {
+        $permission = $this->permissions->getPermission($controller, $action);
+        return $permission->ok ? $permission : Permission::ok(
+            "{$this->namespace}.{$this->getControllerAlias($controller)}.$action",
+            ControllerException::FORBIDDEN,
+            "Unauthorized access `{$action}`"
         );
     }
 

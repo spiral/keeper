@@ -145,7 +145,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     {
         return $this->scope->runScope(
             [
-                self::class => $this,
+                self::class          => $this,
                 CoreInterface::class => $this
             ],
             function () use ($controller, $action, $parameters) {

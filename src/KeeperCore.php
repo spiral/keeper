@@ -156,11 +156,12 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
 
     public function getPermission(string $controller, string $action): Permission
     {
-        return $this->permissions->getPermission($controller, $action) ?? Permission::ok(
-                "{$this->getControllerAlias($controller)}.$action",
-                ControllerException::FORBIDDEN,
-                "Unauthorized access `{$action}`"
-            );
+        $permission = $this->permissions->getPermission($controller, $action);
+        return $permission->ok ? $permission : Permission::ok(
+            "{$this->namespace}.{$this->getControllerAlias($controller)}.$action",
+            ControllerException::FORBIDDEN,
+            "Unauthorized access `{$action}`"
+        );
     }
 
     private function getControllerAlias(string $controller)

@@ -154,7 +154,7 @@ final class Sitemap implements \IteratorAggregate
      */
     private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
     {
-        if ($node->hasOption('permission') && !$guard->allows($node->getOption('permission'))) {
+        if (!$this->isAllowed($node, $guard)) {
             return null;
         }
 
@@ -181,6 +181,15 @@ final class Sitemap implements \IteratorAggregate
         }
 
         return new Node($node->getName(), $options, $nodes);
+    }
+
+    private function isAllowed(Node $node, GuardInterface $guard): bool
+    {
+        if ($node->getOption('type') !== self::TYPE_LINK || !$node->getOption('permission')) {
+            return true;
+        }
+
+        return $guard->allows($node->getOption('permission'));
     }
 
     private function nodeMatches(Node $node, string $targetNode = null): bool

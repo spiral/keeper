@@ -28,6 +28,12 @@ final class Link
     public $parent;
 
     /**
+     * @Attribute(name="permission")
+     * @var string
+     */
+    public $permission;
+
+    /**
      * @Attribute(name="title", type="string", required=true)
      * @var string
      */

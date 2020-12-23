@@ -134,6 +134,7 @@ class AnnotationTest extends TestCase
         // This exact action is forbidden tests/App/Bootloader/GuestBootloader.php:34
         $this->assertArrayNotHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayNotHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayNotHasKey('external.forbidden', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
 
         $this->app->runScope(
@@ -145,6 +146,7 @@ class AnnotationTest extends TestCase
 
         $this->assertArrayHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayHasKey('external.custom', $this->nodes($output, 'custom', 'custom.parent'));
+        $this->assertArrayHasKey('external.forbidden', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
     }
 

@@ -50,7 +50,7 @@ class SitemapController
     {
         $nodes = [];
         foreach ($node->getIterator() as $name => $child) {
-            $nodes[$name] = $this->wrap($child);
+            $nodes[$child->getName()] = $this->wrap($child);
         }
         return [
             'name'    => $node->getName(),

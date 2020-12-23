@@ -38,4 +38,13 @@ class ExternalController
     public function custom(): void
     {
     }
+
+    /**
+     * @Guarded(permission="linkAllowed")
+     * @Link(title="external", parent="custom.parent", permission="linkForbidden")
+     * @Action(route="/forbidden", name="external:forbidden")
+     */
+    public function forbidden(): void
+    {
+    }
 }

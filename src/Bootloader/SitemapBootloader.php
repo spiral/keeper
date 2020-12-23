@@ -157,11 +157,21 @@ class SitemapBootloader extends Bootloader
          * @var Action              $action
          * @var Guarded|null        $guarded
          * @var GuardNamespace|null $guardNamespace
+         * @var Link|null           $link
          */
         $guardNamespace = $this->reader->getClassAnnotation($class, GuardNamespace::class);
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
             $guarded = $this->reader->getMethodAnnotation($method, Guarded::class);
-            $method = Sitemap\Method::create($namespace, $controller, $method, $action, $guardNamespace, $guarded);
+            $link = $this->reader->getMethodAnnotation($method, Link::class);
+            $method = Sitemap\Method::create(
+                $namespace,
+                $controller,
+                $method,
+                $action,
+                $guardNamespace,
+                $guarded,
+                $link
+            );
             yield "$controller.{$method->name}" => $method;
         }
     }

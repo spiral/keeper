@@ -7,8 +7,9 @@ namespace Spiral\Keeper\Module\Sitemap;
 use Spiral\Domain\Annotation\Guarded;
 use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Keeper\Annotation\Action;
+use Spiral\Keeper\Annotation\Sitemap\Link;
 
-class Method
+final class Method
 {
     /** @var \ReflectionMethod */
     public $reflection;
@@ -40,14 +41,15 @@ class Method
         \ReflectionMethod $reflection,
         Action $action,
         ?GuardNamespace $guardNamespace = null,
-        ?Guarded $guarded = null
+        ?Guarded $guarded = null,
+        ?Link $link = null
     ): self {
         $method = $reflection->getName();
 
         $permission = array_filter(
             [
                 $guardNamespace && $guardNamespace->namespace ? $guardNamespace->namespace : "$namespace.$controller",
-                $guarded && $guarded->permission ? $guarded->permission : $method
+                self::permission($link, $guarded, $method)
             ],
             static function ($chunk): bool {
                 return (bool)$chunk;
@@ -65,5 +67,18 @@ class Method
     public function name(): string
     {
         return "{$this->controller}.{$this->name}";
+    }
+
+    private static function permission(?Link $link, ?Guarded $guarded, string $method): string
+    {
+        if ($link && $link->permission) {
+            return $link->permission;
+        }
+
+        if ($guarded && $guarded->permission) {
+            return $guarded->permission;
+        }
+
+        return $method;
     }
 }

@@ -68,6 +68,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         $this->container = $container;
         $this->core = new KeeperCore(
             $container,
+            $container,
             new Core($container),
             $guard,
             static::NAMESPACE

@@ -39,6 +39,7 @@ class App extends Kernel
         Bootloader\NewBootloader::class,
         Bootloader\InterceptedBootloader::class,
         Bootloader\MiddlewaredBootloader::class,
+        Bootloader\GuardedBootloader::class,
         UIBootloader::class,
         Bootloader\LoginBootloader::class,
     ];

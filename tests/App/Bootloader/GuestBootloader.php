@@ -29,6 +29,11 @@ class GuestBootloader extends Bootloader
         $permissions->associate(Guest::ROLE, 'root.*', Rule\AllowRule::class);
         $permissions->associate(Guest::ROLE, 'default.external.*', Rule\AllowRule::class);
 
+        $permissions->associate(Guest::ROLE, 'guarded.provided.allowed', Rule\AllowRule::class);
+        $permissions->associate(Guest::ROLE, 'guarded.provided.forbidden', Rule\ForbidRule::class);
+        $permissions->associate(Guest::ROLE, 'guarded.missing.allowed', Rule\AllowRule::class);
+        $permissions->associate(Guest::ROLE, 'guarded.missing.forbidden', Rule\ForbidRule::class);
+
         $permissions->associate(Enemy::ROLE, "{$ns}.*", Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, "{$ns}.*.*", Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, "{$ns}.*.*.*", Rule\AllowRule::class);

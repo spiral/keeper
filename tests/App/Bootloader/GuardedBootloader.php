@@ -16,8 +16,4 @@ class GuardedBootloader extends Bootloader\KeeperBootloader
         Bootloader\AnnotatedBootloader::class,
         GuestBootloader::class
     ];
-
-    protected const INTERCEPTORS = [
-        GuardInterceptor::class
-    ];
 }

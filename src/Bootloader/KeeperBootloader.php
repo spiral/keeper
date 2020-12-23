@@ -20,6 +20,7 @@ use Spiral\Core\Container;
 use Spiral\Core\Container\SingletonInterface;
 use Spiral\Core\Core;
 use Spiral\Core\CoreInterface;
+use Spiral\Domain\GuardInterceptor;
 use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Exception\KeeperException;
 use Spiral\Keeper\KeeperCore;
@@ -200,6 +201,8 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 $this->core->addInterceptor($this->container->get($interceptor));
             }
         }
+
+        $this->core->addInterceptor($this->container->get(GuardInterceptor::class));
     }
 
     /**

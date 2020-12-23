@@ -97,7 +97,7 @@ class Node implements \IteratorAggregate
     }
 
     /**
-     * @return iterable
+     * @return iterable|Node[]
      */
     public function getIterator(): iterable
     {

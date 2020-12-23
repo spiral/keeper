@@ -27,6 +27,7 @@ class GuestBootloader extends Bootloader
         $permissions->associate(Guest::ROLE, "{$ns}.*.*", Rule\AllowRule::class);
         $permissions->associate(Guest::ROLE, "{$ns}.*.*.*", Rule\AllowRule::class);
         $permissions->associate(Guest::ROLE, 'root.*', Rule\AllowRule::class);
+        $permissions->associate(Guest::ROLE, 'im-a-child', Rule\AllowRule::class);
         $permissions->associate(Guest::ROLE, 'default.external.*', Rule\AllowRule::class);
 
         $permissions->associate(Guest::ROLE, 'guarded.provided.allowed', Rule\AllowRule::class);
@@ -38,6 +39,7 @@ class GuestBootloader extends Bootloader
         $permissions->associate(Enemy::ROLE, "{$ns}.*.*", Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, "{$ns}.*.*.*", Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, 'root.*', Rule\AllowRule::class);
+        $permissions->associate(Enemy::ROLE, 'im-a-child', Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, 'default.external.*', Rule\AllowRule::class);
         $permissions->associate(Enemy::ROLE, 'default.external.linkAllowed', Rule\AllowRule::class);
 

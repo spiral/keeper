@@ -2,6 +2,7 @@
 The whole changelog is described below, here you can see the main steps that could be required for a successful migration.
 - `breadcrumps.dark.php` renamed into `breadcrumbs.dark.php`. So if you extend it or `common.dark.php` please be aware.
 - `@Controller` annotation now don't use `name` attribute for prefixing, use `prefix` attribute explicitly.
+- KeeperCore now doesn't protect actions by `namespace.controller.method`, use `@GuardNamespace` and `Guarded` annotations.
 - For sitemaps permissions are taken from `@GuardNamespace` and `@Guarded` annotation.
   Note that keeper namespace isn't used here automatically because these annotations come from external module,
   so you need to specify the namespace in the `@GuardNamespace` explicitly. 
@@ -146,16 +147,15 @@ second: 1
 ```
 
 ### Visibility
-Now permissions are taken from `@GuardNamespace` and `@Guarded` annotation.
-Note that keeper namespace isn't used here automatically because these annotations come from external module, so you need to specify the namespace in the `@GuardNamespace` explicitly: 
-```php
-/**
- * @Controller(name="myController", prefix="/prefix", namespace="ns")
- * @GuardNamespace(namespace="ns.myController")
- */
+By default, all nodes are available for the user, `withVisibleNodes()` allows hiding forbidden nodes.
+If any node is forbidden, it will be removed from the tree with all its children.
+Also, passing a `$targeNode` will mark all active nodes if match found, so it will allow you to use breadcrumbs.
 
-```
-As a fallback to `@GuardNamespace` controller's `namespace.name` is used, method's `name` is a fallback to a missing `@Guarded` annotation.
+Permissions are taken from `@GuardNamespace`, `@Guarded` and `@Link` annotations: `<guard Namespace (or controller name)>.<link permission (or guarded permission (or method name))>`.
+Use `@Link` permission in cases when method is protected by a context-based permission rule -
+for rendering links in the sidebar and breadcrumbs the context can't be passed, so you have to use additional permission for navigation (and register it with allow rule).
+In other cases you can rely on standard `@Guarded` permission (or method name) flow.
+> Note that keeper namespace isn't used here automatically because these annotations come from external module.
 
 Example with `@GuardNamespace` annotation:
 ```php
@@ -183,6 +183,16 @@ class WithNamespaceController
     {
         // permission is "withNamespace.permission"
     }
+
+    /**
+     * @Link(title="C", permission="methodC")
+     * @Guarded(permission="permission")
+     * ...
+     */
+    public function с(): void
+    {
+        // permission is "withNamespace.methodC"
+    }
 }
 ```
 Example without `@GuardNamespace` annotation:
@@ -209,6 +219,16 @@ class WithoutNamespaceController
     public function b(): void
     {
         // permission is "without.permission"
+    }
+
+    /**
+     * @Link(title="C", permission="methodC")
+     * @Guarded(permission="permission")
+     * ...
+     */
+    public function с(): void
+    {
+        // permission is "without.methodC"
     }
 }
 ```

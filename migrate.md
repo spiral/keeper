@@ -15,6 +15,10 @@ The whole changelog is described below, here you can see the main steps that cou
 View template `views/layout/breadcrumps.dark.php` renamed into `views/layout/breadcrumbs.dark.php` (typo fixed).
 Referenced in `views/layout/common.dark.php` and `views/bundle.dark.php`.
 
+## Guard
+Previously, `KeeperCore` protected actions using `namespace.controller.method` permission, now it will be used as a fallback
+only if a method doesn't have `@Guarded` annotation. Please add `GuardNamespace(namespace="...")` if missing. 
+
 ## Routes
 
 ### Annotations

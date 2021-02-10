@@ -5,6 +5,8 @@ $_name_ = inject('name');
 ob_start(); ?>${context}${value}${template}${body}<?php $_context_ = ob_get_clean();
 ob_start(); ?>${title}<?php $_title_ = ob_get_clean();
 ob_start(); ?>${href}${url}<?php $_href_ = ob_get_clean();
+ob_start(); ?>${target}<?php $_target_ = ob_get_clean();
+ob_start(); ?>${omitEmptyHref}<?php $_omitEmptyHref_ = ob_get_clean();
 
 $_gb_->addColumn(
     $_name_,
@@ -18,6 +20,8 @@ $_gb_->addColumn(
             'title' => $_gb_->toHandlebars(trim($_title_)),
             'body'  => $_gb_->toHandlebars(trim($_context_)),
             'href'  => $_gb_->toHandlebars($_href_),
+            'target'  => $_gb_->toHandlebars($_target_),
+            'omitEmptyHref'  => $_gb_->toHandlebars($_omitEmptyHref_),
         ]
     ],
     inject('class')

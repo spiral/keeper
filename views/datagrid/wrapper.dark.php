@@ -27,6 +27,11 @@ $_gb_->setOption('actions.size', inject('actions-size', 'sm'));
 $_gb_->setOption('actions.icon', inject('actions-icon', 'cog'));
 $_gb_->setOption('actions.class', inject('actions-class', ''));
 //$_gb_->setOption('errorMessageTarget', '#' . $_gb_->getID());
+$_gb_->setOption('responsive.listSummaryColumn', inject('list-summary', ''));
+$_gb_->setOption('responsive.listExcludeColumns', inject('list-exclude', []));
+$_gb_->setOption('responsive.tableExcludeColumns', inject('table-exclude', []));
+$_gb_->setOption('responsive.listClass', inject('list-class', 'd-md-none'));
+$_gb_->setOption('responsive.tableClass', inject('table-class', 'table d-none d-md-table'));
 
 ?>
 <div class="sf-table ${class}" attr:aggregate>

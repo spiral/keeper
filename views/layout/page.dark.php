@@ -5,4 +5,5 @@
   <div class="sf-main__wrapper">
     <define:content/>
   </div>
+  <stack:collect name="datagridrenderers" level="20"/>
 </define:main>

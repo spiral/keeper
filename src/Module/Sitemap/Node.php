@@ -99,7 +99,7 @@ class Node implements \IteratorAggregate
     /**
      * @return iterable|Node[]
      */
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         $positions = [];
         $position = 0;

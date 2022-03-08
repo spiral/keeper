@@ -1,19 +1,12 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Spiral\Attributes\ReaderInterface;
 use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Bootloader\AttributesBootloader;
 use Spiral\Domain\Annotation\Guarded;
 use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Helpers\GraphSorter;
@@ -30,7 +23,11 @@ class SitemapBootloader extends Bootloader
 {
     protected const ROOT = Sitemap::TYPE_ROOT;
 
-    /** @var AnnotationReader */
+    protected const DEPENDENCIES = [
+        AttributesBootloader::class,
+    ];
+
+    /** @var ReaderInterface */
     private $reader;
     /** @var Locator */
     private $locator;
@@ -39,7 +36,7 @@ class SitemapBootloader extends Bootloader
     /** @var array */
     private $cache = [];
 
-    public function __construct(AnnotationReader $reader, Locator $locator)
+    public function __construct(ReaderInterface $reader, Locator $locator)
     {
         $this->reader = $reader;
         $this->locator = $locator;
@@ -55,7 +52,6 @@ class SitemapBootloader extends Bootloader
         $this->declareSitemap($sitemap);
         $this->fillFromSitemap($sitemap);
 
-        AnnotationRegistry::registerLoader('class_exists');
         $annotations = $this->parseAnnotations($keeper->getNamespace(), $sitemap);
 
         foreach ($annotations as $annotation) {
@@ -127,7 +123,7 @@ class SitemapBootloader extends Bootloader
     private function buildClassSitemap(\ReflectionClass $class): string
     {
         $lastSegment = static::ROOT;
-        foreach ($this->reader->getClassAnnotations($class) as $ann) {
+        foreach ($this->reader->getClassMetadata($class) as $ann) {
             switch (true) {
                 case $ann instanceof Segment:
                 case $ann instanceof Group:
@@ -159,10 +155,10 @@ class SitemapBootloader extends Bootloader
          * @var GuardNamespace|null $guardNamespace
          * @var Link|null           $link
          */
-        $guardNamespace = $this->reader->getClassAnnotation($class, GuardNamespace::class);
+        $guardNamespace = $this->reader->firstClassMetadata($class, GuardNamespace::class);
         foreach ($this->locator->locateMethodsWithAction($class) as $method => $action) {
-            $guarded = $this->reader->getMethodAnnotation($method, Guarded::class);
-            $link = $this->reader->getMethodAnnotation($method, Link::class);
+            $guarded = $this->reader->firstFunctionMetadata($method, Guarded::class);
+            $link = $this->reader->firstFunctionMetadata($method, Link::class);
             $method = Sitemap\Method::create(
                 $namespace,
                 $controller,
@@ -186,7 +182,7 @@ class SitemapBootloader extends Bootloader
         $sitemapElements = $sitemap->getElements();
         foreach ($methods as $method) {
             $lastSegment = $lastSegments[$method->controller] ?? static::ROOT;
-            foreach ($this->reader->getMethodAnnotations($method->reflection) as $ann) {
+            foreach ($this->reader->getFunctionMetadata($method->reflection) as $ann) {
                 switch (true) {
                     case $ann instanceof Link:
                     case $ann instanceof View:

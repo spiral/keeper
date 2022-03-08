@@ -1,50 +1,62 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation\Sitemap;
 
 use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\Common\Annotations\Annotation\Attributes;
+use Doctrine\Common\Annotations\Annotation\Target;
+use Spiral\Attributes\NamedArgumentConstructor;
 use Spiral\Keeper\Module\Sitemap\Method;
 
 /**
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD"})
+ * @Attributes({
+ *     @Attribute("parent", required=true, type="string"),
+ *     @Attribute("title", required=true, type="string"),
+ *     @Attribute("options", type="array"),
+ *     @Attribute("position", type="float")
+ * })
  */
+#[\Attribute(\Attribute::TARGET_METHOD), NamedArgumentConstructor]
 final class View
 {
     use ParentTrait;
 
     /**
-     * @Attribute(name="name", type="string", required=true)
      * @var string
      */
     public $parent;
 
     /**
-     * @Attribute(name="title", type="string", required=true)
      * @var string
      */
     public $title;
 
     /**
-     * @Attribute(name="options", type="array")
      * @var array
      */
     public $options = [];
 
     /**
-     * @Attribute(name="position", type="float")
      * @var float
      */
     public $position;
+
+    public function __construct(
+        string $parent,
+        string $title,
+        array $options = [],
+        ?float $position = null
+    ) {
+        $this->parent = $parent;
+        $this->title = $title;
+        $this->options = $options;
+        $this->position = $position;
+    }
 
     public function getOptions(Method $method = null): array
     {

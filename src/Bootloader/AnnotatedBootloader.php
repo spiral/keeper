@@ -1,18 +1,11 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Bootloader\AttributesBootloader;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 use Spiral\Keeper\Config\KeeperConfig;
@@ -21,6 +14,10 @@ use Spiral\Keeper\Helper\RouteBuilder;
 
 final class AnnotatedBootloader extends Bootloader
 {
+    protected const DEPENDENCIES = [
+        AttributesBootloader::class,
+    ];
+
     /** @var KeeperConfig */
     private $config;
     /** @var Locator */
@@ -34,8 +31,6 @@ final class AnnotatedBootloader extends Bootloader
 
     public function boot(KeeperBootloader $keeper): void
     {
-        AnnotationRegistry::registerLoader('class_exists');
-
         $annotations = iterator_to_array($this->parseAnnotations($keeper->getNamespace()));
         foreach ($annotations as $name => $controller) {
             $keeper->addController($controller['name'], $controller['class']);

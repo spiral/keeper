@@ -1,45 +1,57 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\Common\Annotations\Annotation\Attributes;
+use Doctrine\Common\Annotations\Annotation\Target;
+use Spiral\Attributes\NamedArgumentConstructor;
 
 /**
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS"})
+ * @Attributes({
+ *     @Attribute("name", required=true, type="string"),
+ *     @Attribute("prefix", type="string"),
+ *     @Attribute("namespace", type="string"),
+ *     @Attribute("defaultAction", type="string")
+ * })
  */
+#[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class Controller
 {
     /**
-     * @Attribute(name="name", type="string", required=true)
      * @type string
      */
     public $name;
 
     /**
-     * @Attribute(name="prefix", type="string")
      * @type string
      */
     public $prefix;
 
     /**
-     * @Attribute(name="name", type="string")
      * @type string|null
      */
     public $namespace = 'keeper';
 
     /**
-     * @Attribute(name="name", type="string")
      * @type string|null
      */
     public $defaultAction;
+
+    public function __construct(
+        string $name,
+        ?string $prefix = null,
+        string $namespace = 'keeper',
+        ?string $defaultAction = null
+    ) {
+        $this->name = $name;
+        $this->prefix = $prefix;
+        $this->namespace = $namespace;
+        $this->defaultAction = $defaultAction;
+    }
 }

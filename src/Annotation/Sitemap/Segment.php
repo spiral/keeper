@@ -1,51 +1,65 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Annotation\Sitemap;
 
 use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\Common\Annotations\Annotation\Attributes;
+use Doctrine\Common\Annotations\Annotation\Target;
+use Spiral\Attributes\NamedArgumentConstructor;
 
 /**
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS"})
+ * @Attributes({
+ *     @Attribute("parent", type="string"),
+ *     @Attribute("name", required=true, type="string"),
+ *     @Attribute("title", required=true, type="string"),
+ *     @Attribute("options", type="array"),
+ *     @Attribute("position", type="float")
+ * })
  */
+#[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 final class Segment
 {
     /**
-     * @Attribute(name="name", type="string", required=true)
      * @var string
      */
     public $parent = 'root';
 
     /**
-     * @Attribute(name="name", type="string", required=true)
      * @var string
      */
     public $name;
 
     /**
-     * @Attribute(name="title", type="string", required=true)
      * @var string
      */
     public $title;
 
     /**
-     * @Attribute(name="options", type="array")
      * @var array
      */
     public $options = [];
 
     /**
-     * @Attribute(name="position", type="float")
      * @var float
      */
     public $position;
+
+    public function __construct(
+        string $name,
+        string $title,
+        string $parent = 'root',
+        array $options = [],
+        ?float $position = null
+    ) {
+        $this->name = $name;
+        $this->title = $title;
+        $this->parent = $parent;
+        $this->options = $options;
+        $this->position = $position;
+    }
 }

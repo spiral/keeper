@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Helper;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Spiral\Annotations\AnnotationLocator;
+use Spiral\Attributes\ReaderInterface;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
+use Spiral\Tokenizer\ClassesInterface;
 
 /**
  * @internal
  */
 final class Locator
 {
-    /** @var AnnotationLocator */
+    /** @var ClassesInterface */
     private $locator;
-    /** @var AnnotationReader */
+    /** @var ReaderInterface */
     private $reader;
 
-    public function __construct(AnnotationLocator $locator, AnnotationReader $reader)
+    public function __construct(ClassesInterface $locator, ReaderInterface $reader)
     {
         $this->reader = $reader;
         $this->locator = $locator;
@@ -28,25 +28,25 @@ final class Locator
     public function locateNamespaceControllers(string $namespace): iterable
     {
         $matches = [];
-        foreach ($this->locator->findClasses(Controller::class) as $match) {
-            /** @var Controller $controller */
-            $controller = $match->getAnnotation();
-            if ($controller->namespace !== $namespace) {
+        foreach ($this->locator->getClasses() as $class) {
+            $controller = $this->reader->firstClassMetadata($class, Controller::class);
+            if ($controller === null || $controller->namespace !== $namespace) {
                 continue;
             }
-            $matches[$match->getClass()->getFileName()] = $match;
+
+            $matches[$class->getFileName()] = [$class, $controller];
         }
 
         ksort($matches);
         foreach ($matches as $match) {
-            yield $match->getClass() => $match->getAnnotation();
+            yield $match[0] => $match[1];
         }
     }
 
     public function locateMethodsWithAction(\ReflectionClass $class): iterable
     {
         foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            $action = $this->reader->getMethodAnnotation($method, Action::class);
+            $action = $this->reader->firstFunctionMetadata($method, Action::class);
             if (!$action instanceof Action) {
                 continue;
             }

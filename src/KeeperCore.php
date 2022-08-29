@@ -129,7 +129,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
      * @param string|null      $context
      * @return object|null
      */
-    public function createInjection(\ReflectionClass $class, string $context = null): ?object
+    public function createInjection(\ReflectionClass $class, string $context = null): object
     {
         return $this->getModule($class->getName());
     }
@@ -141,7 +141,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
      * @return mixed
      * @throws \Throwable
      */
-    public function callAction(string $controller, string $action, array $parameters = [])
+    public function callAction(string $controller, string $action, array $parameters = []): mixed
     {
         return $this->scope->runScope(
             [

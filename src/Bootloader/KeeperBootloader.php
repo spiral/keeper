@@ -13,7 +13,8 @@ namespace Spiral\Keeper\Bootloader;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Boot\BootloadManager;
+use Spiral\Boot\BootloadManager\BootloadManager;
+use Spiral\Boot\BootloadManager\Initializer;
 use Spiral\Bootloader\Security\GuardBootloader;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Core\Container;
@@ -66,9 +67,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 
     /**
      * Adds new keeper module and create keeper specific context dependency.
-     *
-     * @param object $module
-     * @param array  $aliases
      */
     public function addModule(object $module, array $aliases = []): void
     {
@@ -87,11 +85,10 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      * @param PermissionsProviderInterface $permissions
      * @throws \Throwable
      */
-    public function boot(
-        BootloadManager $bootloadManager,
-        RouterInterface $appRouter,
-        PermissionsProviderInterface $permissions
-    ): void {
+    public function boot(RouterInterface $appRouter, PermissionsProviderInterface $permissions): void
+    {
+        $bootloadManager = new BootloadManager($this->container, new Initializer($this->container));
+
         $this->core = new KeeperCore(
             $this->container,
             new Core($this->container),

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Keeper\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Bootloader\AttributesBootloader;
+use Spiral\Bootloader\Attributes\AttributesBootloader;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 use Spiral\Keeper\Config\KeeperConfig;

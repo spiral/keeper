@@ -6,7 +6,7 @@ namespace Spiral\Keeper\Bootloader;
 
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Bootloader\AttributesBootloader;
+use Spiral\Bootloader\Attributes\AttributesBootloader;
 use Spiral\Domain\Annotation\Guarded;
 use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Helpers\GraphSorter;

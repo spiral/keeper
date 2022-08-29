@@ -16,9 +16,6 @@ use Spiral\Boot\Environment;
 use Spiral\Router\RouterInterface;
 use Spiral\Tests\Keeper\App\App;
 
-/**
- * @requires function \Spiral\Framework\Kernel::init
- */
 abstract class TestCase extends BaseTestCase
 {
     /** @var App */
@@ -47,7 +44,7 @@ abstract class TestCase extends BaseTestCase
             'app'    => __DIR__ . '/App/',
         ];
 
-        return App::init($config, new Environment($env), false);
+        return App::create($config)->run(new Environment($env));
     }
 
     protected function router(): RouterInterface

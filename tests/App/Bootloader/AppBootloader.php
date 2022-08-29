@@ -6,7 +6,7 @@ namespace Spiral\Tests\Keeper\App\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\DirectoriesInterface;
-use Spiral\Bootloader\Views\ViewsBootloader;
+use Spiral\Views\Bootloader\ViewsBootloader;
 
 class AppBootloader extends Bootloader
 {

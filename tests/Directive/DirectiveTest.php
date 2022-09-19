@@ -18,7 +18,7 @@ class DirectiveTest extends TestCase
     public function testEmptyLogout(): void
     {
         $this->assertSame(
-            \preg_replace('/\s+/', '','<a href="/default/logout">1</a>'
+            \preg_replace('/\s+/', '', '<a href="/default/logout">1</a>'
             . '<a href="/default/logout">2</a>'
             . '<a href="/default/logout?a=b">3</a>'),
             \preg_replace('/\s+/', '', $this->getContent('/default/view'))
@@ -34,7 +34,7 @@ class DirectiveTest extends TestCase
             ],
             function (): void {
                 $this->assertSame(
-                    \preg_replace('/\s+/', '','<a href="/default/logout?token=' . AuthContext::TOKEN_ID . '">1</a>'
+                    \preg_replace('/\s+/', '', '<a href="/default/logout?token=' . AuthContext::TOKEN_ID . '">1</a>'
                     . '<a href="/default/logout?token=' . AuthContext::TOKEN_ID . '">2</a>'
                     . '<a href="/default/logout?a=b&token=' . AuthContext::TOKEN_ID . '">3</a>'),
                     \preg_replace('/\s+/', '', $this->getContent('/default/view'))

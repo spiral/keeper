@@ -19,7 +19,7 @@ use Spiral\Keeper\Annotation\Sitemap\View;
 use Spiral\Keeper\Helper\Locator;
 use Spiral\Keeper\Module\Sitemap;
 
-class SitemapBootloader extends Bootloader
+class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     protected const ROOT = Sitemap::TYPE_ROOT;
 
@@ -152,7 +152,6 @@ class SitemapBootloader extends Bootloader
          * @var \ReflectionMethod   $method
          * @var Action              $action
          * @var Guarded|null        $guarded
-         * @var GuardNamespace|null $guardNamespace
          * @var Link|null           $link
          */
         $guardNamespace = $this->reader->firstClassMetadata($class, GuardNamespace::class);
@@ -250,16 +249,16 @@ class SitemapBootloader extends Bootloader
     {
         // wood working
         $root = null;
-        $points = [];
+        $_ = [];
         foreach ($this->sorter->sort() as $item) {
-            $points[$item['name']] = &$item;
+            $_[$item['name']] = &$item;
             if ($root === null) {
                 $root = &$item;
                 unset($item);
                 continue;
             }
 
-            $points[$item['parent']]['child'][] = &$item;
+            $_[$item['parent']]['child'][] = &$item;
             unset($item);
         }
 

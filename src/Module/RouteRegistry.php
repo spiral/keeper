@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Module;
@@ -14,32 +7,24 @@ namespace Spiral\Keeper\Module;
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Helper\RouteBuilder;
+use Spiral\Router\GroupRegistry;
 use Spiral\Router\Route;
 use Spiral\Router\RouteInterface;
 use Spiral\Router\RouterInterface;
 
 final class RouteRegistry
 {
-    /** @var KeeperConfig */
-    private $config;
-
     /** @var MiddlewareInterface[]|string[] */
-    private $middleware;
-
-    /** @var RouterInterface */
-    private $appRouter;
+    private array $middleware;
 
     private $names = [];
 
-    /**
-     * @param KeeperConfig    $config
-     * @param RouterInterface $appRouter
-     */
-    public function __construct(KeeperConfig $config, RouterInterface $appRouter)
+    public function __construct(
+        private readonly KeeperConfig $config,
+        private readonly RouterInterface $appRouter,
+        private readonly GroupRegistry $groups)
     {
-        $this->config = $config;
         $this->middleware = $this->config->getMiddleware();
-        $this->appRouter = $appRouter;
     }
 
     /**
@@ -60,16 +45,13 @@ final class RouteRegistry
         }
     }
 
-    /**
-     * @param string         $name
-     * @param RouteInterface $route
-     */
-    public function setRoute(string $name, RouteInterface $route): void
+    public function setRoute(string $name, RouteInterface $route, string $group): void
     {
         $this->names[RouteBuilder::routeName($this->config->getNamespace(), $name)] = true;
-        $this->appRouter->setRoute(
+
+        $this->groups->getGroup($group)->addRoute(
             RouteBuilder::routeName($this->config->getNamespace(), $name),
-            $route instanceof Route ? $this->configureRoute($route) : $route
+            $this->configureRoute($route)
         );
     }
 

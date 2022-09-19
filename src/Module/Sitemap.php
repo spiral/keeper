@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Module;
@@ -160,7 +153,7 @@ final class Sitemap implements \IteratorAggregate
 
         $activePath = false;
         $nodes = [];
-        foreach ($node as $name => $subNode) {
+        foreach ($node as $subNode) {
             $child = $this->filterVisible($subNode, $guard, $targetNode);
             if ($child !== null) {
                 $nodes[$child->getName()] = $child;

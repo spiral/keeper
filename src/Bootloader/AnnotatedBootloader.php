@@ -12,7 +12,7 @@ use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Helper\Locator;
 use Spiral\Keeper\Helper\RouteBuilder;
 
-final class AnnotatedBootloader extends Bootloader
+final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     protected const DEPENDENCIES = [
         AttributesBootloader::class,
@@ -32,7 +32,7 @@ final class AnnotatedBootloader extends Bootloader
     public function boot(KeeperBootloader $keeper): void
     {
         $annotations = iterator_to_array($this->parseAnnotations($keeper->getNamespace()));
-        foreach ($annotations as $name => $controller) {
+        foreach ($annotations as $controller) {
             $keeper->addController($controller['name'], $controller['class']);
 
             if ($controller['defaultAction'] && isset($controller['routes'][$controller['defaultAction']])) {

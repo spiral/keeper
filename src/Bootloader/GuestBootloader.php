@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
@@ -20,7 +13,7 @@ use Spiral\Security\Rule\AllowRule;
 /**
  * Provides full access to admin panel for Guests.
  */
-final class GuestBootloader extends Bootloader
+final class GuestBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     /**
      * @param KeeperCore           $core

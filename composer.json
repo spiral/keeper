@@ -15,7 +15,8 @@
     "spiral/toolkit": "^2.0",
     "spiral/helpers": "^1.0",
     "spiral/code-style": "^1.1",
-    "spiral/nyholm-bridge": "^1.2"
+    "spiral/nyholm-bridge": "^1.2",
+    "vimeo/psalm": "^4.27"
   },
   "autoload": {
     "psr-4": {
@@ -28,5 +29,10 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "spiral/composer-publish-plugin": true
+    }
+  }
 }

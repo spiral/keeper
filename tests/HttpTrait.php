@@ -56,10 +56,8 @@ trait HttpTrait
             body: 'php://input'
         );
 
-        $request = $request
+        return $request
             ->withCookieParams($cookies)
             ->withQueryParams($query);
-
-        return $request;
     }
 }

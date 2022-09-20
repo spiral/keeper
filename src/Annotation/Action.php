@@ -27,7 +27,7 @@ use Spiral\Router\Route;
 #[\Attribute(\Attribute::TARGET_METHOD), NamedArgumentConstructor]
 final class Action
 {
-    public const DEFAULT_GROUP = 'default';
+    public const DEFAULT_GROUP = 'web';
 
     /**
      * @var string

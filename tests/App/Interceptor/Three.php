@@ -9,13 +9,14 @@ use Spiral\Core\CoreInterface;
 
 class Three implements CoreInterceptorInterface
 {
-    public function process(string $controller, string $action, array $parameters, CoreInterface $core)
+    public function process(string $controller, string $action, array $parameters, CoreInterface $core): array
     {
         $result = $core->callAction($controller, $action, $parameters);
         if (!is_array($result)) {
             $result = [];
         }
         $result[] = 'three';
+
         return $result;
     }
 }

@@ -1,19 +1,14 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Boot\BootloadManager;
+use Spiral\Boot\BootloadManager\BootloadManager;
+use Spiral\Boot\BootloadManager\ClassesRegistry;
+use Spiral\Boot\BootloadManager\Initializer;
 use Spiral\Bootloader\Security\GuardBootloader;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Core\Container;
@@ -26,11 +21,12 @@ use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Exception\KeeperException;
 use Spiral\Keeper\KeeperCore;
 use Spiral\Keeper\Module\RouteRegistry;
+use Spiral\Router\GroupRegistry;
 use Spiral\Router\Route;
 use Spiral\Router\RouterInterface;
 use Spiral\Router\Target\Action;
 
-abstract class KeeperBootloader extends Bootloader implements SingletonInterface
+abstract class KeeperBootloader extends Bootloader implements SingletonInterface, KeeperBootloaderInterface
 {
     protected const NAMESPACE          = 'keeper';
     protected const PREFIX             = 'keeper/';
@@ -66,9 +62,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 
     /**
      * Adds new keeper module and create keeper specific context dependency.
-     *
-     * @param object $module
-     * @param array  $aliases
      */
     public function addModule(object $module, array $aliases = []): void
     {
@@ -88,10 +81,13 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      * @throws \Throwable
      */
     public function boot(
-        BootloadManager $bootloadManager,
         RouterInterface $appRouter,
-        PermissionsProviderInterface $permissions
+        PermissionsProviderInterface $permissions,
+        BootloadManager $bootloadManager,
+        GroupRegistry $groups
     ): void {
+        $keeeperBootloadManager = $this->getKeeperBootloadManager($bootloadManager->getClasses());
+
         $this->core = new KeeperCore(
             $this->container,
             new Core($this->container),
@@ -101,7 +97,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         $config = $this->initConfig();
 
         // keeper relies on it's own routing mechanism
-        $routes = new RouteRegistry($config, $appRouter);
+        $routes = new RouteRegistry($config, $appRouter, $groups);
 
         $this->addModule($routes, ['routes']);
 
@@ -113,8 +109,8 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 KeeperCore::class    => $this->core,
                 KeeperConfig::class  => $config
             ],
-            function () use ($config, $bootloadManager): void {
-                (clone $bootloadManager)->bootload($config->getModuleBootloaders());
+            function () use ($config, $keeeperBootloadManager): void {
+                (clone $keeeperBootloadManager)->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($config);
             }
         );
@@ -170,10 +166,10 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 
         $route = $route->withMiddleware(...$middlewares)->withVerbs(...$verbs);
         if ($name !== null) {
-            $this->getRouteRegistry()->setRoute($name, $route);
+            $this->getRouteRegistry()->setRoute($name, $route, $group);
         }
 
-        $this->getRouteRegistry()->setRoute("$controller.$action", $route);
+        $this->getRouteRegistry()->setRoute("$controller.$action", $route, $group);
     }
 
     /**
@@ -243,5 +239,22 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     private function missingCore(): void
     {
         throw new KeeperException('Keeper core requested outside of its context');
+    }
+
+    private function getKeeperBootloadManager(array $classes): BootloadManager
+    {
+        $registry = new ClassesRegistry();
+        foreach ($classes as $class) {
+            if (!\is_subclass_of($class, KeeperBootloaderInterface::class)) {
+                $registry->register($class);
+            }
+        }
+
+        return new BootloadManager(
+            $this->container,
+            $this->container,
+            $this->container,
+            new Initializer($this->container, $this->container, $registry),
+        );
     }
 }

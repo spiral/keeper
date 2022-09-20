@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Keeper;
 
-use Laminas\Diactoros\ServerRequest;
+use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Router\Exception\RouteNotFoundException;
@@ -49,6 +49,15 @@ trait HttpTrait
     ): ServerRequestInterface {
         $headers = array_merge(['accept-language' => 'en'], $headers);
 
-        return new ServerRequest([], [], $uri, $method, 'php://input', $headers, $cookies, $query);
+        $request = new ServerRequest(
+            method: $method,
+            uri: $uri,
+            headers: $headers,
+            body: 'php://input'
+        );
+
+        return $request
+            ->withCookieParams($cookies)
+            ->withQueryParams($query);
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Keeper\Route;
 
+use Spiral\Core\Container;
 use Spiral\Keeper\Config\KeeperConfig;
 use Spiral\Keeper\Module\RouteRegistry;
+use Spiral\Router\GroupRegistry;
 use Spiral\Tests\Keeper\TestCase;
 
 class RegistryTest extends TestCase
@@ -58,6 +60,8 @@ class RegistryTest extends TestCase
 
     private function registry(): RouteRegistry
     {
-        return new RouteRegistry(new KeeperConfig('ns', ['middleware' => []]), $this->router());
+        return new RouteRegistry(
+            new KeeperConfig('ns', ['middleware' => []]), $this->router(), new GroupRegistry(new Container())
+        );
     }
 }

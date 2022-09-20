@@ -1,24 +1,17 @@
 <?php
 
-/**
- * Spiral Framework.
- *
- * @license   MIT
- * @author    Anton Titov (Wolfy-J)
- */
-
 declare(strict_types=1);
 
 namespace Spiral\Keeper\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Bootloader\Views\ViewsBootloader;
+use Spiral\Views\Bootloader\ViewsBootloader;
 use Spiral\Keeper\Directive\ActionDirective;
 use Spiral\Keeper\Directive\AuthDirective;
 use Spiral\Stempler\Bootloader\StemplerBootloader;
 use Spiral\Toolkit\Bootloader\ToolkitBootloader;
 
-final class UIBootloader extends Bootloader
+final class UIBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     protected const DEPENDENCIES = [
         StemplerBootloader::class,

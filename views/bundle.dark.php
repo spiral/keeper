@@ -61,6 +61,7 @@
 
 {{--grid actions--}}
 <use:element path="keeper:datagrid/action/action" as="grid:action"/>
+<use:element path="keeper:datagrid/action/bulkaction" as="grid:bulkaction"/>
 <use:element path="keeper:datagrid/action/link" as="grid:action.link"/>
 <use:element path="keeper:datagrid/action/delete" as="grid:action.delete"/>
 

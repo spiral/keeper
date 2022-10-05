@@ -21,8 +21,12 @@ $_gb_->setOption('paginator.limitOptions', inject('paginate-options', [10, 20, 5
 
 // actions configuration
 $_gb_->setOption('actions.title', inject('actions-title', ' '));
-$_gb_->setOption('selectable.id', inject('selectable', ''));
-$_gb_->setOption('selectable.type', inject('selectable-type', 'multiple'));
+if (injected('selectable')) {
+    $_gb_->setOption('selectable.id', inject('selectable', ''));
+}
+if (injected('selectable-type')) {
+    $_gb_->setOption('selectable.type', inject('selectable-type', 'multiple'));
+}
 $_gb_->setOption('actions.label', inject('actions-label', 'Actions'));
 $_gb_->setOption('actions.kind', inject('actions-kind', ''));
 $_gb_->setOption('actions.size', inject('actions-size', 'sm'));

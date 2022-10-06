@@ -21,6 +21,12 @@ $_gb_->setOption('paginator.limitOptions', inject('paginate-options', [10, 20, 5
 
 // actions configuration
 $_gb_->setOption('actions.title', inject('actions-title', ' '));
+if (injected('selectable')) {
+    $_gb_->setOption('selectable.id', inject('selectable', ''));
+}
+if (injected('selectable-type')) {
+    $_gb_->setOption('selectable.type', inject('selectable-type', 'multiple'));
+}
 $_gb_->setOption('actions.label', inject('actions-label', 'Actions'));
 $_gb_->setOption('actions.kind', inject('actions-kind', ''));
 $_gb_->setOption('actions.size', inject('actions-size', 'sm'));
@@ -35,12 +41,12 @@ $_gb_->setOption('responsive.tableClass', inject('table-class', 'table d-none d-
 
 ?>
 <div class="sf-table ${class}" attr:aggregate>
-  <div class="js-sf-datagrid" id="{{ $_gb_->getID() }}" @if(injected('url')) data-url="${url}" @endif >
+    <div class="js-sf-datagrid" id="{{ $_gb_->getID() }}" @if(injected('url')) data-url="${url}" @endif >
     ${context}
     <script type="text/javascript" role="sf-options">
         (function () {
             return {!! $_gb_->render() !!};
         });
     </script>
-  </div>
+</div>
 </div><?php unset($_gb_); ?>

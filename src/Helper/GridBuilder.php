@@ -45,6 +45,13 @@ final class GridBuilder
     private $cells = [];
 
     /**
+     * Bulk Actions definitions.
+     *
+     * @var array
+     */
+    private $bulkActions = [];
+
+    /**
      * Action definitions.
      *
      * @var array
@@ -101,6 +108,18 @@ final class GridBuilder
     public function addAction(array $action): self
     {
         $this->actions[] = $action;
+
+        return $this;
+    }
+
+    /**
+     * @param string $id
+     * @param array $action
+     * @return $this
+     */
+    public function addBulkAction(string $id, array $action): self
+    {
+        $this->bulkActions[$id] = $action;
 
         return $this;
     }
@@ -163,6 +182,7 @@ final class GridBuilder
 
         $schema['columns'] = $this->columns;
         $schema['renderers']['cells'] = $this->cells;
+        $schema['renderers']['actions'] = $this->bulkActions;
 
         if ($this->actions !== []) {
             $schema['columns'][] = [

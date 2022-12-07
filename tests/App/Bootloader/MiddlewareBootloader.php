@@ -10,7 +10,7 @@ use Spiral\Tests\Keeper\App\Middleware\Three;
 
 class MiddlewareBootloader extends Bootloader
 {
-    public function boot(KeeperBootloader $keeper): void
+    public function init(KeeperBootloader $keeper): void
     {
         $keeper->addMiddleware(Three::class);
     }

@@ -172,6 +172,11 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         $this->getRouteRegistry()->setRoute("$controller.$action", $route, $group);
     }
 
+    protected function getMiddleware(): array
+    {
+        return static::MIDDLEWARE;
+    }
+
     /**
      * @return RouteRegistry
      */
@@ -220,7 +225,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 'loginView'     => 'keeper:login',
 
                 // global keeper middleware
-                'middleware'    => static::MIDDLEWARE,
+                'middleware'    => $this->getMiddleware(),
 
                 // connected modules and extensions
                 'modules'       => static::LOAD,

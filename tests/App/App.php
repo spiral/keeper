@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Tests\Keeper\App;
 
 use Spiral\Bootloader\CommandBootloader;
+use Spiral\Bootloader\Http\ErrorHandlerBootloader;
 use Spiral\Bootloader\Http\RouterBootloader;
 use Spiral\Bootloader\Security\GuardBootloader;
 use Spiral\Bootloader\Views\TranslatedCacheBootloader;
@@ -19,6 +20,7 @@ use Spiral\Tests\Keeper\App\Bootloader;
 class App extends Kernel
 {
     protected const LOAD = [
+        ErrorHandlerBootloader::class,
         TranslatedCacheBootloader::class,
         StemplerBootloader::class,
         GuardBootloader::class,
@@ -42,6 +44,7 @@ class App extends Kernel
         Bootloader\GuardedBootloader::class,
         UIBootloader::class,
         Bootloader\LoginBootloader::class,
+        Bootloader\RoutesBootloader::class,
     ];
 
     public function getHttp(): Http

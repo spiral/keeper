@@ -22,15 +22,12 @@ final class RouteRegistry
     public function __construct(
         private readonly KeeperConfig $config,
         private readonly RouterInterface $appRouter,
-        private readonly GroupRegistry $groups)
-    {
+        private readonly GroupRegistry $groups,
+    ) {
         $this->middleware = $this->config->getMiddleware();
     }
 
-    /**
-     * @param string|MiddlewareInterface $middleware
-     */
-    public function addMiddleware($middleware): void
+    public function addMiddleware(string|MiddlewareInterface $middleware): void
     {
         if (!in_array($middleware, $this->middleware, true)) {
             $this->middleware[] = $middleware;
@@ -58,13 +55,10 @@ final class RouteRegistry
     /**
      * Provides the ability to inject templated args in a form or {id} or {{id}}.
      *
-     * @param string            $namespace
      * @param string|array|null $route
-     * @param array             $parameters
-     * @return string
      * @deprecated use RouteBuilder::uri()
      */
-    public function uri(string $namespace, $route = null, array $parameters = []): string
+    public function uri(string $namespace, mixed $route = null, array $parameters = []): string
     {
         [
             'namespace'  => $namespace,
@@ -99,9 +93,6 @@ final class RouteRegistry
 
     /**
      * Assign middlewares to a given route.
-     *
-     * @param Route $route
-     * @return RouteInterface
      */
     private function configureRoute(Route $route): RouteInterface
     {

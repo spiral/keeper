@@ -6,9 +6,11 @@ namespace Spiral\Keeper\Bootloader;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Boot\BootloadManager\BootloadManager;
 use Spiral\Boot\BootloadManager\ClassesRegistry;
+use Spiral\Boot\BootloadManager\DefaultInvokerStrategy;
 use Spiral\Boot\BootloadManager\Initializer;
+use Spiral\Boot\BootloadManager\StrategyBasedBootloadManager;
+use Spiral\Boot\BootloadManagerInterface;
 use Spiral\Bootloader\Security\GuardBootloader;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Core\Container;
@@ -75,18 +77,15 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     }
 
     /**
-     * @param BootloadManager              $bootloadManager
-     * @param RouterInterface              $appRouter
-     * @param PermissionsProviderInterface $permissions
      * @throws \Throwable
      */
     public function boot(
         RouterInterface $appRouter,
         PermissionsProviderInterface $permissions,
-        BootloadManager $bootloadManager,
-        GroupRegistry $groups
+        BootloadManagerInterface $bootloadManager,
+        GroupRegistry $groups,
     ): void {
-        $keeeperBootloadManager = $this->getKeeperBootloadManager($bootloadManager->getClasses());
+        $keeperBootloadManager = $this->getKeeperBootloadManager($bootloadManager->getClasses());
 
         $this->core = new KeeperCore(
             $this->container,
@@ -109,48 +108,28 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 KeeperCore::class    => $this->core,
                 KeeperConfig::class  => $config
             ],
-            function () use ($config, $keeeperBootloadManager): void {
-                (clone $keeeperBootloadManager)->bootload($config->getModuleBootloaders());
+            function () use ($config, $keeperBootloadManager): void {
+                $keeperBootloadManager->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($config);
             }
         );
     }
 
-    /**
-     * @return string
-     */
     public function getNamespace(): string
     {
         return static::NAMESPACE;
     }
 
-    /**
-     * @param string $controller
-     * @param string $class
-     */
     public function addController(string $controller, string $class): void
     {
         $this->core->setController($controller, $class);
     }
 
-    /**
-     * @param MiddlewareInterface|string $middleware
-     */
-    public function addMiddleware($middleware): void
+    public function addMiddleware(MiddlewareInterface|string $middleware): void
     {
         $this->getRouteRegistry()->addMiddleware($middleware);
     }
 
-    /**
-     * @param string      $pattern
-     * @param string      $controller
-     * @param string      $action
-     * @param array       $verbs
-     * @param string|null $name
-     * @param array       $defaults
-     * @param string|null $group
-     * @param array       $middlewares
-     */
     public function addRoute(
         string $pattern,
         string $controller,
@@ -177,9 +156,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         return static::MIDDLEWARE;
     }
 
-    /**
-     * @return RouteRegistry
-     */
     protected function getRouteRegistry(): RouteRegistry
     {
         /** @var RouteRegistry $registry */
@@ -187,10 +163,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         return $registry;
     }
 
-    /**
-     * @param KeeperConfig $config
-     * @throws \Throwable
-     */
     private function initInterceptors(KeeperConfig $config): void
     {
         foreach ($config->getInterceptors() as $interceptor) {
@@ -206,8 +178,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
 
     /**
      * Init configuration from default and user-defined value.
-     *
-     * @return KeeperConfig
      */
     private function initConfig(): KeeperConfig
     {
@@ -246,7 +216,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         throw new KeeperException('Keeper core requested outside of its context');
     }
 
-    private function getKeeperBootloadManager(array $classes): BootloadManager
+    private function getKeeperBootloadManager(array $classes): BootloadManagerInterface
     {
         $registry = new ClassesRegistry();
         foreach ($classes as $class) {
@@ -255,11 +225,12 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             }
         }
 
-        return new BootloadManager(
+        $initializer = new Initializer($this->container, $this->container, $registry);
+
+        return new StrategyBasedBootloadManager(
+            new DefaultInvokerStrategy($initializer, $this->container, $this->container),
             $this->container,
-            $this->container,
-            $this->container,
-            new Initializer($this->container, $this->container, $registry),
+            $initializer,
         );
     }
 }

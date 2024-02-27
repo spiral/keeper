@@ -123,6 +123,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
     private function buildClassSitemap(\ReflectionClass $class): string
     {
         $lastSegment = static::ROOT;
+        /** @psalm-suppress UnusedForeachValue, NoValue */
         foreach ($this->reader->getClassMetadata($class) as $ann) {
             switch (true) {
                 case $ann instanceof Segment:
@@ -181,6 +182,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
         $sitemapElements = $sitemap->getElements();
         foreach ($methods as $method) {
             $lastSegment = $lastSegments[$method->controller] ?? static::ROOT;
+            /** @psalm-suppress NoValue */
             foreach ($this->reader->getFunctionMetadata($method->reflection) as $ann) {
                 switch (true) {
                     case $ann instanceof Link:

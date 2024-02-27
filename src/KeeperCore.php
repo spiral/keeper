@@ -21,6 +21,9 @@ use Spiral\Domain\Permission;
 use Spiral\Domain\PermissionsProviderInterface;
 use Spiral\Keeper\Exception\KeeperException;
 
+/**
+ * @implements InjectorInterface<object>
+ */
 final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsProviderInterface
 {
     /** @var string */

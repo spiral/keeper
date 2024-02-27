@@ -14,6 +14,8 @@ use Spiral\Security\GuardInterface;
  * @method Sitemap segment(string $name, string $title = null, array $options = [])
  * @method Sitemap link(string $name, string $title = null, array $options = [])
  * @method Sitemap view(string $name, string $title = null, array $options = [])
+ *
+ * @implements \IteratorAggregate<string, Node>
  */
 final class Sitemap implements \IteratorAggregate
 {

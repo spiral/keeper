@@ -92,6 +92,7 @@ final class GridBuilder
      */
     public function setOption(string $path, $value): self
     {
+        /** @psalm-suppress UnsupportedPropertyReferenceUsage */
         $loc = &$this->options;
         foreach (explode('.', $path) as $step) {
             $loc = &$loc[$step];

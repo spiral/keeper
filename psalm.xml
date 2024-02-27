@@ -10,6 +10,8 @@
     ensureArrayStringOffsetsExist="true"
     addParamDefaultToDocblockType="true"
     strictBinaryOperands="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
 >
     <projectFiles>
         <directory name="src" />

@@ -67,7 +67,8 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
      */
     public function addModule(object $module, array $aliases = []): void
     {
-        $aliases[] = get_class($module);
+        /** @var array<class-string> $aliases */
+        $aliases[] = $module::class;
         $this->core->addModule($module, $aliases);
 
         foreach ($aliases as $alias) {

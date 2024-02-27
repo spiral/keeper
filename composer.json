@@ -16,7 +16,7 @@
     "spiral/helpers": "^1.0",
     "spiral/code-style": "^1.1",
     "spiral/nyholm-bridge": "^1.3",
-    "vimeo/psalm": "^4.27"
+    "vimeo/psalm": "^5.22"
   },
   "autoload": {
     "psr-4": {

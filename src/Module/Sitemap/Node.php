@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Module\Sitemap;
 
+/**
+ * @implements \IteratorAggregate<string, Node>
+ */
 class Node implements \IteratorAggregate
 {
     /** @var string */

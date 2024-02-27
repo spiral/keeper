@@ -6,7 +6,7 @@
   "require": {
     "php": ">=8.1",
     "ext-json": "*",
-    "spiral/framework": "^3.0.1",
+    "spiral/framework": "^3.4",
     "spiral/attributes": "^2.8 || ^3.0"
   },
   "require-dev": {

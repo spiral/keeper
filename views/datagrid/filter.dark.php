@@ -24,7 +24,7 @@
           </div>
           <div class="sf-filter-toggle-panel" data-class-open="" data-class-closed="d-none">
             <div class="position-relative">
-              <div class="border position-absolute shadow-sm p-3 bg-white w-100 mt-2" style="z-index: 1">
+              <div class="border position-absolute shadow-sm p-3 bg-white w-100 mt-2" style="z-index: 4">
                   <?php $_gb_->captureForm('#' . $_gb_->getID() . '-filter'); ?>
                 <form:wrapper action="#{!! $_gb_->getID().'-filter' !!}" id="#{!! $_gb_->getID() . '-filter' !!}"
                               lock-type="none" submit-on-reset="true">

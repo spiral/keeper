@@ -17,6 +17,7 @@ use Spiral\Core\BinderInterface;
 use Spiral\Core\CompatiblePipelineBuilder;
 use Spiral\Core\Container\Autowire;
 use Spiral\Core\Container\InjectorInterface;
+use Spiral\Core\ContainerScope;
 use Spiral\Core\CoreInterceptorInterface;
 use Spiral\Core\CoreInterface;
 use Spiral\Core\Exception\ControllerException;
@@ -65,7 +66,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         KeeperEntitiesConfig $config,
         PipelineBuilderInterface $builder = null,
     ) {
-        $binder->removeBinding(KeeperEntitiesConfig::class);
         $this->builder = $builder ?? new CompatiblePipelineBuilder();
         $config->setCore($this);
 
@@ -140,13 +140,13 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     }
 
     /**
-     * @param \ReflectionClass $class
-     * @param string|null      $context
-     * @return object|null
+     * Inject a module
      */
     public function createInjection(\ReflectionClass $class, string $context = null): object
     {
-        return $this->getModule($class->getName());
+        // To avoid a conflict when a few KeeperCore instances are registered as injectors for the same module
+        $keeper = ContainerScope::getContainer()->get(self::class);
+        return $keeper->getModule($class->getName());
     }
 
     /**
@@ -163,7 +163,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
                 name: 'keeper',
                 bindings: [
                     self::class          => $this,
-                    CoreInterface::class => $this
+                    CoreInterface::class => $this,
                 ],
             ),
             function (ContainerInterface $container) use ($controller, $action, $parameters) {

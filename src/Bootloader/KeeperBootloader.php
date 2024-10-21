@@ -127,10 +127,11 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         // init all keeper functionality
         $scope->runScope(
             [
-                self::class          => $this,
+                self::class => $this,
                 CoreInterface::class => $core,
-                KeeperCore::class    => $core,
-                KeeperConfig::class  => $config
+                KeeperCore::class => $core,
+                KeeperConfig::class => $config,
+                KeeperEntitiesConfig::class => $this->config,
             ],
             function (ContainerInterface $container) use ($config, $bootloadManager, $core): void {
                 // init all keeper functionality
@@ -159,6 +160,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         /** @var array<class-string> $aliases */
         $aliases[] = $module::class;
         foreach ($aliases as $alias) {
+            /** @see \Spiral\Keeper\KeeperCore::createInjection() */
             $this->binder->bindInjector($alias, KeeperCore::class);
         }
 

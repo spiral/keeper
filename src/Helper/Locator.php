@@ -37,7 +37,7 @@ final class Locator
             $matches[$class->getFileName()] = [$class, $controller];
         }
 
-        ksort($matches);
+        \ksort($matches);
         foreach ($matches as $match) {
             yield $match[0] => $match[1];
         }

@@ -7,6 +7,7 @@ namespace Spiral\Tests\Keeper;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Spiral\Http\Http;
 use Spiral\Router\Exception\RouteNotFoundException;
 
 trait HttpTrait
@@ -14,7 +15,7 @@ trait HttpTrait
     private function post($uri, array $data = [], array $headers = [], array $cookies = []): ResponseInterface
     {
         try {
-            return $this->app->getHttp()->handle(
+            return $this->getContainer()->get(Http::class)->handle(
                 $this->request($uri, 'POST', [], $headers, $cookies)->withParsedBody($data)
             );
         } catch (RouteNotFoundException $e) {
@@ -34,7 +35,7 @@ trait HttpTrait
             foreach ($attributes as $name => $attribute) {
                 $request = $request->withAttribute($name, $attribute);
             }
-            return $this->app->getHttp()->handle($request);
+            return $this->getContainer()->get(Http::class)->handle($request);
         } catch (RouteNotFoundException $e) {
             return new NotFoundResponse();
         }

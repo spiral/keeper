@@ -124,11 +124,11 @@ class AnnotationTest extends TestCase
 
     public function testForbidden(): void
     {
-        $this->app->runScope(
-            [ActorInterface::class => Enemy::class],
+        $this->runScoped(
             function () use (&$output): void {
                 $output = $this->getSitemap(true);
-            }
+            },
+            [ActorInterface::class => Enemy::class],
         );
 
         // This exact action is forbidden tests/App/Bootloader/GuestBootloader.php:34
@@ -137,11 +137,11 @@ class AnnotationTest extends TestCase
         $this->assertArrayNotHasKey('external.forbidden', $this->nodes($output, 'custom', 'custom.parent'));
         $this->assertArrayHasKey('root.bottom', $this->nodes($output, 'rootgroup', 'root.top'));
 
-        $this->app->runScope(
-            [ActorInterface::class => Guest::class],
+        $this->runScoped(
             function () use (&$output): void {
                 $output = $this->getSitemap(true);
-            }
+            },
+            [ActorInterface::class => Guest::class],
         );
 
         $this->assertArrayHasKey('root.parent', $this->nodes($output, 'custom', 'custom.parent'));

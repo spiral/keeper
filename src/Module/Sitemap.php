@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Module;
 
+use Spiral\Core\Attribute\Scope;
 use Spiral\Keeper\Exception\SitemapException;
 use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Keeper\Module\Sitemap\Node;
@@ -17,6 +18,7 @@ use Spiral\Security\GuardInterface;
  *
  * @implements \IteratorAggregate<string, Node>
  */
+#[Scope('keeper')]
 final class Sitemap implements \IteratorAggregate
 {
     public const TYPE_ROOT    = 'root';

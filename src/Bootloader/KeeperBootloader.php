@@ -73,10 +73,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     private function init(ConfiguratorInterface $configurator, BinderInterface $binder): void
     {
         $this->config = new KeeperEntitiesConfig();
-        $this->binder = $binder;
-        $configName = static::CONFIG_NAME ?: static::NAMESPACE;
+        $this->binder = $binder->getBinder('keeper');
         $configurator->setDefaults(
-            $configName,
+            static::CONFIG_NAME ?: static::NAMESPACE,
             [
                 // keeper isolation prefix (only for non-host routing)
                 'routePrefix'   => static::PREFIX,
@@ -97,9 +96,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 'interceptors'  => static::INTERCEPTORS,
             ],
         );
-
-        // Store shared object
-        $binder->bind(KeeperConfig::class, new KeeperConfig(static::NAMESPACE, $configurator->getConfig($configName)));
     }
 
     /**
@@ -110,10 +106,14 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         RouterInterface $appRouter,
         ScopeInterface $scope,
         GroupRegistry $groups,
-        KeeperConfig $config,
         FactoryInterface $factory,
+        ConfiguratorInterface $configurator,
     ): void {
         $bootloadManager = $invoker->invoke($this->getKeeperBootloadManager(...));
+        $config = new KeeperConfig(
+            static::NAMESPACE,
+            $configurator->getConfig(static::CONFIG_NAME ?: static::NAMESPACE),
+        );
 
         // keeper relies on it's own routing mechanism
         $routes = new RouteRegistry($config, $appRouter, $groups);

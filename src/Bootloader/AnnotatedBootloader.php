@@ -31,7 +31,7 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
 
     public function boot(KeeperBootloader $keeper): void
     {
-        $annotations = iterator_to_array($this->parseAnnotations($keeper->getNamespace()));
+        $annotations = \iterator_to_array($this->parseAnnotations($keeper->getNamespace()));
         foreach ($annotations as $controller) {
             $keeper->addController($controller['name'], $controller['class']);
 

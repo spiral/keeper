@@ -9,28 +9,18 @@ use Spiral\Domain\Annotation\GuardNamespace;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 
-/**
- * @Controller(
- *     name="provided",
- *     prefix="/provided",
- *     namespace="guarded"
- * )
- * @GuardNamespace(namespace="guarded.provided")
- */
+#[Controller(name: "provided", prefix: "/provided", namespace: "guarded")]
+#[GuardNamespace(namespace: "guarded.provided")]
 class ProvidedController
 {
-    /**
-     * @Guarded(permission="allowed")
-     * @Action(route="/allowed")
-     */
+    #[Action(route: "/allowed")]
+    #[Guarded(permission: "allowed")]
     public function allowed(): void
     {
     }
 
-    /**
-     * @Guarded(permission="forbidden")
-     * @Action(route="/forbidden")
-     */
+    #[Action(route: "/forbidden")]
+    #[Guarded(permission: "forbidden")]
     public function forbidden(): void
     {
     }

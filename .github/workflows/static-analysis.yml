@@ -2,9 +2,9 @@ on:
   pull_request:
   push:
     branches:
-      - 0.10
+      - '*'
 
-name: static analysis
+name: Psalm
 
 jobs:
   psalm:

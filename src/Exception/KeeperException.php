@@ -11,6 +11,4 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Exception;
 
-class KeeperException extends \RuntimeException
-{
-}
+class KeeperException extends \RuntimeException {}

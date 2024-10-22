@@ -14,16 +14,10 @@ use Spiral\Tokenizer\ClassesInterface;
  */
 final class Locator
 {
-    /** @var ClassesInterface */
-    private $locator;
-    /** @var ReaderInterface */
-    private $reader;
-
-    public function __construct(ClassesInterface $locator, ReaderInterface $reader)
-    {
-        $this->reader = $reader;
-        $this->locator = $locator;
-    }
+    public function __construct(
+        private readonly ClassesInterface $locator,
+        private readonly ReaderInterface $reader,
+    ) {}
 
     public function locateNamespaceControllers(string $namespace): iterable
     {
@@ -37,7 +31,7 @@ final class Locator
             $matches[$class->getFileName()] = [$class, $controller];
         }
 
-        ksort($matches);
+        \ksort($matches);
         foreach ($matches as $match) {
             yield $match[0] => $match[1];
         }

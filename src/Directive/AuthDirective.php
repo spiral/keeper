@@ -34,9 +34,9 @@ class AuthDirective extends AbstractDirective
      */
     public function renderAuth(Directive $directive): string
     {
-        return sprintf(
+        return \sprintf(
             '<?php if($this->container->get(\Spiral\Security\GuardInterface::class)->allows(%s)): ?>',
-            $directive->body
+            $directive->body,
         );
     }
 
@@ -56,7 +56,7 @@ class AuthDirective extends AbstractDirective
 
         if (isset($directive->values[1]) && $this->endsWithArray($directive->values[1])) {
             $directive->values[1] = $this->appendToArray($directive->values[1], $token);
-            $directive->body = implode(', ', $directive->values);
+            $directive->body = \implode(', ', $directive->values);
         } else {
             $directive->body .= ", [$token]";
             $directive->values[] = "[$token]";
@@ -67,6 +67,6 @@ class AuthDirective extends AbstractDirective
 
     private function appendToArray(string $value, string $postfix): string
     {
-        return $value === '[]' ? "[$postfix]" : rtrim($value, ']') . ", $postfix]";
+        return $value === '[]' ? "[$postfix]" : \rtrim($value, ']') . ", $postfix]";
     }
 }

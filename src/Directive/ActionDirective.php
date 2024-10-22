@@ -37,32 +37,31 @@ class ActionDirective extends AbstractDirective
 
     private function doRender(Directive $directive, string $name): string
     {
-        if (count($directive->values) < 2) {
+        if (\count($directive->values) < 2) {
             throw new DirectiveException(
                 "Unable to call @$name directive, at least 2 values is required",
-                $directive->getContext()
+                $directive->getContext(),
             );
         }
 
-        return sprintf(
+        return \sprintf(
             '<?php echo $this->container->get(\Spiral\Keeper\Helper\RouteBuilder::class)->uri(%s); ?>',
-            $directive->body
+            $directive->body,
         );
     }
 
-
     private function handleLegacyDirective(Directive $directive): Directive
     {
-        if (count($directive->values) < 1) {
+        if (\count($directive->values) < 1) {
             throw new DirectiveException(
                 'Unable to call @action directive, at least 1 value is required',
-                $directive->getContext()
+                $directive->getContext(),
             );
         }
 
-        $count = count($directive->values);
+        $count = \count($directive->values);
         if ($count === 1 || ($count === 2 && $this->endsWithArray($directive->values[1]))) {
-            array_unshift($directive->values, "'keeper'");
+            \array_unshift($directive->values, "'keeper'");
             $directive->body = "'keeper', {$directive->body}";
             return $directive;
         }

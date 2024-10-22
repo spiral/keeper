@@ -7,15 +7,10 @@ namespace Spiral\Tests\Keeper\App\Controller\Defaults;
 use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 
-/**
- * @Controller(namespace="default", name="notSetWithIndex", prefix="/notSetWithIndex")
- */
+#[Controller(name: "notSetWithIndex", prefix: "/notSetWithIndex", namespace: "default")]
 class NotSetWithIndexController
 {
-    /**
-     * @Action(route="/index")
-     * @return string
-     */
+    #[Action(route: "/index")]
     public function index(): string
     {
         return 'notSetWithIndex: index';

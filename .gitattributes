@@ -1,1 +1,9 @@
-/tests export-ignore
+* text=auto
+
+.github                export-ignore
+tests                  export-ignore
+.*                     export-ignore
+*.xml                  export-ignore
+*.xml.dist             export-ignore
+.php-cs-fixer.dist.php export-ignore
+composer.lock          export-ignore

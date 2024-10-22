@@ -24,12 +24,7 @@ class MiddlewareTest extends TestCase
 
     public function testLoginOk(): void
     {
-        $this->app->runScope(
-            [
-                RequestHandlerInterface::class => $this->app->get(RequestHandlerInterface::class),
-                AuthContextInterface::class    => AuthContext::class,
-                ActorInterface::class          => Guest::class
-            ],
+        $this->runScoped(
             function (): void {
                 $this->assertSame(
                     200,
@@ -41,7 +36,12 @@ class MiddlewareTest extends TestCase
                         [AuthMiddleware::ATTRIBUTE => new AuthContext()]
                     )->getStatusCode()
                 );
-            }
+            },
+            [
+                RequestHandlerInterface::class => $this->getContainer()->get(RequestHandlerInterface::class),
+                AuthContextInterface::class    => AuthContext::class,
+                ActorInterface::class          => Guest::class
+            ],
         );
     }
 }

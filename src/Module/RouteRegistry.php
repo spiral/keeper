@@ -29,7 +29,7 @@ final class RouteRegistry
 
     public function addMiddleware(string|MiddlewareInterface $middleware): void
     {
-        if (!in_array($middleware, $this->middleware, true)) {
+        if (!\in_array($middleware, $this->middleware, true)) {
             $this->middleware[] = $middleware;
 
             foreach ($this->appRouter->getRoutes() as $name => $route) {
@@ -48,7 +48,7 @@ final class RouteRegistry
 
         $this->groups->getGroup($group)->addRoute(
             RouteBuilder::routeName($this->config->getNamespace(), $name),
-            $this->configureRoute($route)
+            $this->configureRoute($route),
         );
     }
 
@@ -63,7 +63,7 @@ final class RouteRegistry
         [
             'namespace'  => $namespace,
             'route'      => $route,
-            'parameters' => $parameters
+            'parameters' => $parameters,
         ] = $this->handleLegacyUriParams($namespace, $route, $parameters);
 
         $builder = new RouteBuilder($this->appRouter);
@@ -72,23 +72,23 @@ final class RouteRegistry
 
     private function handleLegacyUriParams(string $namespace, $route = null, array $parameters = []): array
     {
-        if (!empty($parameters) && !is_string($route)) {
+        if (!empty($parameters) && !\is_string($route)) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Route name should be a string in case of parameters are provided, %s given',
-                    gettype($route)
-                )
+                    \gettype($route),
+                ),
             );
         }
 
         $route = $route ?: null;
         if (empty($route) && empty($parameters)) {
             [$namespace, $route] = ['keeper', $namespace];
-        } elseif (is_array($route)) {
+        } elseif (\is_array($route)) {
             [$namespace, $route, $parameters] = ['keeper', $namespace, $route];
         }
 
-        return compact('namespace', 'route', 'parameters');
+        return \compact('namespace', 'route', 'parameters');
     }
 
     /**

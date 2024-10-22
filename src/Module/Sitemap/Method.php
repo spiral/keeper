@@ -11,28 +11,15 @@ use Spiral\Keeper\Annotation\Sitemap\Link;
 
 final class Method
 {
-    /** @var \ReflectionMethod */
-    public $reflection;
-    /** @var string */
-    public $name;
-    /** @var string */
-    public $controller;
-    /** @var string */
-    public $route;
-    /** @var string|null */
-    public $permission;
+    public string $name;
 
     public function __construct(
-        \ReflectionMethod $reflection,
-        string $route,
-        string $controller,
-        ?string $permission = null
+        public \ReflectionMethod $reflection,
+        public string $route,
+        public string $controller,
+        public ?string $permission = null,
     ) {
-        $this->reflection = $reflection;
         $this->name = $reflection->getName();
-        $this->controller = $controller;
-        $this->route = $route;
-        $this->permission = $permission;
     }
 
     public static function create(
@@ -42,25 +29,25 @@ final class Method
         Action $action,
         ?GuardNamespace $guardNamespace = null,
         ?Guarded $guarded = null,
-        ?Link $link = null
+        ?Link $link = null,
     ): self {
         $method = $reflection->getName();
 
-        $permission = array_filter(
+        $permission = \array_filter(
             [
                 $guardNamespace && $guardNamespace->namespace ? $guardNamespace->namespace : "$namespace.$controller",
-                self::permission($link, $guarded, $method)
+                self::permission($link, $guarded, $method),
             ],
             static function ($chunk): bool {
-                return (bool)$chunk;
-            }
+                return (bool) $chunk;
+            },
         );
 
         return new self(
             $reflection,
             $action->name ?: "$controller.$method",
             $controller,
-            implode('.', $permission)
+            \implode('.', $permission),
         );
     }
 

@@ -22,25 +22,19 @@ use Spiral\Keeper\Module\Sitemap;
 class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     protected const ROOT = Sitemap::TYPE_ROOT;
-
     protected const DEPENDENCIES = [
         AttributesBootloader::class,
     ];
 
-    /** @var ReaderInterface */
-    private $reader;
-    /** @var Locator */
-    private $locator;
-    /** @var GraphSorter */
-    private $sorter;
-    /** @var array */
-    private $cache = [];
+    private GraphSorter $sorter;
 
-    public function __construct(ReaderInterface $reader, Locator $locator)
-    {
-        $this->reader = $reader;
-        $this->locator = $locator;
+    /** @var array<non-empty-string, bool> */
+    private array $cache = [];
 
+    public function __construct(
+        private readonly ReaderInterface $reader,
+        private readonly Locator $locator,
+    ) {
         $this->initSorter();
     }
 
@@ -92,9 +86,9 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
                 'parent'  => $parent ? $parent->getName() : static::ROOT,
                 'title'   => $node->getOption('title'),
                 'options' => $node->getOptions(),
-                'child'   => []
+                'child'   => [],
             ],
-            [$parent ? $parent->getName() : static::ROOT]
+            [$parent ? $parent->getName() : static::ROOT],
         );
         foreach ($node->getIterator() as $child) {
             $this->fillFromNode($child, $node);
@@ -138,9 +132,9 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
                             'parent'  => $ann->parent,
                             'title'   => $ann->title,
                             'options' => $ann->options + ['position' => $ann->position],
-                            'child'   => []
+                            'child'   => [],
                         ],
-                        $ann->parent ? [$ann->parent] : []
+                        $ann->parent ? [$ann->parent] : [],
                     );
             }
         }
@@ -166,7 +160,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
                 $action,
                 $guardNamespace,
                 $guarded,
-                $link
+                $link,
             );
             yield "$controller.{$method->name}" => $method;
         }
@@ -198,9 +192,9 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
                                 'parent'  => $parent,
                                 'title'   => $ann->title,
                                 'options' => $ann->getOptions($method),
-                                'child'   => []
+                                'child'   => [],
                             ],
-                            $parent ? [$parent] : []
+                            $parent ? [$parent] : [],
                         );
 
                         break;
@@ -209,20 +203,12 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
         }
     }
 
-    /**
-     * @param Link|View      $ann
-     * @param Sitemap\Method $method
-     * @param array          $methods
-     * @param array          $sitemapElements
-     * @param string         $lastSegment
-     * @return string
-     */
     private function getParent(
-        $ann,
+        Link|View $ann,
         Sitemap\Method $method,
         array $methods,
         array $sitemapElements,
-        string $lastSegment
+        string $lastSegment,
     ): string {
         $parent = null;
         if ($ann->hasAbsoluteParent()) {
@@ -231,7 +217,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
             $parent = "{$method->controller}.{$ann->parent}";
         }
 
-        if ($parent && (isset($methods[$parent]) || in_array($parent, $sitemapElements, true))) {
+        if ($parent && (isset($methods[$parent]) || \in_array($parent, $sitemapElements, true))) {
             return $parent;
         }
 

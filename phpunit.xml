@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
-         backupGlobals="false"
-         backupStaticAttributes="false"
          colors="true"
-         verbose="false"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
+         cacheResultFile="runtime/phpunit/result.cache"
+         failOnWarning="true"
+         failOnRisky="true"
+         executionOrder="random"
          stderr="true"
-         stopOnFailure="false"
-         stopOnError="false"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage>
-    <include>
-      <directory>src/</directory>
-    </include>
-  </coverage>
-  <testsuites>
-    <testsuite name="Keeper - Admin panel and UI toolkit">
-      <directory>./tests/</directory>
-    </testsuite>
-  </testsuites>
-  <php>
-    <ini name="error_reporting" value="-1"/>
-    <ini name="memory_limit" value="-1"/>
-  </php>
+         beStrictAboutOutputDuringTests="true"
+>
+    <testsuites>
+        <testsuite name="Keeper - Admin panel and UI toolkit">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+        <exclude>
+            <directory>tests</directory>
+        </exclude>
+    </source>
+    <coverage>
+        <report>
+            <html outputDirectory="runtime/phpunit/coverage"/>
+            <text outputFile="runtime/phpunit/coverage.txt"/>
+            <clover outputFile="runtime/phpunit/logs/clover.xml"/>
+        </report>
+    </coverage>
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="memory_limit" value="-1"/>
+    </php>
 </phpunit>

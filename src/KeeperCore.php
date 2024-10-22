@@ -11,14 +11,30 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper;
 
+use Psr\Container\ContainerInterface;
+use Spiral\Core\Attribute\Proxy;
+use Spiral\Core\BinderInterface;
+use Spiral\Core\CompatiblePipelineBuilder;
+use Spiral\Core\Container\Autowire;
 use Spiral\Core\Container\InjectorInterface;
+use Spiral\Core\ContainerScope;
 use Spiral\Core\CoreInterceptorInterface;
 use Spiral\Core\CoreInterface;
 use Spiral\Core\Exception\ControllerException;
+use Spiral\Core\FactoryInterface;
 use Spiral\Core\InterceptableCore;
+use Spiral\Core\Scope;
 use Spiral\Core\ScopeInterface;
+use Spiral\Domain\GuardInterceptor;
 use Spiral\Domain\Permission;
 use Spiral\Domain\PermissionsProviderInterface;
+use Spiral\Interceptors\Context\CallContext;
+use Spiral\Interceptors\Context\Target;
+use Spiral\Interceptors\Handler\AutowireHandler;
+use Spiral\Interceptors\HandlerInterface;
+use Spiral\Interceptors\InterceptorInterface;
+use Spiral\Interceptors\PipelineBuilderInterface;
+use Spiral\Keeper\Config\KeeperEntitiesConfig;
 use Spiral\Keeper\Exception\KeeperException;
 
 /**
@@ -26,42 +42,39 @@ use Spiral\Keeper\Exception\KeeperException;
  */
 final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsProviderInterface
 {
-    /** @var string */
-    private $namespace;
+    /** @var array */
+    private array $controllers = [];
 
     /** @var array */
-    private $controllers = [];
+    private array $aliases = [];
 
-    /** @var array */
-    private $aliases = [];
+    private array $modules = [];
+    private InterceptableCore $invoker;
+    private PipelineBuilderInterface $builder;
 
-    /** @var ScopeInterface */
-    private $scope;
-
-    /** @var array */
-    private $modules = [];
-
-    /** @var InterceptableCore */
-    private $invoker;
-
-    /** @var PermissionsProviderInterface */
-    private $permissions;
+    /** @var list<CoreInterceptorInterface|InterceptorInterface> */
+    private array $interceptors = [];
 
     public function __construct(
-        ScopeInterface $scope,
-        CoreInterface $core,
-        PermissionsProviderInterface $permissions,
-        string $namespace
+        #[Proxy] private readonly ScopeInterface $scope,
+        BinderInterface $binder,
+        #[Proxy] private readonly FactoryInterface $factory,
+        private readonly CoreInterface|HandlerInterface|null $core,
+        private readonly PermissionsProviderInterface $permissions,
+        private readonly string $namespace,
+        KeeperEntitiesConfig $config,
+        PipelineBuilderInterface $builder = null,
     ) {
-        $this->invoker = new InterceptableCore($core);
-        $this->scope = $scope;
-        $this->permissions = $permissions;
-        $this->namespace = $namespace;
+        $this->builder = $builder ?? new CompatiblePipelineBuilder();
+        $config->setCore($this);
+
+        // Add guard interceptor
+        $this->interceptors[] = $this->factory->make(GuardInterceptor::class, ['permissions' => $this]);
+
+        // Init routes
+        \array_map(fn(\Closure $closure) => $closure($this), $config->getRoutes());
     }
 
-    /**
-     * @return string
-     */
     public function getNamespace(): string
     {
         return $this->namespace;
@@ -85,8 +98,8 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     {
         if (!isset($this->controllers[$name])) {
             throw new ControllerException(
-                sprintf('No such controller `%s`', $name),
-                ControllerException::NOT_FOUND
+                \sprintf('No such controller `%s`', $name),
+                ControllerException::NOT_FOUND,
             );
         }
 
@@ -94,13 +107,11 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     }
 
     /**
-     * Adds domain core interceptor.
-     *
-     * @param CoreInterceptorInterface $interceptor
+     * Add interceptor.
      */
-    public function addInterceptor(CoreInterceptorInterface $interceptor): void
+    public function addInterceptor(string|Autowire|InterceptorInterface|CoreInterceptorInterface $interceptor): void
     {
-        $this->invoker->addInterceptor($interceptor);
+        $this->interceptors[] = $this->initInterceptor($interceptor);
     }
 
     /**
@@ -128,13 +139,13 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     }
 
     /**
-     * @param \ReflectionClass $class
-     * @param string|null      $context
-     * @return object|null
+     * Inject a module
      */
     public function createInjection(\ReflectionClass $class, string $context = null): object
     {
-        return $this->getModule($class->getName());
+        // To avoid a conflict when a few KeeperCore instances are registered as injectors for the same module
+        $keeper = ContainerScope::getContainer()->get(self::class);
+        return $keeper->getModule($class->getName());
     }
 
     /**
@@ -147,13 +158,24 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     public function callAction(string $controller, string $action, array $parameters = []): mixed
     {
         return $this->scope->runScope(
-            [
-                self::class          => $this,
-                CoreInterface::class => $this
-            ],
-            function () use ($controller, $action, $parameters) {
-                return $this->invoker->callAction($controller, $action, $parameters);
-            }
+            new Scope(
+                name: 'keeper',
+                bindings: [
+                    self::class          => $this,
+                    CoreInterface::class => $this,
+                ],
+            ),
+            function (ContainerInterface $container) use ($controller, $action, $parameters) {
+                return $this->builder
+                    ->withInterceptors(...$this->interceptors)
+                    ->build($this->core ?? new AutowireHandler($container))
+                    ->handle(
+                        new CallContext(
+                            Target::fromPair($controller, $action),
+                            arguments: $parameters,
+                        ),
+                    );
+            },
         );
     }
 
@@ -163,16 +185,29 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         return $permission->ok ? $permission : Permission::ok(
             "{$this->namespace}.{$this->getControllerAlias($controller)}.$action",
             ControllerException::FORBIDDEN,
-            "Unauthorized access `{$action}`"
+            "Unauthorized access `{$action}`",
         );
+    }
+
+    public function initInterceptor(
+        string|Autowire|InterceptorInterface|CoreInterceptorInterface $interceptor,
+    ): InterceptorInterface|CoreInterceptorInterface {
+        return match (true) {
+            $interceptor instanceof Autowire => $interceptor->resolve($this->factory),
+            $interceptor instanceof CoreInterceptorInterface,
+            $interceptor instanceof InterceptorInterface => $interceptor,
+            \is_subclass_of($interceptor, CoreInterceptorInterface::class),
+            \is_subclass_of($interceptor, InterceptorInterface::class) => $this->factory->make($interceptor),
+            default => throw new KeeperException("Invalid interceptor definition `{$interceptor}`."),
+        };
     }
 
     private function getControllerAlias(string $controller)
     {
         if (!isset($this->aliases[$controller])) {
             throw new ControllerException(
-                sprintf('No such controller `%s`', $controller),
-                ControllerException::NOT_FOUND
+                \sprintf('No such controller `%s`', $controller),
+                ControllerException::NOT_FOUND,
             );
         }
 

@@ -1,22 +1,20 @@
 <?xml version="1.0"?>
-<psalm
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorLevel="6"
-    hoistConstants="true"
-    findUnusedPsalmSuppress="false"
-    findUnusedVariablesAndParams="true"
-    ensureArrayStringOffsetsExist="true"
-    addParamDefaultToDocblockType="true"
-    strictBinaryOperands="true"
-    findUnusedBaselineEntry="true"
-    findUnusedCode="false"
+<psalm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="https://getpsalm.org/schema/config"
+       xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+       errorLevel="1"
+       findUnusedBaselineEntry="false"
+       findUnusedCode="false"
+       errorBaseline="psalm-baseline.xml"
 >
+    <issueHandlers>
+        <MissingClassConstType errorLevel="suppress"/>
+    </issueHandlers>
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
+            <directory name="tests" />
         </ignoreFiles>
     </projectFiles>
 </psalm>

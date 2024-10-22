@@ -8,10 +8,10 @@ trait ArrayTrait
 {
     private function endsWithArray($value): bool
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return false;
         }
 
-        return mb_strpos($value, 'inject') === 0 || mb_substr($value, mb_strlen($value) - 1, 1) === ']';
+        return \mb_strpos($value, 'inject') === 0 || \mb_substr($value, \mb_strlen($value) - 1, 1) === ']';
     }
 }

@@ -53,7 +53,7 @@ class Node implements \IteratorAggregate
      */
     public function hasOption(string $option): bool
     {
-        return array_key_exists($option, $this->options);
+        return \array_key_exists($option, $this->options);
     }
 
     /**
@@ -116,7 +116,7 @@ class Node implements \IteratorAggregate
             $positions[$name] = $currentPosition;
             $node->setOption('position', $currentPosition);
         }
-        array_multisort($positions, SORT_ASC, $nodes);
+        \array_multisort($positions, SORT_ASC, $nodes);
 
         yield from $nodes;
     }
@@ -133,6 +133,6 @@ class Node implements \IteratorAggregate
             }
         }
 
-        return $nested ? array_merge($elements, ...$nested) : $elements;
+        return $nested ? \array_merge($elements, ...$nested) : $elements;
     }
 }

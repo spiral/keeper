@@ -14,11 +14,10 @@ use Spiral\Views\ViewsInterface;
 class LoginMiddleware extends AbstractFirewall
 {
     public function __construct(
-        private string $loginView,
-        private ResponseFactoryInterface $responseFactory,
-        private ViewsInterface $views
-    ) {
-    }
+        private readonly string $loginView,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly ViewsInterface $views,
+    ) {}
 
     public function denyAccess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

@@ -9,25 +9,16 @@ use Spiral\Keeper\Annotation\Action;
 use Spiral\Keeper\Annotation\Controller;
 use Spiral\Router\Router;
 
-/**
- * @Controller(namespace="default", name="known", prefix="/known", defaultAction="foo")
- */
+#[Controller(name: "known", prefix: "/known", namespace: "default", defaultAction: "foo")]
 class SetKnownController
 {
-    /**
-     * @Action(route="/baz")
-     * @return string
-     */
+    #[Action(route: "/baz")]
     public function foo(): string
     {
         return 'known: foo';
     }
 
-    /**
-     * @Action(route="/defaults")
-     * @param ServerRequestInterface $request
-     * @return mixed
-     */
+    #[Action(route: "/defaults")]
     public function defaults(ServerRequestInterface $request)
     {
         return $request->getAttribute(Router::ROUTE_MATCHES);

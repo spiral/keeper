@@ -94,7 +94,7 @@ final class GridBuilder
     {
         /** @psalm-suppress UnsupportedPropertyReferenceUsage */
         $loc = &$this->options;
-        foreach (explode('.', $path) as $step) {
+        foreach (\explode('.', $path) as $step) {
             $loc = &$loc[$step];
         }
         $loc = $value;
@@ -136,7 +136,7 @@ final class GridBuilder
         string $name,
         array $column,
         array $renderer = [],
-        string $cellClass = null
+        string $cellClass = null,
     ): self {
         $this->columns[] = ['id' => $name] + $column;
 
@@ -188,7 +188,7 @@ final class GridBuilder
         if ($this->actions !== []) {
             $schema['columns'][] = [
                 'id'    => 'actions',
-                'title' => $this->options['actions']['title']
+                'title' => $this->options['actions']['title'],
             ];
 
             $schema['renderers']['cells']['actions'] = [
@@ -199,12 +199,12 @@ final class GridBuilder
                     'className' => $this->options['actions']['class'],
                     'icon'      => $this->options['actions']['icon'],
                     'label'     => $this->options['actions']['label'],
-                    'actions'   => $this->actions
-                ]
+                    'actions'   => $this->actions,
+                ],
             ];
         }
 
-        return json_encode($schema);
+        return \json_encode($schema);
     }
 
     /**
@@ -223,6 +223,6 @@ final class GridBuilder
      */
     public function uniqueID(): string
     {
-        return 'g-' . crc32((string) (self::$uniqueID++));
+        return 'g-' . \crc32((string) (self::$uniqueID++));
     }
 }

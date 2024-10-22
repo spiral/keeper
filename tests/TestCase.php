@@ -11,44 +11,69 @@ declare(strict_types=1);
 
 namespace Spiral\Tests\Keeper;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
-use Spiral\Boot\Environment;
+use Spiral\Bootloader\CommandBootloader;
+use Spiral\Bootloader\Http\ErrorHandlerBootloader;
+use Spiral\Bootloader\Http\RouterBootloader;
+use Spiral\Bootloader\Security\GuardBootloader;
+use Spiral\Bootloader\Views\TranslatedCacheBootloader;
+use Spiral\Keeper\Bootloader\UIBootloader;
+use Spiral\Nyholm\Bootloader\NyholmBootloader;
 use Spiral\Router\RouterInterface;
-use Spiral\Tests\Keeper\App\App;
+use Spiral\Stempler\Bootloader\StemplerBootloader;
+use Spiral\Tests\Keeper\App\Bootloader;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends \Spiral\Testing\TestCase
 {
-    /** @var App */
-    protected $app;
-
-    /**
-     * @throws \Throwable
-     */
-    public function setUp(): void
+    public function defineBootloaders(): array
     {
-        parent::setUp();
-        $this->app = $this->makeApp(['DEBUG' => true]);
+        return [
+            // Load
+            ErrorHandlerBootloader::class,
+            TranslatedCacheBootloader::class,
+            StemplerBootloader::class,
+            GuardBootloader::class,
+            NyholmBootloader::class,
+            RouterBootloader::class,
+            CommandBootloader::class,
+
+            // ??
+            \Spiral\Keeper\Bootloader\KeeperBootloader::class,
+
+            // App
+            Bootloader\AnnotationBootloader::class,
+            Bootloader\AppBootloader::class,
+            Bootloader\BlankBootloader::class,
+            Bootloader\DefaultBootloader::class,
+            Bootloader\ControllerDefaultBootloader::class,
+            Bootloader\ControllerDefaultWithActionBootloader::class,
+            Bootloader\ControllerDefaultWithFallbackBootloader::class,
+            Bootloader\OldBootloader::class,
+            Bootloader\NewBootloader::class,
+            Bootloader\InterceptedBootloader::class,
+            Bootloader\MiddlewaredBootloader::class,
+            Bootloader\GuardedBootloader::class,
+            UIBootloader::class,
+            Bootloader\LoginBootloader::class,
+            Bootloader\RoutesBootloader::class,
+        ];
     }
 
-    /**
-     * @param array $env
-     * @return App
-     * @throws \Throwable
-     */
-    protected function makeApp(array $env = []): App
+    public function rootDirectory(): string
     {
-        $config = [
-            'config' => __DIR__ . '/config/',
-            'root'   => __DIR__ . '/App/',
-            'views'  => __DIR__ . '/views/',
-            'app'    => __DIR__ . '/App/',
-        ];
+        return \dirname(__DIR__ . '/App/');
+    }
 
-        return App::create($config)->run(new Environment($env));
+    public function defineDirectories(string $root): array
+    {
+        return [
+            'config' => __DIR__ . '/config/',
+            'views' => __DIR__ . '/views/',
+            'app' => __DIR__ . '/App/',
+        ] + parent::defineDirectories($root);
     }
 
     protected function router(): RouterInterface
     {
-        return $this->app->get(RouterInterface::class);
+        return $this->getContainer()->get(RouterInterface::class);
     }
 }

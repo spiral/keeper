@@ -14,41 +14,25 @@ use Spiral\Keeper\Module\Sitemap;
 use Spiral\Router\Router;
 use Spiral\Security\GuardInterface;
 
-/**
- * @Controller(
- *     name="root",
- *     prefix="/root",
- *     namespace="default"
- * )
- * @Group(name="rootgroup")
- */
+#[Controller(name: "root", prefix: "/root", namespace: "default")]
+#[Group(name: "rootgroup")]
 class RootController
 {
-    /**
-     * @Link(title="root", position=0.7)
-     * @Action(route="/self")
-     */
+    #[Link(title: "root", position: 0.7)]
+    #[Action(route: "/self")]
     public function index(): void
     {
     }
 
-    /**
-     * @Link(title="duplicated")
-     * @Action(route="/duplicated")
-     */
+    #[Link(title: "duplicated")]
+    #[Action(route: "/duplicated")]
     public function duplicated(): void
     {
     }
 
-    /**
-     * @Guarded(permission="im-a-child")
-     * @Link(title="child", parent="parent")
-     * @Action(route="/child", name="root:child")
-     * @param Sitemap                $sitemap
-     * @param GuardInterface         $guard
-     * @param ServerRequestInterface $request
-     * @return array
-     */
+    #[Action(route: "/child", name: "root:child")]
+    #[Link(title: "child", parent: "parent")]
+    #[Guarded(permission: "im-a-child")]
     public function child(Sitemap $sitemap, GuardInterface $guard, ServerRequestInterface $request): array
     {
         return iterator_to_array(
@@ -58,27 +42,21 @@ class RootController
         );
     }
 
-    /**
-     * @Guarded(permission="parentRoot")
-     * @Link(title="parent", parent="custom.parent")
-     * @Action(route="/parent", name="root:parent")
-     */
+    #[Guarded(permission: "parentRoot")]
+    #[Link(title: "parent", parent: "custom.parent")]
+    #[Action(route: "/parent", name: "root:parent")]
     public function parent(): void
     {
     }
 
-    /**
-     * @Link(title="parent", position=0.6)
-     * @Action(route="/top", name="top")
-     */
+    #[Action(route: "/top", name: "top")]
+    #[Link(title: "parent", position: 0.6)]
     public function top(): void
     {
     }
 
-    /**
-     * @Link(title="bottom", parent="top")
-     * @Action(route="/bottom", name="bottom")
-     */
+    #[Action(route: "/bottom", name: "bottom")]
+    #[Link(title: "bottom", parent: "top")]
     public function bottom(): void
     {
     }

@@ -46,12 +46,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     protected const INTERCEPTORS = [];
     protected const MIDDLEWARE   = [];
 
-    /** @deprecated don't use it */
-    protected $container;
-
-    /** @deprecated don't use it */
-    protected $core;
-
     private KeeperEntitiesConfig $config;
     private BinderInterface $binder;
     private BootloadManagerInterface $bootloadManager;

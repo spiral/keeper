@@ -153,10 +153,6 @@
     <DeprecatedMethod>
       <code><![CDATA[withCore]]></code>
     </DeprecatedMethod>
-    <MissingPropertyType>
-      <code><![CDATA[$container]]></code>
-      <code><![CDATA[$core]]></code>
-    </MissingPropertyType>
     <MixedArgument>
       <code><![CDATA[$container->make(GuardInterceptor::class, ['permissions' => $core])]]></code>
       <code><![CDATA[$core->getController($controller)]]></code>

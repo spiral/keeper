@@ -8,7 +8,7 @@ use Spiral\Keeper\Helper\RouteBuilder;
 use Spiral\Tests\Keeper\HttpTrait;
 use Spiral\Tests\Keeper\TestCase;
 
-abstract class NamespaceTest extends TestCase
+abstract class NamespaceTestBase extends TestCase
 {
     use HttpTrait;
 

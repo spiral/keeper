@@ -7,7 +7,4 @@ tests/runtime/*
 build/logs/*
 build/
 *.db
-clover.xml
-clover.json
-.php_cs.cache
-.phpunit.result.cache
+runtime

@@ -6,7 +6,7 @@ namespace Spiral\Tests\Keeper\Route;
 
 use Spiral\Tests\Keeper\HttpTrait;
 
-class BlankedNamespaceTest extends NamespaceTest
+class BlankedNamespaceTest extends NamespaceTestBase
 {
     use HttpTrait;
 

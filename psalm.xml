@@ -7,6 +7,9 @@
        findUnusedCode="false"
        errorBaseline="psalm-baseline.xml"
 >
+    <issueHandlers>
+        <MissingClassConstType errorLevel="suppress"/>
+    </issueHandlers>
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>

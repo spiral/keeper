@@ -67,7 +67,8 @@ final class KeeperEntitiesConfig
             : $this->core->addModule($module, $aliases);
     }
 
-    public function addController(string $controller, string $class): void {
+    public function addController(string $controller, string $class): void
+    {
         $this->core === null
             ? $this->controllers[$controller] = $class
             : $this->core->setController($controller, $class);
@@ -147,7 +148,8 @@ final class KeeperEntitiesConfig
         $this->interceptors = [];
     }
 
-    private function apply() {
+    private function apply(): void
+    {
         // Apply modules
         foreach ($this->modules as [$module, $aliases]) {
             $this->core->addModule($module, $aliases);

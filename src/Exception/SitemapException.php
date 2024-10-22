@@ -11,6 +11,4 @@ declare(strict_types=1);
 
 namespace Spiral\Keeper\Exception;
 
-class SitemapException extends \RuntimeException
-{
-}
+class SitemapException extends \RuntimeException {}

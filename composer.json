@@ -27,7 +27,7 @@
         "spiral/dumper": "^3.3",
         "spiral/toolkit": "^2.0",
         "spiral/helpers": "^1.0",
-        "spiral/code-style": "^1.1",
+        "spiral/code-style": "~2.1",
         "spiral/nyholm-bridge": "^1.3",
         "vimeo/psalm": "^5.22",
         "spiral/testing": "^2.8"
@@ -50,6 +50,8 @@
         }
     },
     "scripts": {
+        "cs:diff": "php-cs-fixer fix --dry-run -v --diff",
+        "cs:fix": "php-cs-fixer fix -v",
         "psalm": "psalm",
         "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
         "psalm:ci": "psalm --output-format=github --shepherd --show-info=false --stats --threads=4",

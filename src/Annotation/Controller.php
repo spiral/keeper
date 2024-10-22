@@ -47,7 +47,7 @@ final class Controller
         string $name,
         ?string $prefix = null,
         string $namespace = 'keeper',
-        ?string $defaultAction = null
+        ?string $defaultAction = null,
     ) {
         $this->name = $name;
         $this->prefix = $prefix;

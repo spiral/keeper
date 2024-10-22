@@ -42,40 +42,6 @@ final class Sitemap implements \IteratorAggregate
         $this->root = $this->createRoot();
     }
 
-    /**
-     * Declare or create node.
-     *
-     * @param string $name
-     * @param array  $param
-     * @return Sitemap
-     */
-    public function __call(string $name, array $param): Sitemap
-    {
-        if (!in_array($name, [self::TYPE_GROUP, self::TYPE_SEGMENT, self::TYPE_LINK, self::TYPE_VIEW], true)) {
-            throw new SitemapException("Undefined method `{$name}`");
-        }
-
-        if (count($param) === 0) {
-            throw new SitemapException('Node name required and must be string');
-        }
-
-        $root = $this->root->get($param[0]);
-        if ($root instanceof Node) {
-            // found chain
-            return $this->withRoot($root);
-        }
-
-        $args = ['type' => $name, 'title' => $param[1]];
-        if (isset($param[2]) && is_array($param[2])) {
-            $args = array_merge($param [2], $args);
-        }
-
-        $node = new Node($param[0], $args);
-        $this->root->add($node);
-
-        return $this->withRoot($node);
-    }
-
     public function getNamespace(): string
     {
         return $this->namespace;
@@ -127,6 +93,40 @@ final class Sitemap implements \IteratorAggregate
     }
 
     /**
+     * Declare or create node.
+     *
+     * @param string $name
+     * @param array  $param
+     * @return Sitemap
+     */
+    public function __call(string $name, array $param): Sitemap
+    {
+        if (!\in_array($name, [self::TYPE_GROUP, self::TYPE_SEGMENT, self::TYPE_LINK, self::TYPE_VIEW], true)) {
+            throw new SitemapException("Undefined method `{$name}`");
+        }
+
+        if (\count($param) === 0) {
+            throw new SitemapException('Node name required and must be string');
+        }
+
+        $root = $this->root->get($param[0]);
+        if ($root instanceof Node) {
+            // found chain
+            return $this->withRoot($root);
+        }
+
+        $args = ['type' => $name, 'title' => $param[1]];
+        if (isset($param[2]) && \is_array($param[2])) {
+            $args = \array_merge($param [2], $args);
+        }
+
+        $node = new Node($param[0], $args);
+        $this->root->add($node);
+
+        return $this->withRoot($node);
+    }
+
+    /**
      * @param Node $node
      * @return \Generator|Node[]
      */
@@ -168,7 +168,7 @@ final class Sitemap implements \IteratorAggregate
             }
         }
 
-        if ($nodes === [] && !in_array($node->getOption('type'), [self::TYPE_LINK, self::TYPE_VIEW], true)) {
+        if ($nodes === [] && !\in_array($node->getOption('type'), [self::TYPE_LINK, self::TYPE_VIEW], true)) {
             return null;
         }
 

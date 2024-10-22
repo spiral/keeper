@@ -57,7 +57,7 @@ final class Link
         ?string $parent = null,
         ?string $permission = null,
         array $options = [],
-        ?float $position = null
+        ?float $position = null,
     ) {
         $this->parent = $parent;
         $this->title = $title;

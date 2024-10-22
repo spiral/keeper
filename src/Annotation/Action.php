@@ -71,7 +71,7 @@ final class Action
         $methods = Route::VERBS,
         array $defaults = [],
         string $group = self::DEFAULT_GROUP,
-        array $middleware = []
+        array $middleware = [],
     ) {
         $this->route = $route;
         $this->name = $name;
@@ -86,10 +86,10 @@ final class Action
         return [
             'route'      => RouteBuilder::concat($prefix, $this->route),
             'name'       => $this->name ?: null,
-            'verbs'      => (array)$this->methods,
+            'verbs'      => (array) $this->methods,
             'defaults'   => $this->defaults,
             'group'      => $this->group ?: null,
-            'middleware' => (array)$this->middleware,
+            'middleware' => (array) $this->middleware,
         ];
     }
 }

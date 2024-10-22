@@ -16,20 +16,14 @@ namespace Spiral\Keeper\Config;
  */
 final class KeeperConfig
 {
-    /** @var array */
-    private $config;
-    /** @var string */
-    private $namespace;
-
     /**
-     * @param string $namespace
+     * @param non-empty-string $namespace
      * @param array  $config
      */
-    public function __construct(string $namespace, array $config)
-    {
-        $this->config = $config;
-        $this->namespace = $namespace;
-    }
+    public function __construct(
+        private readonly string $namespace,
+        private readonly array $config,
+    ) {}
 
     public function getNamespace(): string
     {

@@ -50,7 +50,7 @@ final class View
         string $parent,
         string $title,
         array $options = [],
-        ?float $position = null
+        ?float $position = null,
     ) {
         $this->parent = $parent;
         $this->title = $title;

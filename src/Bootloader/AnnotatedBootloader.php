@@ -18,16 +18,10 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
         AttributesBootloader::class,
     ];
 
-    /** @var KeeperConfig */
-    private $config;
-    /** @var Locator */
-    private $locator;
-
-    public function __construct(KeeperConfig $config, Locator $locator)
-    {
-        $this->config = $config;
-        $this->locator = $locator;
-    }
+    public function __construct(
+        private readonly KeeperConfig $config,
+        private readonly Locator $locator,
+    ) {}
 
     public function boot(KeeperBootloader $keeper): void
     {
@@ -38,14 +32,14 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
             if ($controller['defaultAction'] && isset($controller['routes'][$controller['defaultAction']])) {
                 $route = $controller['routes'][$controller['defaultAction']];
                 $keeper->addRoute(
-                    (string)$controller['prefix'],
+                    (string) $controller['prefix'],
                     $controller['name'],
                     $controller['defaultAction'],
                     $route['verbs'],
                     $controller['name'],
                     $route['defaults'],
                     $route['group'],
-                    $route['middleware']
+                    $route['middleware'],
                 );
             }
 
@@ -58,7 +52,7 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
                     $route['name'],
                     $route['defaults'],
                     $route['group'],
-                    $route['middleware']
+                    $route['middleware'],
                 );
             }
         }
@@ -81,7 +75,7 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
                 '',
                 $route['defaults'],
                 $route['group'],
-                $route['middleware']
+                $route['middleware'],
             );
         }
     }
@@ -94,13 +88,13 @@ final class AnnotatedBootloader extends Bootloader implements KeeperBootloaderIn
          */
         foreach ($this->locator->locateNamespaceControllers($namespace) as $class => $controller) {
             $className = $class->getName();
-            $prefix = RouteBuilder::concat($this->config->getRoutePrefix(), (string)$controller->prefix);
+            $prefix = RouteBuilder::concat($this->config->getRoutePrefix(), (string) $controller->prefix);
             yield $className => [
                 'name'          => $controller->name,
                 'prefix'        => $prefix,
                 'defaultAction' => $controller->defaultAction ?: null,
                 'class'         => $className,
-                'routes'        => iterator_to_array($this->packRoutes($class, $prefix)),
+                'routes'        => \iterator_to_array($this->packRoutes($class, $prefix)),
             ];
         }
     }

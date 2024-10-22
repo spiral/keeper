@@ -11,7 +11,7 @@
       <code><![CDATA[$name]]></code>
     </PossiblyNullPropertyAssignmentValue>
     <RedundantCastGivenDocblockType>
-      <code><![CDATA[(array)$this->middleware]]></code>
+      <code><![CDATA[(array) $this->middleware]]></code>
     </RedundantCastGivenDocblockType>
   </file>
   <file src="src/Annotation/Controller.php">
@@ -39,10 +39,10 @@
   </file>
   <file src="src/Annotation/Sitemap/ParentTrait.php">
     <RedundantCondition>
-      <code><![CDATA[$this->parent && is_string($this->parent)]]></code>
-      <code><![CDATA[$this->parent && is_string($this->parent)]]></code>
-      <code><![CDATA[is_string($this->parent)]]></code>
-      <code><![CDATA[is_string($this->parent)]]></code>
+      <code><![CDATA[$this->parent && \is_string($this->parent)]]></code>
+      <code><![CDATA[$this->parent && \is_string($this->parent)]]></code>
+      <code><![CDATA[\is_string($this->parent)]]></code>
+      <code><![CDATA[\is_string($this->parent)]]></code>
     </RedundantCondition>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[$this->parent]]></code>
@@ -289,9 +289,6 @@
       <code><![CDATA[private array $interceptors = [];]]></code>
       <code><![CDATA[string|Autowire|InterceptorInterface|CoreInterceptorInterface $interceptor]]></code>
     </DeprecatedInterface>
-    <MissingReturnType>
-      <code><![CDATA[apply]]></code>
-    </MissingReturnType>
     <MixedMethodCall>
       <code><![CDATA[addMiddleware]]></code>
     </MixedMethodCall>
@@ -403,7 +400,7 @@
       <code><![CDATA[match (true) {
             $interceptor instanceof Autowire => $interceptor->resolve($this->factory),
             $interceptor instanceof CoreInterceptorInterface,
-                $interceptor instanceof InterceptorInterface => $interceptor,
+            $interceptor instanceof InterceptorInterface => $interceptor,
             \is_subclass_of($interceptor, CoreInterceptorInterface::class),
             \is_subclass_of($interceptor, InterceptorInterface::class) => $this->factory->make($interceptor),
             default => throw new KeeperException("Invalid interceptor definition `{$interceptor}`."),

@@ -54,7 +54,7 @@ final class Group
         ?string $title = null,
         string $parent = 'root',
         array $options = [],
-        ?float $position = null
+        ?float $position = null,
     ) {
         $this->name = $name;
         $this->title = $title;

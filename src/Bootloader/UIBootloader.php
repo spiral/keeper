@@ -15,14 +15,14 @@ final class UIBootloader extends Bootloader implements KeeperBootloaderInterface
 {
     protected const DEPENDENCIES = [
         StemplerBootloader::class,
-        ToolkitBootloader::class
+        ToolkitBootloader::class,
     ];
 
     public function boot(ViewsBootloader $views, StemplerBootloader $stempler): void
     {
         // overwrite
         $views->addDirectory('keeper', directory('views') . '/keeper');
-        $views->addDirectory('keeper', dirname(__DIR__) . '/../views');
+        $views->addDirectory('keeper', \dirname(__DIR__) . '/../views');
 
         $stempler->addDirective(ActionDirective::class);
         $stempler->addDirective(AuthDirective::class);

@@ -39,11 +39,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     protected const PREFIX             = 'keeper/';
     protected const DEFAULT_CONTROLLER = 'dashboard';
     protected const CONFIG_NAME        = '';
-
     protected const DEPENDENCIES = [
         GuardBootloader::class,
     ];
-
     protected const LOAD         = [];
     protected const INTERCEPTORS = [];
     protected const MIDDLEWARE   = [];
@@ -65,37 +63,6 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 'Keeper core requested outside of its context',
             ),
         ];
-    }
-
-    /**
-     * Init configuration from default and user-defined value.
-     */
-    private function init(ConfiguratorInterface $configurator, BinderInterface $binder): void
-    {
-        $this->config = new KeeperEntitiesConfig();
-        $this->binder = $binder->getBinder('keeper');
-        $configurator->setDefaults(
-            static::CONFIG_NAME ?: static::NAMESPACE,
-            [
-                // keeper isolation prefix (only for non-host routing)
-                'routePrefix'   => static::PREFIX,
-
-                // default controller
-                'routeDefaults' => ['controller' => static::DEFAULT_CONTROLLER],
-
-                // page to render when login is required
-                'loginView'     => 'keeper:login',
-
-                // global keeper middleware
-                'middleware'    => $this->getMiddleware(),
-
-                // connected modules and extensions
-                'modules'       => static::LOAD,
-
-                // domain Core interceptors
-                'interceptors'  => static::INTERCEPTORS,
-            ],
-        );
     }
 
     /**
@@ -137,17 +104,8 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
                 // init all keeper functionality
                 $bootloadManager->bootload($config->getModuleBootloaders());
                 $this->initInterceptors($container, $core, $config);
-            }
+            },
         );
-    }
-
-    private function initInterceptors(ContainerInterface $container, KeeperCore $core, KeeperConfig $config): void
-    {
-        foreach ($config->getInterceptors() as $interceptor) {
-            $core->addInterceptor($interceptor);
-        }
-
-        $core->addInterceptor($container->make(GuardInterceptor::class, ['permissions' => $core]));
     }
 
     /**
@@ -192,7 +150,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         string $group = null,
         array $middlewares = [],
     ): void {
-        $this->config->addRouteRegistrar(static function(KeeperCore $core) use(
+        $this->config->addRouteRegistrar(static function (KeeperCore $core) use (
             $pattern,
             $controller,
             $action,
@@ -201,7 +159,7 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
             $defaults,
             $group,
             $middlewares,
-        ) {
+        ): void {
             /** @var RouteRegistry $registry */
             $registry = $core->getModule(RouteRegistry::class);
 
@@ -225,6 +183,46 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
     protected function getRouteRegistry(): RouteRegistry
     {
         throw new KeeperException('Method `getRouteRegistry()` is not provided since Keeper v0.11.');
+    }
+
+    /**
+     * Init configuration from default and user-defined value.
+     */
+    private function init(ConfiguratorInterface $configurator, BinderInterface $binder): void
+    {
+        $this->config = new KeeperEntitiesConfig();
+        $this->binder = $binder->getBinder('keeper');
+        $configurator->setDefaults(
+            static::CONFIG_NAME ?: static::NAMESPACE,
+            [
+                // keeper isolation prefix (only for non-host routing)
+                'routePrefix'   => static::PREFIX,
+
+                // default controller
+                'routeDefaults' => ['controller' => static::DEFAULT_CONTROLLER],
+
+                // page to render when login is required
+                'loginView'     => 'keeper:login',
+
+                // global keeper middleware
+                'middleware'    => $this->getMiddleware(),
+
+                // connected modules and extensions
+                'modules'       => static::LOAD,
+
+                // domain Core interceptors
+                'interceptors'  => static::INTERCEPTORS,
+            ],
+        );
+    }
+
+    private function initInterceptors(ContainerInterface $container, KeeperCore $core, KeeperConfig $config): void
+    {
+        foreach ($config->getInterceptors() as $interceptor) {
+            $core->addInterceptor($interceptor);
+        }
+
+        $core->addInterceptor($container->make(GuardInterceptor::class, ['permissions' => $core]));
     }
 
     private function getKeeperBootloadManager(

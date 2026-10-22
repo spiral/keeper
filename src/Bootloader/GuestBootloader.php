@@ -15,10 +15,6 @@ use Spiral\Security\Rule\AllowRule;
  */
 final class GuestBootloader extends Bootloader implements KeeperBootloaderInterface
 {
-    /**
-     * @param KeeperCore           $core
-     * @param PermissionsInterface $permissions
-     */
     public function boot(KeeperCore $core, PermissionsInterface $permissions): void
     {
         if (!$permissions->hasRole(Guest::ROLE)) {

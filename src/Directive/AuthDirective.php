@@ -28,10 +28,6 @@ class AuthDirective extends AbstractDirective
         $this->route = $route;
     }
 
-    /**
-     * @param Directive $directive
-     * @return string
-     */
     public function renderAuth(Directive $directive): string
     {
         return \sprintf(
@@ -40,10 +36,6 @@ class AuthDirective extends AbstractDirective
         );
     }
 
-    /**
-     * @param Directive $directive
-     * @return string
-     */
     public function renderEndAuth(Directive $directive): string
     {
         return '<?php endif; ?>';

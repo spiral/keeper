@@ -25,8 +25,6 @@ class ActionDirective extends AbstractDirective
     }
 
     /**
-     * @param Directive $directive
-     * @return string
      * @deprecated use @keeper(namespace, name, args) instead
      */
     public function renderAction(Directive $directive): string

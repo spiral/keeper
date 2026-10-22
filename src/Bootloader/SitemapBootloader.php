@@ -75,7 +75,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
         }
     }
 
-    private function fillFromNode(Sitemap\Node $node, Sitemap\Node $parent = null): void
+    private function fillFromNode(Sitemap\Node $node, ?Sitemap\Node $parent = null): void
     {
         $this->addItem(
             $node->getOption('type'),
@@ -167,9 +167,7 @@ class SitemapBootloader extends Bootloader implements KeeperBootloaderInterface
     }
 
     /**
-     * @param array            $lastSegments
      * @param Sitemap\Method[] $methods
-     * @param Sitemap          $sitemap
      */
     private function buildSitemap(array $lastSegments, array $methods, Sitemap $sitemap): void
     {

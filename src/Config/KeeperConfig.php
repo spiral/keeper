@@ -18,7 +18,6 @@ final class KeeperConfig
 {
     /**
      * @param non-empty-string $namespace
-     * @param array  $config
      */
     public function __construct(
         private readonly string $namespace,
@@ -35,41 +34,26 @@ final class KeeperConfig
         return $this->config['routeDefaults'] ?? [];
     }
 
-    /**
-     * @return string
-     */
     public function getRoutePrefix(): string
     {
         return $this->config['routePrefix'];
     }
 
-    /**
-     * @return array
-     */
     public function getMiddleware(): array
     {
         return $this->config['middleware'];
     }
 
-    /**
-     * @return array
-     */
     public function getModuleBootloaders(): array
     {
         return $this->config['bootload'] ?? $this->config['modules'];
     }
 
-    /**
-     * @return array
-     */
     public function getInterceptors(): array
     {
         return $this->config['interceptors'];
     }
 
-    /**
-     * @return string
-     */
     public function getLoginView(): string
     {
         return $this->config['loginView'];

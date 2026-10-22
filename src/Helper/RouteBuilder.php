@@ -18,7 +18,7 @@ class RouteBuilder
         $this->router = $router;
     }
 
-    final public static function routeName(string $namespace, string $name = null): string
+    final public static function routeName(string $namespace, ?string $name = null): string
     {
         return $name ? "{$namespace}[$name]" : $namespace;
     }

@@ -139,9 +139,9 @@ abstract class KeeperBootloader extends Bootloader implements SingletonInterface
         string $controller,
         string $action,
         array $verbs = Route::VERBS,
-        string $name = null,
+        ?string $name = null,
         array $defaults = [],
-        string $group = null,
+        ?string $group = null,
         array $middlewares = [],
     ): void {
         $this->config->addRouteRegistrar(static function (KeeperCore $core) use (

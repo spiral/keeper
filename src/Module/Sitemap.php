@@ -33,9 +33,6 @@ final class Sitemap implements \IteratorAggregate
     /** @var Node */
     private $root;
 
-    /**
-     * @param string $namespace
-     */
     public function __construct(string $namespace)
     {
         $this->namespace = $namespace;
@@ -55,11 +52,8 @@ final class Sitemap implements \IteratorAggregate
     /**
      * Find all visible nodes and highlight current path.
      *
-     * @param GuardInterface $guard
-     * @param string|null    $targetNode
-     * @return Sitemap
      */
-    public function withVisibleNodes(GuardInterface $guard, string $targetNode = null): Sitemap
+    public function withVisibleNodes(GuardInterface $guard, ?string $targetNode = null): Sitemap
     {
         $sitemap = clone $this;
         $sitemap->root = $this->filterVisible($this->root, $guard, $targetNode) ?? $this->createRoot();
@@ -84,9 +78,6 @@ final class Sitemap implements \IteratorAggregate
         return $result;
     }
 
-    /**
-     * @return \Generator
-     */
     public function getIterator(): \Generator
     {
         yield from $this->root;
@@ -95,9 +86,6 @@ final class Sitemap implements \IteratorAggregate
     /**
      * Declare or create node.
      *
-     * @param string $name
-     * @param array  $param
-     * @return Sitemap
      */
     public function __call(string $name, array $param): Sitemap
     {
@@ -127,7 +115,6 @@ final class Sitemap implements \IteratorAggregate
     }
 
     /**
-     * @param Node $node
      * @return \Generator|Node[]
      */
     private function findActiveNode(Node $node): \Generator
@@ -143,13 +130,7 @@ final class Sitemap implements \IteratorAggregate
         }
     }
 
-    /**
-     * @param Node           $node
-     * @param GuardInterface $guard
-     * @param string|null    $targetNode
-     * @return Node|null
-     */
-    private function filterVisible(Node $node, GuardInterface $guard, string $targetNode = null): ?Node
+    private function filterVisible(Node $node, GuardInterface $guard, ?string $targetNode = null): ?Node
     {
         if (!$this->isAllowed($node, $guard)) {
             return null;
@@ -189,14 +170,13 @@ final class Sitemap implements \IteratorAggregate
         return $guard->allows($node->getOption('permission'));
     }
 
-    private function nodeMatches(Node $node, string $targetNode = null): bool
+    private function nodeMatches(Node $node, ?string $targetNode = null): bool
     {
         $route = $node->getOption('route') ?? $node->getName();
         return RouteBuilder::routeName($this->namespace, $route) === $targetNode;
     }
 
     /**
-     * @param Node $root
      * @return $this
      */
     private function withRoot(Node $root): self

@@ -66,7 +66,7 @@ final class Link
         $this->position = $position;
     }
 
-    public function getOptions(Method $method = null): array
+    public function getOptions(?Method $method = null): array
     {
         $options = $this->options + ['position' => $this->position];
         if ($method !== null) {

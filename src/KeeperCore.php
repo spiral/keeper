@@ -42,10 +42,8 @@ use Spiral\Keeper\Exception\KeeperException;
  */
 final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsProviderInterface
 {
-    /** @var array */
     private array $controllers = [];
 
-    /** @var array */
     private array $aliases = [];
 
     private array $modules = [];
@@ -63,7 +61,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         private readonly PermissionsProviderInterface $permissions,
         private readonly string $namespace,
         KeeperEntitiesConfig $config,
-        PipelineBuilderInterface $builder = null,
+        ?PipelineBuilderInterface $builder = null,
     ) {
         $this->builder = $builder ?? new CompatiblePipelineBuilder();
         $config->setCore($this);
@@ -80,10 +78,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         return $this->namespace;
     }
 
-    /**
-     * @param string $name
-     * @param string $target
-     */
     public function setController(string $name, string $target): void
     {
         $this->controllers[$name] = $target;
@@ -91,7 +85,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     }
 
     /**
-     * @param string $name
      * @return mixed
      */
     public function getController(string $name): string
@@ -114,10 +107,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         $this->interceptors[] = $this->initInterceptor($interceptor);
     }
 
-    /**
-     * @param object $module
-     * @param array  $aliases
-     */
     public function addModule(object $module, array $aliases): void
     {
         foreach ($aliases as $alias) {
@@ -125,10 +114,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
         }
     }
 
-    /**
-     * @param string $name
-     * @return object
-     */
     public function getModule(string $name): object
     {
         if (!isset($this->modules[$name])) {
@@ -141,7 +126,7 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     /**
      * Inject a module
      */
-    public function createInjection(\ReflectionClass $class, string $context = null): object
+    public function createInjection(\ReflectionClass $class, ?string $context = null): object
     {
         // To avoid a conflict when a few KeeperCore instances are registered as injectors for the same module
         $keeper = ContainerScope::getContainer()->get(self::class);
@@ -149,10 +134,6 @@ final class KeeperCore implements CoreInterface, InjectorInterface, PermissionsP
     }
 
     /**
-     * @param string $controller
-     * @param string $action
-     * @param array  $parameters
-     * @return mixed
      * @throws \Throwable
      */
     public function callAction(string $controller, string $action, array $parameters = []): mixed

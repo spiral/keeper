@@ -67,7 +67,6 @@ final class GridBuilder
     }
 
     /**
-     * @param string $id
      * @return $this
      */
     public function setID(string $id): self
@@ -77,16 +76,12 @@ final class GridBuilder
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getID(): string
     {
         return $this->gridID;
     }
 
     /**
-     * @param string $path
      * @param mixed  $value
      * @return $this
      */
@@ -103,7 +98,6 @@ final class GridBuilder
     }
 
     /**
-     * @param array $action
      * @return $this
      */
     public function addAction(array $action): self
@@ -114,8 +108,6 @@ final class GridBuilder
     }
 
     /**
-     * @param string $id
-     * @param array $action
      * @return $this
      */
     public function addBulkAction(string $id, array $action): self
@@ -126,17 +118,13 @@ final class GridBuilder
     }
 
     /**
-     * @param string      $name
-     * @param array       $column
-     * @param array       $renderer
-     * @param string|null $cellClass
      * @return $this
      */
     public function addColumn(
         string $name,
         array $column,
         array $renderer = [],
-        string $cellClass = null,
+        ?string $cellClass = null,
     ): self {
         $this->columns[] = ['id' => $name] + $column;
 
@@ -152,7 +140,6 @@ final class GridBuilder
     }
 
     /**
-     * @param string $id
      * @return $this
      */
     public function captureForm(string $id): self
@@ -163,7 +150,6 @@ final class GridBuilder
     }
 
     /**
-     * @param string $id
      * @return $this
      */
     public function captureFilterForm(string $id): self
@@ -173,9 +159,6 @@ final class GridBuilder
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $schema = $this->options;
@@ -210,17 +193,12 @@ final class GridBuilder
     /**
      * Convert {opt} statements to {{opt}} statements.
      *
-     * @param string|null $template
-     * @return string|null
      */
     public function toHandlebars(?string $template): ?string
     {
         return Handlebars::convert($template);
     }
 
-    /**
-     * @return string
-     */
     public function uniqueID(): string
     {
         return 'g-' . \crc32((string) (self::$uniqueID++));
